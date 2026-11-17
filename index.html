@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Kenny's Homeschool Hub</title>
+  <style>
+    :root {
+      --bg: #f3f1ee;
+      --elevated: #ffffff;
+      --text: #1c1917;
+      --text-secondary: #57534e;
+      --border: rgba(28, 25, 23, 0.10);
+      --border-weak: rgba(28, 25, 23, 0.16);
+      --danger: #dc2626;
+      --danger-deep: #991b1b;
+      --danger-subtle: #fef2f2;
+      --warning: #ea580c;
+      --warning-deep: #9a3412;
+      --warning-subtle: #fff7ed;
+      --info: #1d4ed8;
+      --info-bg: #eff6ff;
+      --info-border: #bfdbfe;
+      --accent: #2563eb;
+      --accent-subtle: #eff6ff;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-full: 999px;
+      --shadow: 0 1px 2px rgba(28, 25, 23, 0.04), 0 1px 3px rgba(28, 25, 23, 0.05);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; }
+
+    header.page-head { margin-bottom: 20px; }
+    header.page-head h1 {
+      margin: 0;
+      font-size: 2rem;
+      line-height: 1.2;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+    header.page-head .summary {
+      margin: 8px 0 0;
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+      max-width: 46rem;
+    }
+    .sources { margin: 8px 0 0; color: var(--text-secondary); font-size: 0.8rem; }
+
+    .callout {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 28px;
+    }
+    .callout .lead { color: var(--info); font-weight: 650; font-size: 0.92rem; }
+    .callout p { margin: 2px 0 0; color: var(--text); font-size: 0.95rem; }
+    .callout .icon { flex: 0 0 auto; color: var(--info); margin-top: 2px; }
+
+    .section { margin: 0 0 28px; }
+    .section > h2 {
+      margin: 0 0 14px;
+      font-size: 1.25rem;
+      line-height: 1.3;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+    .section > h2 .caption,
+    .section-caption {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.88rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--text-secondary);
+    }
+    .card-section > h3 { margin: 0 0 12px; font-size: 1.02rem; font-weight: 650; }
+
+    .card {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .card.accent-red { border-left: 6px solid var(--danger); }
+    .card.accent-orange { border-left: 6px solid var(--warning); }
+
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      padding: 20px;
+    }
+    .hero-score {
+      font-size: 48px;
+      line-height: 72px;
+      font-weight: 650;
+      color: var(--danger);
+    }
+    .hero-copy { flex: 1 1 220px; min-width: 200px; }
+    .eyebrow {
+      color: var(--danger);
+      font-size: 0.72rem;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .hero-copy h3 {
+      margin: 4px 0 0;
+      font-size: 1.5rem;
+      line-height: 1.25;
+      font-weight: 650;
+      letter-spacing: -0.015em;
+    }
+    .hero-copy .meta { margin-top: 4px; color: var(--text-secondary); font-size: 0.92rem; }
+    .ring-wrap { display: flex; align-items: center; gap: 12px; }
+    .ring-label { color: var(--text-secondary); font-size: 0.92rem; }
+    .ring-label strong { display: block; color: var(--text); font-weight: 650; }
+
+    .win-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 12px 0 6px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .win-card {
+      flex: 0 0 200px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+    .win-card .score { color: var(--danger); font-size: 1.05rem; font-weight: 650; }
+    .win-card .title { color: var(--text); font-weight: 650; margin-top: 6px; }
+    .win-card .meta { color: var(--text-secondary); font-size: 0.75rem; margin-top: 2px; }
+    .pill {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .pill.milestone { background: var(--danger-subtle); color: var(--danger-deep); }
+    .pill.quiz { background: var(--warning-subtle); color: var(--warning-deep); }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 4px;
+      background: rgba(28, 25, 23, 0.06);
+      border-radius: var(--radius-full);
+      margin: 8px 0 24px;
+      width: fit-content;
+      max-width: 100%;
+    }
+    .tabs button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .tabs button[aria-selected="true"] {
+      background: var(--elevated);
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
+    .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .panel[hidden] { display: none; }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card-section {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--danger);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .card-section.orange { border-left-color: var(--warning); }
+
+    .rows { display: flex; flex-direction: column; }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .row:first-child { padding-top: 0; }
+    .row .title { font-weight: 600; font-size: 0.95rem; }
+    .row .detail { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
+    .row .meta { color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; margin-right: 4px; }
+    .row-end { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-top: 2px; }
+
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 650;
+      background: rgba(28, 25, 23, 0.08);
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .status.warning { background: var(--warning-subtle); color: var(--warning-deep); }
+    .status.danger { background: var(--danger-subtle); color: var(--danger-deep); }
+    .status.accent { background: var(--accent-subtle); color: var(--accent); }
+
+    .jobs { display: flex; flex-direction: column; gap: 10px; }
+    .job {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .job .emoji { font-size: 32px; line-height: 1; }
+    .job .title { font-size: 1.05rem; font-weight: 650; }
+    .job .detail { color: var(--text-secondary); font-size: 0.92rem; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .metric {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--warning);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .metric:nth-child(odd) { border-left-color: var(--danger); }
+    .metric .value { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    .metric .label { margin-top: 4px; font-weight: 600; font-size: 0.92rem; }
+    .metric .detail { margin-top: 2px; color: var(--text-secondary); font-size: 0.85rem; }
+
+    .props { display: flex; flex-direction: column; }
+    .prop {
+      display: grid;
+      grid-template-columns: 42% 1fr;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .prop:last-child { border-bottom: 0; }
+    .prop .k { color: var(--text-secondary); }
+    .prop .v { font-weight: 550; }
+
+    .body-text { margin: 0; color: var(--text); font-size: 0.98rem; }
+
+    .table-wrap { overflow-x: auto; margin-bottom: 16px; }
+    table.data {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      font-size: 0.92rem;
+    }
+    table.data th, table.data td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    table.data th {
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 650;
+      background: rgba(28, 25, 23, 0.03);
+    }
+    table.data tr:last-child td { border-bottom: 0; }
+    table.data .num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.data .warn { color: var(--warning-deep); font-weight: 650; }
+
+    .bars { display: flex; flex-direction: column; gap: 10px; margin: 8px 0 20px; }
+    .bar-row { display: grid; grid-template-columns: minmax(120px, 220px) 1fr auto; gap: 10px; align-items: center; }
+    .bar-label { font-size: 0.88rem; }
+    .bar-track {
+      height: 10px;
+      background: rgba(28, 25, 23, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .bar-fill { height: 100%; background: var(--warning); border-radius: var(--radius-full); }
+    .bar-fill.alert { background: var(--danger); }
+    .bar-val { font-size: 0.85rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    .cols {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      align-items: end;
+      min-height: 140px;
+      margin-top: 8px;
+    }
+    .col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .col-stack {
+      width: 100%;
+      height: 110px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .col-bar {
+      width: 42%;
+      min-width: 18px;
+      background: var(--warning);
+      border-radius: 6px 6px 0 0;
+    }
+    .col-val { font-size: 0.72rem; color: var(--text-secondary); text-align: center; }
+    .col-label { font-size: 0.72rem; text-align: center; font-weight: 600; }
+
+    .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+    .steps li { position: relative; padding: 0 0 20px 52px; counter-increment: step; }
+    .steps li:last-child { padding-bottom: 0; }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--danger);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      line-height: 32px;
+      text-align: center;
+    }
+    .steps li:nth-child(even)::before { background: var(--warning); }
+    .steps li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 34px;
+      bottom: 2px;
+      width: 2px;
+      background: var(--border-weak);
+    }
+    .steps .title { font-weight: 650; }
+    .steps .detail { color: var(--text-secondary); font-size: 0.92rem; margin-top: 2px; }
+
+    .checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .checks li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--danger);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+    .checks li.open { border-left-color: var(--warning); }
+    .check { flex: 0 0 22px; width: 22px; height: 22px; border-radius: 6px; margin-top: 1px; }
+    .check.open-box { background: var(--elevated); border: 2px solid var(--border-weak); }
+    .check-text { font-size: 0.95rem; }
+    .check-meta { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
+
+    @media (max-width: 860px) {
+      .grid-3 { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      header.page-head h1 { font-size: 1.7rem; }
+      .bar-row { grid-template-columns: 1fr auto; }
+      .bar-label { grid-column: 1 / -1; }
+      .cols { grid-template-columns: repeat(5, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .page { padding: 20px 14px 48px; }
+      .metrics { grid-template-columns: 1fr; }
+      .tabs { border-radius: 16px; width: 100%; }
+      .tabs button { flex: 1 1 calc(50% - 4px); text-align: center; padding: 8px 10px; }
+      .prop { grid-template-columns: 1fr; gap: 2px; }
+      .row { flex-direction: column; gap: 6px; }
+      .row-end { padding-top: 0; }
+      .row .meta { white-space: normal; }
+      .cols { grid-template-columns: 1fr; min-height: 0; }
+      .col { display: grid; grid-template-columns: 110px 1fr auto; width: 100%; align-items: center; }
+      .col-stack { height: 10px; }
+      .col-bar { width: 100%; height: 10px; border-radius: var(--radius-full); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="page-head">
+      <h1>Kenny's Homeschool Hub</h1>
+      <p class="summary">One front door for Kenny's homeschool: his wins up top, then today's work, a kid view for Kenny, a read-only progress view for his teachers and family, and the plan.</p>
+      <p class="sources">Source: Miacademy parent account, read-only, Nov 17, 2026, ~3:24 PM ET</p>
+    </header>
+
+    <div class="callout">
+      <svg class="icon" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+        <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" stroke-width="1.75"/>
+        <rect x="9.1" y="8.2" width="1.8" height="6.2" rx="0.9" fill="currentColor"/>
+        <circle cx="10" cy="5.8" r="1.05" fill="currentColor"/>
+      </svg>
+      <div>
+        <div class="lead">Real data from Miacademy, Nov 17, 2026, ~3:24 PM ET.</div>
+        <p>Numbers and work below come from Kenny's parent account, read-only, this afternoon. Art and video wins will appear once David sends them. To update, ask Alfred.</p>
+      </div>
+    </div>
+
+    <section class="section">
+      <h2>Kenny's Wall of Wins<span class="caption">Art and video wins will appear once David sends them.</span></h2>
+      <div class="card accent-red hero">
+        <div class="hero-score">87%</div>
+        <div class="hero-copy">
+          <div class="eyebrow">Newest win · Quiz</div>
+          <h3>Rounding Whole Numbers and Decimals</h3>
+          <div class="meta">Math · Nov 11 · 87% on the Rounding Whole Numbers and Decimals quiz.</div>
+        </div>
+        <div class="ring-wrap">
+          <svg width="84" height="84" viewBox="0 0 84 84" aria-label="5 of 6 graded courses at or above 80 percent">
+            <circle cx="42" cy="42" r="34" fill="none" stroke="rgba(28,25,23,0.16)" stroke-width="8"/>
+            <circle cx="42" cy="42" r="34" fill="none" stroke="#ea580c" stroke-width="8" stroke-linecap="round" stroke-dasharray="177.3114893687 213.6283004441" transform="rotate(-90 42 42)"/>
+            <text x="42" y="47" text-anchor="middle" font-size="16" font-weight="600" fill="#1c1917">83%</text>
+          </svg>
+          <div class="ring-label">
+            <strong>5 / 6</strong>
+            Graded courses at 80%+
+          </div>
+        </div>
+      </div>
+
+      <div class="win-strip">
+        <div class="win-card">
+          <div class="score">90%</div>
+          <div class="title">Analyzing Data</div>
+          <div class="meta">Structures of Science · Nov 10</div>
+          <span class="pill quiz">Quiz</span>
+        </div>
+        <div class="win-card">
+          <div class="score">100%</div>
+          <div class="title">Operation Exploration: The Northeast</div>
+          <div class="meta">U.S. Geography · Nov 4</div>
+          <span class="pill quiz">Quiz</span>
+        </div>
+        <div class="win-card">
+          <div class="score">100%</div>
+          <div class="title">Chicago Fire</div>
+          <div class="meta">Reading · Oct 30</div>
+          <span class="pill quiz">Quiz</span>
+        </div>
+        <div class="win-card">
+          <div class="score">Done</div>
+          <div class="title">General Science course complete</div>
+          <div class="meta">General Science</div>
+          <span class="pill milestone">Milestone</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="Hub views">
+      <button type="button" role="tab" id="tab-today" aria-controls="panel-today" aria-selected="true">Today</button>
+      <button type="button" role="tab" id="tab-kenny" aria-controls="panel-kenny" aria-selected="false">Kenny</button>
+      <button type="button" role="tab" id="tab-teachers" aria-controls="panel-teachers" aria-selected="false">Teachers &amp; family</button>
+      <button type="button" role="tab" id="tab-plan" aria-controls="panel-plan" aria-selected="false">Plan</button>
+    </div>
+
+    <div id="panel-today" class="panel" role="tabpanel" aria-labelledby="tab-today">
+      <section class="section">
+        <h2>Today at a glance · Tue Nov 17</h2>
+        <div class="grid-3">
+          <div class="card-section">
+            <h3>On today</h3>
+            <div class="rows">
+              <div class="row">
+                <div class="title">Tutor Time with Christen Sinyard</div>
+                <div class="row-end"><span class="meta">Morning</span><span class="status">Fixed</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Language Arts Level E</div>
+                <div class="row-end"><span class="meta">Mon–Fri</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Math Level F</div>
+                <div class="row-end"><span class="meta">Mon–Fri</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Structures of Science</div>
+                <div class="row-end"><span class="meta">Mon–Fri</span></div>
+              </div>
+              <div class="row">
+                <div class="title">U.S. Geography</div>
+                <div class="row-end"><span class="meta">Tue/Wed/Thu</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Intro to Typing</div>
+                <div class="row-end"><span class="meta">Mon–Thu</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Today's Progress</div>
+                <div class="row-end"><span class="meta">0/10</span><span class="status warning">Not started</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-section orange">
+            <h3>This week</h3>
+            <div class="rows">
+              <div class="row">
+                <div class="title">Singing with Kathleen Blanco</div>
+                <div class="row-end"><span class="meta">Wed 1:00–1:40 PM</span><span class="status">Fixed</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Tutor Time with Christen</div>
+                <div class="row-end"><span class="meta">Thu morning</span></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="title">Friday progress report</div>
+                  <div class="detail">From the Assessor</div>
+                </div>
+                <div class="row-end"><span class="meta">Fri</span></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="title">Time so far this week</div>
+                  <div class="detail">30 minutes so far</div>
+                </div>
+                <div class="row-end"><span class="meta">Nov 16–22</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-section">
+            <h3>Waiting on David</h3>
+            <div class="rows">
+              <div class="row">
+                <div class="title">Approve next week's plan</div>
+                <div class="row-end"><span class="meta">Before Monday</span><span class="status warning">To do</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Retake: Math Comparing and Ordering Numbers quiz</div>
+                <div class="row-end"><span class="meta">67% on Oct 22</span><span class="status warning">Retake</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Retake: General Science Food Webs in Ecosystems quiz</div>
+                <div class="row-end"><span class="meta">67% on Oct 29</span><span class="status warning">Retake</span></div>
+              </div>
+              <div class="row">
+                <div class="title">Math Level F overall is below the 80% mastery bar</div>
+                <div class="row-end"><span class="meta">75% (C)</span><span class="status warning">Below 80%</span></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="title">Study time down the last 3 weeks</div>
+                  <div class="detail">Oct 19–25 was 2 hr 50 min; the next three weeks were 1 hr 52 min, 59 min, and 1 hr 14 min.</div>
+                </div>
+                <div class="row-end"><span class="status warning">Flag</span></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="title">MOSI Jan 7: Tutor Time ends 10 AM, class starts 10 AM</div>
+                  <div class="detail">About 25 minutes away, so Kenny arrives late unless that morning moves</div>
+                </div>
+                <div class="row-end"><span class="status danger">Conflict</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="panel-kenny" class="panel" role="tabpanel" aria-labelledby="tab-kenny" hidden>
+      <section class="section">
+        <h2>My jobs today 🚀</h2>
+        <div class="jobs">
+          <div class="job card" style="border-left:6px solid var(--danger);">
+            <div class="emoji" aria-hidden="true">👩‍🏫</div>
+            <div><div class="title">Tutor Time with Ms. Christen</div><div class="detail">This morning</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--danger);">
+            <div class="emoji" aria-hidden="true">📖</div>
+            <div><div class="title">Language Arts</div><div class="detail">Monday–Friday</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--danger);">
+            <div class="emoji" aria-hidden="true">➗</div>
+            <div><div class="title">Math</div><div class="detail">Monday–Friday</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--danger);">
+            <div class="emoji" aria-hidden="true">🔬</div>
+            <div><div class="title">Structures of Science</div><div class="detail">Monday–Friday</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--danger);">
+            <div class="emoji" aria-hidden="true">🗺️</div>
+            <div><div class="title">U.S. Geography</div><div class="detail">Tuesday, Wednesday, Thursday</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--danger);">
+            <div class="emoji" aria-hidden="true">⌨️</div>
+            <div><div class="title">Typing</div><div class="detail">Monday–Thursday</div></div>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <h2>Coming up</h2>
+        <div class="jobs">
+          <div class="job card" style="border-left:6px solid var(--warning);">
+            <div class="emoji" aria-hidden="true">🎤</div>
+            <div><div class="title">Singing with Ms. Kathleen</div><div class="detail">Wednesday 1:00–1:40 PM</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--warning);">
+            <div class="emoji" aria-hidden="true">👩‍🏫</div>
+            <div><div class="title">Tutor Time with Ms. Christen</div><div class="detail">Thursday morning</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--warning);">
+            <div class="emoji" aria-hidden="true">🏆</div>
+            <div><div class="title">Friday progress report</div><div class="detail">Friday</div></div>
+          </div>
+          <div class="job card" style="border-left:6px solid var(--warning);">
+            <div class="emoji" aria-hidden="true">🎮</div>
+            <div><div class="title">MOSI: Video Game Programming</div><div class="detail">Thu Jan 7, 10 AM–12 PM</div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="panel-teachers" class="panel" role="tabpanel" aria-labelledby="tab-teachers" hidden>
+      <section class="section">
+        <h2>Kenny's progress<span class="caption">Read-only. For Christen Sinyard, Kathleen Blanco, and Alys. From the Miacademy parent account, Nov 17, 2026.</span></h2>
+        <div class="metrics">
+          <div class="metric">
+            <div class="value">5 / 6</div>
+            <div class="label">Graded courses at 80%+</div>
+            <div class="detail">Math Level F is at 75%</div>
+          </div>
+          <div class="metric">
+            <div class="value">7</div>
+            <div class="label">Active courses</div>
+            <div class="detail">Gradebook</div>
+          </div>
+          <div class="metric">
+            <div class="value">57</div>
+            <div class="label">Learning days</div>
+            <div class="detail">23 hr 7 min, Aug 17–Nov 17</div>
+          </div>
+          <div class="metric">
+            <div class="value">80%</div>
+            <div class="label">Mastery bar</div>
+            <div class="detail">Below it means review and retake</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Course grades<span class="caption">Gradebook overall, plus two courses that also appear on Reports. Intro to Typing and Math Level I have no grade yet.</span></h2>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th class="num">Grade</th>
+                <th>Letter</th>
+                <th>Schedule</th>
+                <th>Notes</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Language Arts Level E</td>
+                <td class="num">89%</td>
+                <td>B+</td>
+                <td>Mon–Fri</td>
+                <td></td>
+                <td>Gradebook</td>
+              </tr>
+              <tr>
+                <td>Reading Comprehension Level E</td>
+                <td class="num">100%</td>
+                <td>A+</td>
+                <td>Friday</td>
+                <td></td>
+                <td>Gradebook</td>
+              </tr>
+              <tr>
+                <td>Math Level F</td>
+                <td class="num warn">75%</td>
+                <td class="warn">C</td>
+                <td>Mon–Fri</td>
+                <td>Below the 80% mastery bar</td>
+                <td>Gradebook</td>
+              </tr>
+              <tr>
+                <td>General Science</td>
+                <td class="num">92%</td>
+                <td>A-</td>
+                <td></td>
+                <td>All assigned tasks completed</td>
+                <td>Gradebook</td>
+              </tr>
+              <tr>
+                <td>Structures of Science</td>
+                <td class="num">93%</td>
+                <td>A</td>
+                <td>Mon–Fri</td>
+                <td></td>
+                <td>Gradebook</td>
+              </tr>
+              <tr>
+                <td>U.S. Geography</td>
+                <td class="num">90%</td>
+                <td>A-</td>
+                <td>Tue/Wed/Thu</td>
+                <td></td>
+                <td>Gradebook</td>
+              </tr>
+              <tr>
+                <td>Intro to Typing</td>
+                <td class="num">No grade yet</td>
+                <td></td>
+                <td>Mon–Thu</td>
+                <td></td>
+                <td>Gradebook</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bars" aria-label="Gradebook course grades">
+          <div class="bar-row"><div class="bar-label">Language Arts Level E</div><div class="bar-track"><div class="bar-fill" style="width:89%"></div></div><div class="bar-val">89% · B+</div></div>
+          <div class="bar-row"><div class="bar-label">Reading Comprehension Level E</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><div class="bar-val">100% · A+</div></div>
+          <div class="bar-row"><div class="bar-label">Math Level F</div><div class="bar-track"><div class="bar-fill alert" style="width:75%"></div></div><div class="bar-val">75% · C</div></div>
+          <div class="bar-row"><div class="bar-label">General Science</div><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><div class="bar-val">92% · A-</div></div>
+          <div class="bar-row"><div class="bar-label">Structures of Science</div><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><div class="bar-val">93% · A</div></div>
+          <div class="bar-row"><div class="bar-label">U.S. Geography</div><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><div class="bar-val">90% · A-</div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Also on Reports</h2>
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Course</th><th class="num">Grade</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Song Writing</td><td class="num">80%</td><td>At the mastery bar</td></tr>
+              <tr><td>Math Level I</td><td class="num">No grade yet</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Attendance<span class="caption">Aug 17–Nov 17, 2026. No time logged Nov 13–15. Today's Progress is 0/10.</span></h2>
+        <div class="metrics">
+          <div class="metric"><div class="value">57</div><div class="label">Learning days</div></div>
+          <div class="metric"><div class="value">23 hr 7 min</div><div class="label">Time logged</div></div>
+          <div class="metric"><div class="value">0/10</div><div class="label">Today's Progress</div></div>
+          <div class="metric"><div class="value">30 min</div><div class="label">This week so far</div><div class="detail">Nov 16–22</div></div>
+        </div>
+        <div class="bars" style="margin-top:16px;" aria-label="Time share by subject">
+          <div class="bar-row"><div class="bar-label">Math</div><div class="bar-track"><div class="bar-fill" style="width:43%"></div></div><div class="bar-val">43%</div></div>
+          <div class="bar-row"><div class="bar-label">Language Arts</div><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><div class="bar-val">25%</div></div>
+          <div class="bar-row"><div class="bar-label">Science</div><div class="bar-track"><div class="bar-fill" style="width:19%"></div></div><div class="bar-val">19%</div></div>
+          <div class="bar-row"><div class="bar-label">Social Studies</div><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><div class="bar-val">9%</div></div>
+          <div class="bar-row"><div class="bar-label">Music &amp; Arts</div><div class="bar-track"><div class="bar-fill" style="width:2%"></div></div><div class="bar-val">2%</div></div>
+          <div class="bar-row"><div class="bar-label">Life Skills</div><div class="bar-track"><div class="bar-fill" style="width:2%"></div></div><div class="bar-val">2%</div></div>
+        </div>
+        <div class="cols" aria-label="Weekly time logged">
+          <div class="col"><div class="col-stack"><div class="col-bar" style="height:100%"></div></div><div class="col-val">2 hr 50 min</div><div class="col-label">Oct 19–25</div></div>
+          <div class="col"><div class="col-stack"><div class="col-bar" style="height:66%"></div></div><div class="col-val">1 hr 52 min</div><div class="col-label">Oct 26–Nov 1</div></div>
+          <div class="col"><div class="col-stack"><div class="col-bar" style="height:35%"></div></div><div class="col-val">59 min</div><div class="col-label">Nov 2–8</div></div>
+          <div class="col"><div class="col-stack"><div class="col-bar" style="height:44%"></div></div><div class="col-val">1 hr 14 min</div><div class="col-label">Nov 9–15</div></div>
+          <div class="col"><div class="col-stack"><div class="col-bar" style="height:18%"></div></div><div class="col-val">30 min so far</div><div class="col-label">Nov 16–22</div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Recent completed work<span class="caption">Assessments and completions from the parent account as of Nov 17. This is not a full lesson-by-lesson log.</span></h2>
+        <div class="card-section" style="border-left-color: var(--warning);">
+          <div class="rows">
+            <div class="row"><div class="title">Math: Rounding Whole Numbers and Decimals quiz</div><div class="row-end"><span class="meta">Nov 11</span><span class="status">87%</span></div></div>
+            <div class="row"><div class="title">Structures of Science: Analyzing Data quiz</div><div class="row-end"><span class="meta">Nov 10</span><span class="status">90%</span></div></div>
+            <div class="row"><div class="title">U.S. Geography: Operation Exploration: The Northeast quiz</div><div class="row-end"><span class="meta">Nov 4</span><span class="status">100%</span></div></div>
+            <div class="row"><div class="title">Reading: Chicago Fire quiz</div><div class="row-end"><span class="meta">Oct 30</span><span class="status">100%</span></div></div>
+            <div class="row"><div class="title">General Science: Food Webs in Ecosystems quiz</div><div class="row-end"><span class="meta">Oct 29</span><span class="status warning">67%</span></div></div>
+            <div class="row"><div class="title">Math: Comparing and Ordering Numbers quiz</div><div class="row-end"><span class="meta">Oct 22</span><span class="status warning">67%</span></div></div>
+            <div class="row"><div><div class="title">General Science: all assigned tasks completed</div><div class="detail">Date not listed on the report</div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid-3" style="margin-bottom:28px;">
+        <div class="card-section">
+          <h3>Christen Sinyard · Tutor Time</h3>
+          <div class="props">
+            <div class="prop"><div class="k">Sessions</div><div class="v">Tue and Thu mornings</div></div>
+            <div class="prop"><div class="k">Her role</div><div class="v">Leads her sessions and sets lesson order for her part</div></div>
+            <div class="prop"><div class="k">Before each session</div><div class="v">One-page brief from the Coordinator</div></div>
+            <div class="prop"><div class="k">After</div><div class="v">Session mapped back onto Miacademy</div></div>
+          </div>
+        </div>
+        <div class="card-section orange">
+          <h3>Kathleen Blanco · Singing</h3>
+          <div class="props">
+            <div class="prop"><div class="k">Lesson</div><div class="v">Wednesdays 1:00–1:40 PM</div></div>
+            <div class="prop"><div class="k">Status</div><div class="v"><span class="status accent">Fixed in the week</span></div></div>
+          </div>
+        </div>
+        <div class="card-section">
+          <h3>Alys · Family</h3>
+          <div class="props">
+            <div class="prop"><div class="k">View</div><div class="v">Progress, Friday reports, and wins</div></div>
+            <div class="prop"><div class="k">Teacher of record</div><div class="v">David</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-plan" class="panel" role="tabpanel" aria-labelledby="tab-plan" hidden>
+      <section class="section">
+        <h2>Three bot roles</h2>
+        <div class="grid-3">
+          <div class="card-section">
+            <h3>Coordinator</h3>
+            <p class="body-text">Builds the weekly plan and daily lesson plan. Writes Christen's one-page brief before each session and maps her session back onto Miacademy afterward.</p>
+          </div>
+          <div class="card-section orange">
+            <h3>Subject tutors</h3>
+            <p class="body-text">Short instructional blocks. Re-teach missed concepts a different way and generate targeted practice.</p>
+          </div>
+          <div class="card-section">
+            <h3>Assessor</h3>
+            <p class="body-text">Quizzes and grades, keeps the mastery record, and writes the Friday progress report.</p>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <h2>How a week runs</h2>
+        <ol class="steps">
+          <li>
+            <div class="title">David approves the weekly plan</div>
+            <div class="detail">Nothing runs until he says yes. He is teacher of record and supervises all use.</div>
+          </li>
+          <li>
+            <div class="title">Daily lessons from Miacademy</div>
+            <div class="detail">7 active Gradebook courses set the scope and order. Language Arts and Math run Mon–Fri, with Reading Comprehension on Friday; Structures of Science Mon–Fri; U.S. Geography Tue/Wed/Thu; Typing Mon–Thu.</div>
+          </li>
+          <li>
+            <div class="title">Tue and Thu: Tutor Time with Christen Sinyard</div>
+            <div class="detail">She leads; the Coordinator briefs her before and maps her work after.</div>
+          </li>
+          <li>
+            <div class="title">Wed 1:00–1:40 PM: Singing with Kathleen Blanco</div>
+            <div class="detail">A fixed part of the week.</div>
+          </li>
+          <li>
+            <div class="title">Friday: progress report</div>
+            <div class="detail">Daily logs and Friday reports build the portfolio for Kenny's annual evaluation, next due Oct 31, 2027.</div>
+          </li>
+        </ol>
+      </section>
+      <section class="section">
+        <h2>Rules</h2>
+        <ul class="checks">
+          <li>
+            <svg class="check done" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="6" fill="#dc2626"/><path d="M6 11.2l3.2 3.3 6.8-7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="check-text">Any assessment under 80% is reviewed, then retaken. Never advanced past.</div>
+          </li>
+          <li>
+            <svg class="check done" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="6" fill="#dc2626"/><path d="M6 11.2l3.2 3.3 6.8-7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="check-text">Basic plan only: no Step Up pre-authorization and no higher subscription tier.</div>
+          </li>
+          <li class="open">
+            <span class="check open-box" aria-hidden="true"></span>
+            <div>
+              <div class="check-text">Christen asked to take on the brief and catch-up loop</div>
+              <div class="check-meta">Not asked yet</div>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+      function select(tab) {
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.setAttribute("aria-selected", on ? "true" : "false");
+          var panel = document.getElementById(t.getAttribute("aria-controls"));
+          if (panel) {
+            if (on) panel.removeAttribute("hidden");
+            else panel.setAttribute("hidden", "");
+          }
+        });
+      }
+      tabs.forEach(function (tab, i) {
+        tab.addEventListener("click", function () { select(tab); });
+        tab.addEventListener("keydown", function (e) {
+          var next = null;
+          if (e.key === "ArrowRight" || e.key === "ArrowDown") next = tabs[(i + 1) % tabs.length];
+          if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = tabs[(i - 1 + tabs.length) % tabs.length];
+          if (e.key === "Home") next = tabs[0];
+          if (e.key === "End") next = tabs[tabs.length - 1];
+          if (next) { e.preventDefault(); next.focus(); select(next); }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
