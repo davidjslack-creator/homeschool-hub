@@ -221,7 +221,145 @@ body{background:linear-gradient(160deg,#d9627e,#f29b5a);background-attachment:fi
 #toast.on{opacity:1}
 .center{text-align:center}
 :focus-visible{outline:4px solid #ffc83a;outline-offset:2px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Phone-friendly layer ===== */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,[data-act],.pcard,.tbtn{touch-action:manipulation}
+.chip,.tile{touch-action:none}
+.modes{grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+.lv{grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr))}
+.gal{grid-template-columns:repeat(auto-fill,minmax(min(250px,100%),1fr))}
+.tblwrap{overflow-x:auto;max-width:100%}
+.actrow{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.actrow .tools{flex-wrap:nowrap}
+#bbbtns{display:flex;gap:8px;justify-content:center;flex:1 1 55%}
+#bbbtns .btn{flex:1;max-width:560px;font-size:1.25rem}
+.custface{width:44px;height:44px;flex:none}
+.bubble{display:flex;gap:10px;align-items:center}
+.chip{min-height:52px;min-width:52px;justify-content:center}
+.tile{min-height:52px;min-width:52px;justify-content:center}
+.holding .pcard{border-style:dashed;border-color:#ffb400;box-shadow:0 0 0 3px #ffe08a}
+.holding .pcard .chips .empty::after{content:' \2190 tap here'}
+.dghost.touchg{transform:translate(-50%,-150%) scale(1.25);box-shadow:0 12px 24px rgba(0,0,0,.35)}
+.btn.small{min-height:48px}
+/* phones (portrait) and short landscape phones */
+@media (max-width:700px),(max-height:500px){
+ #app{padding:8px 8px 16px}
+ .card{padding:10px 10px;border-radius:18px}
+ .hud{gap:6px;margin-bottom:6px}
+ .hud .pill{font-size:.8rem;padding:.25em .6em}
+ .hud .pill.opt{display:none}
+ .hud .btn.small{padding:.3em .7em;font-size:.85rem}
+ .skillbadge{font-size:.72rem}
+ .bp{font-size:.88rem;padding:6px 8px;gap:4px 12px;margin-top:4px}
+ .bp .bpi{font-size:1rem}
+ .bp small{display:none}
+ .labgrid{grid-template-columns:1fr!important;gap:8px}
+ .scene.inplay{display:none}
+ .bubble{font-size:.88rem;padding:6px 10px;margin-top:0;line-height:1.3}
+ .bigbake{font-size:.85rem;padding:4px 8px}
+ .stagebox{position:static;padding:2px}
+ .stagebox svg{max-height:120px}
+ .pcard{padding:6px 8px;margin-bottom:6px}
+ .pname{font-size:1rem}
+ .hart{min-height:76px;margin:4px 0}
+ .hart svg{height:76px}
+ .chips{min-height:58px;padding:4px;margin:4px 0}
+ .live{font-size:1rem}
+ .modal{padding:6px}
+ .modal .card{max-height:96vh}
+ #toast{top:10px;bottom:auto}
+ .hero h1{font-size:2rem}
+ /* the dock: shelf + tools + feedback + Check/Hint/Undo always reachable */
+ body.inplay .dock{position:fixed;z-index:40;background:#fffaf2;box-shadow:0 -6px 18px rgba(0,0,0,.22);padding:6px 8px calc(6px + env(safe-area-inset-bottom));overflow-y:auto}
+ .dock .tray{margin:0 0 6px;padding:4px 6px;border-radius:12px}
+ .dock .tray>b{display:none}
+ .modal .scene{display:none}
+ .bubble>span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .custface{width:34px;height:34px}
+ .chk-long{display:none}
+ .dock .tray>.note{display:none}
+ .dock .traygs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+ .dock .trayg{flex:none;margin-top:0}
+ .dock .trayg h4{font-size:.68rem;margin:0 0 2px}
+ .dock .tiles{flex-wrap:nowrap;gap:6px;margin-top:0}
+ .dock .tile{padding:3px 6px;font-size:.78rem}
+ .dock .tile svg.ti{width:32px;height:32px}
+ .dock .toolbar{flex-wrap:nowrap;overflow-x:auto;margin:2px 0;gap:6px;padding-bottom:4px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+ .dock .tbtn{flex:none;min-height:48px;font-size:.85rem;padding:.2em .6em}
+ .dock #holdmsg{min-height:0!important;font-size:.8rem;font-weight:800;color:#a05a00}
+ .dock .fb{font-size:.85rem;padding:.4em .6em;margin:4px 0;max-height:22vh;overflow-y:auto;min-height:0}
+ .dock .actrow{margin-top:2px;flex-wrap:nowrap;gap:6px}
+ .dock .actrow .btn.small{min-height:48px;padding:.3em .7em}
+ .dock #bbbtns .btn{font-size:1.05rem;min-height:52px;padding:.4em .6em}
+ .dock #bbbtns .btn.ghost{flex:0 0 auto}
+}
+@media (max-width:700px){
+ body.inplay .dock{left:0;right:0;bottom:0;max-height:62vh;border-radius:16px 16px 0 0}
+ body.inplay #app{padding-bottom:calc(var(--dockh,260px) + 12px)}
+}
+@media (max-height:500px) and (min-width:701px){
+ body.inplay .dock{top:0;right:0;bottom:0;width:min(46vw,430px);border-radius:16px 0 0 16px}
+ body.inplay #app{margin:0;max-width:none;padding-right:calc(min(46vw,430px) + 8px)}
+ .dock .traygs{flex-wrap:wrap}
+ body.inplay .dock{display:flex;flex-direction:column}
+ .dock .actrow{order:-2;margin:0 0 6px}
+ .dock .fb{order:-1}
+}
+
+/* ===== Mad science lab ===== */
+body.madmode{background:linear-gradient(160deg,#2a1450,#0f5e4a);background-attachment:fixed}
+body.madmode .card#qcard{background:#fbf8ff}
+.mode.l .art{background:linear-gradient(135deg,#3b1f6e,#127a5e)}
+.hart.mad{background:radial-gradient(circle at 50% 90%,#4a3290,#1d1338);border-color:#5b47a0}
+.labscene svg{display:block;width:100%;height:auto}
+.madbubble{border-color:#8a5cf0;background:#f6f0ff}
+.madbubble .host{width:40px;height:47px;flex:none}
+.reveal{position:relative;margin-top:8px;background:radial-gradient(circle at 50% 40%,#5b3f9a,#1c1233);border-radius:18px;padding:10px;color:#fff;text-align:center;overflow:hidden;border:3px solid #9ff6ff}
+.reveal h3{margin:.2em 0;font-size:1.4rem;color:#fff59f}
+.reveal .phrase{font-style:italic;margin:.2em 0}
+.reveal .traits{text-align:left;font-size:.92rem;margin:.4em 0;padding-left:1.2em}
+.revcr svg{width:100%;max-width:320px;height:auto;animation:pop .9s cubic-bezier(.2,1.6,.4,1) both}
+.zapflash{position:absolute;inset:0;background:radial-gradient(circle,#ffffff,#9ff6ff 40%,transparent 70%);animation:zapf 1s ease-out forwards;pointer-events:none}
+@keyframes zapf{0%{opacity:1}100%{opacity:0}}
+@keyframes pop{0%{transform:scale(.15) rotate(-12deg);opacity:0}60%{opacity:1}100%{transform:scale(1) rotate(0)}}
+.madgc{background:radial-gradient(circle at 50% 35%,#3f2a78,#1c1233);color:#fff}
+.madgc small{color:#e9e2ff}
+.gc svg.cr{width:100%;height:auto;max-width:260px}
+.bob{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.blink{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.wig{transform-box:fill-box;transform-origin:50% 0;animation:wig 1.5s ease-in-out infinite alternate}
+@keyframes wig{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+.flap{transform-box:fill-box;transform-origin:0% 50%;animation:flap 1.2s ease-in-out infinite alternate}
+@keyframes flap{from{transform:rotate(-8deg)}to{transform:rotate(10deg)}}
+.flick{animation:flick .5s steps(2) infinite}
+@keyframes flick{50%{opacity:.1}}
+.twink{transform-box:fill-box;transform-origin:center;animation:twink 1.4s ease-in-out infinite}
+@keyframes twink{50%{transform:scale(.4);opacity:.3}}
+.wob{transform-box:fill-box;transform-origin:50% 100%;animation:wob 1.8s ease-in-out infinite}
+@keyframes wob{50%{transform:scale(1.05,.95)}}
+.float{animation:floaty 3s ease-in-out infinite}
+@keyframes floaty{50%{transform:translate(4px,-6px)}}
+.cr.glow .cbody{filter:drop-shadow(0 0 10px #e3eaff)}
+.bub{animation:bub 2.2s ease-in infinite}
+@keyframes bub{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-40px);opacity:0}}
+.bub2{animation:bub2 1.8s ease-in-out infinite}
+@keyframes bub2{0%{transform:translateY(0);opacity:.9}100%{transform:translateY(-34px);opacity:0}}
+.arc{animation:flick .35s steps(2) infinite}
+.arc.a2{animation-delay:.17s}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flame .6s ease-in-out infinite alternate}
+@keyframes flame{to{transform:scaleY(1.3)}}
+.labscene.zapped{animation:zapf2 .8s ease-out}
+@keyframes zapf2{0%{filter:brightness(3)}100%{filter:none}}
+@media (max-width:700px),(max-height:500px){
+ .reveal h3{font-size:1.15rem}
+ .revcr svg{max-width:240px}
+ body.madmode.revealed .dock>.tray{display:none}
+ #reveal{scroll-margin-top:8px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.zapflash{display:none}}
 </style>
 </head>
 <body>
@@ -256,16 +394,16 @@ const SK={
  b3:{n:'Bake 3',name:'Bakery: take away (same-size pieces)',desc:'Spills and snacks: subtract, then pour into bigger cups to simplify.'},
  b4:{n:'Bake 4',name:'Bakery: cut cakes into slices',desc:'Slice a cake and serve exactly the fraction on the order.'},
  b5:{n:'Big Bake',name:'Bakery: the Big Bake (a mix of everything)',desc:'A grand order with several ingredients at once.'},
- l1:{n:'Lab 1',name:'Creature Lab: build & combine blocks',desc:'Drag blocks onto parts and combine them into the amount on the blueprint.'},
- l2:{n:'Lab 2',name:'Creature Lab: simplify blocks',desc:'Match the blueprint exactly in simplest form. Combine, slice and squish.'},
- l3:{n:'Lab 3',name:'Creature Lab: regroup wholes & mixed numbers',desc:'Turn improper blocks into wholes plus a fraction, and back.'}
+ l1:{n:'Lab 1',name:'Creature Lab: measure & combine doses',desc:'Drop fraction blocks into each ingredient and combine them into the amount on the formula.'},
+ l2:{n:'Lab 2',name:'Creature Lab: simplify blocks',desc:'Match the formula exactly in simplest form. Combine, slice and squish.'},
+ l3:{n:'Lab 3',name:'Creature Lab: regroup wholes & mixed numbers',desc:'Overflowing flasks: turn improper amounts into wholes plus a fraction, and back.'}
 };
 const BAKEIDS=['b1','b2','b3','b4'],LABIDS=['l1','l2','l3'],ALLSK=['b1','b2','b3','b4','b5','l1','l2','l3'];
 const TAGNAME={unsimplified:'Answered correctly but needed a nudge to simplify',bk_merge:'Needed a nudge to combine same-size pieces',bk_regroup:'Needed a nudge to regroup into wholes or mixed numbers',bk_slice:'Tried to combine different-size pieces',
  lab_merge:'Needed a nudge to combine blocks (Creature Lab)',lab_regroup:'Needed a nudge to regroup into wholes or mixed numbers (Creature Lab)',lab_slice:'Tried to combine different-size pieces (Creature Lab)'};
 const MODES={
  bakery:{name:'Fraction Bakery',tag:'Run the bakery: fill measuring cups, halve and double recipes, slice cakes. Earn coins and decorate your shop.',total:7},
- lab:{name:'Creature Lab',tag:'Follow blueprints and build creatures from fraction blocks: head, wings, tail and feet.',total:7}
+ lab:{name:'Creature Lab',tag:'Mad science! Measure Lightning Essence, Dragon Toenail and Ghost Goo with fraction blocks, then zap the cauldron to brew a creature.',total:7}
 };
 
 /* ===== storage (localStorage only, this device) ===== */
@@ -295,6 +433,7 @@ const SFX={
  chest:()=>[392,523,659,784,1047].forEach((f,i)=>beep(f,.14,'triangle',.12,i*.07)),
  win:()=>[523,659,784,1047,784,1047,1319].forEach((f,i)=>beep(f,.2,'triangle',.13,i*.1)),
  coin:()=>{beep(988,.07,'square',.06);beep(1319,.15,'square',.06,.07)},
+ zap:()=>{[220,330,180,660,990,1320].forEach((f,i)=>beep(f,.12,'sawtooth',.06,i*.06));[784,1047].forEach((f,i)=>beep(f,.25,'triangle',.12,.4+i*.12))},
  hit:()=>{beep(200,.12,'sawtooth',.08);beep(140,.15,'sawtooth',.07,.08)}
 };
 function sfx(n){try{SFX[n]()}catch(e){}}
@@ -342,7 +481,7 @@ function bbAnalyze(h){
  return Object.assign({st:'tidy',N,D},bbTidy(h));
 }
 function bbTidy(h){
- const bl=h.blocks,t=h.target,whole=bl.filter(b=>b.d===1),frs=bl.filter(b=>b.d!==1),nm=h.noun,P=h.art==='lab'?'lab':'bk';
+ const bl=h.blocks,t=h.target,whole=bl.filter(b=>b.d===1),frs=bl.filter(b=>b.d!==1),nm=h.noun,P=h.art==='bake'?'bk':'lab';
  if(frs.length>1){
   const seen={};let dup=0;frs.forEach(b=>{if(seen[b.d])dup=b.d;seen[b.d]=1});
   if(dup)return{step:'merge',tag:P+'_merge',msg:`The ${nm} has several ${dup}ths blocks. <b>Combine</b> them into one block.`};
@@ -426,6 +565,7 @@ const ING={
 };
 function copyArt(h,n,D){
  const ty=h.type;
+ if(h.art==='mad')return madArt(ty,n,D);
  if(ty==='flour'||ty==='sugar'||ty==='milk'){const I=ING[ty];return cupArt(n,D,I.col,I.pat)}
  if(ty==='butter')return stickArt(n,D,200);
  if(ty==='eggs')return pieArt(n,D,eggInner());
@@ -435,7 +575,7 @@ function partCopies(N,D){const wh=Math.floor(N/D),rem=N%D,c=[];for(let i=0;i<wh;
 function holderArt(h,N,D){
  let cps=N>0?partCopies(N,D):[0],DD=Math.min(D,24);
  if(!(N>0))DD=Math.max(1,Math.min(D,24));
- const c=cps.length,cw=h.type==='butter'?200:100;
+ const c=cps.length,cw=(h.type==='butter'||h.type==='yeti')?200:100;
  let s=`<svg viewBox="0 0 ${cw*c} 100" style="width:${Math.min(c*cw/100,4)*(h.type==='eggs'||h.type==='cake'?110:84)}px" role="img" aria-label="${esc(h.name+': '+(N>0?nowText(h,N,D):'empty'))}">`;
  cps.forEach((n,i)=>{s+=`<g transform="translate(${cw*i} 0)">${copyArt(h,n,DD)}</g>`});
  return s+'</svg>';
@@ -517,20 +657,20 @@ function chipHTML(b,hid,i,sel){
  const lab=b.d===1?(b.n===1?'1 whole':`${b.n} wholes`):`${b.n}/${b.d}`;
  return `<div class="chip${sel?' sel':''}" data-act="chipsel" data-p="${hid}" data-i="${i}" role="button" tabindex="0" aria-label="block ${lab}">${s}<span>${lab}</span></div>`;
 }
-const TGROUP={cup:'Measuring cups',spoon:'Measuring spoons',stick:'Butter sticks',egg:'Eggs',slice:'The cake',blk:'Fraction blocks'};
+const TGROUP={cup:'Measuring cups',spoon:'Measuring spoons',stick:'Butter sticks',egg:'Eggs',slice:'The cake',blk:'Measuring doses (fraction blocks)'};
 function trayHTML(pz){
  const groups=[];pz.tiles.forEach(t=>{let g=groups.find(x=>x.k===t.k);if(!g)groups.push(g={k:t.k,l:[]});g.l.push(t.d)});
- return `<div class="tray"><b>${pz.mode==='bakery'?'Kitchen shelf':'Block tray'}</b> <span class="note">Drag onto a ${pz.mode==='bakery'?'bowl':'part'}. Or tap one, then tap where it goes.</span>`+groups.map(g=>`<div class="trayg"><h4>${TGROUP[g.k]}</h4><div class="tiles">${g.l.map(d=>tileHTML(g.k,d)).join('')}</div></div>`).join('')+`<div class="note" id="holdmsg" style="min-height:1.3em"></div></div>`;
+ return `<div class="tray"><b>${pz.mode==='bakery'?'Kitchen shelf':'Block tray'}</b> <span class="note">Drag onto a ${pz.mode==='bakery'?'bowl':'container'}. Or tap one, then tap where it goes.</span>`+`<div class="traygs">`+groups.map(g=>`<div class="trayg"><h4>${TGROUP[g.k]}</h4><div class="tiles">${g.l.map(d=>tileHTML(g.k,d)).join('')}</div></div>`).join('')+`</div><div class="note" id="holdmsg" style="min-height:1.3em"></div></div>`;
 }
 function holdersHTML(pz){
- return B.holders.map(h=>`<div class="pcard" id="pc_${h.id}" data-act="placehere" data-p="${h.id}"><div class="phead"><span class="pname">${esc(h.name)}</span><span class="need">Needs: ${needHTML(h)}</span></div>${h.note?`<div class="note"><b>${h.note}</b></div>`:''}${h.art==='bake'?`<div class="hart" id="art_${h.id}"></div>`:''}<div class="chips" id="chips_${h.id}"></div><div class="live" id="live_${h.id}"></div></div>`).join('');
+ return B.holders.map(h=>`<div class="pcard" id="pc_${h.id}" data-act="placehere" data-p="${h.id}"><div class="phead"><span class="pname">${esc(h.name)}</span><span class="need">Needs: ${needHTML(h)}</span></div>${h.note?`<div class="note"><b>${h.note}</b></div>`:''}${h.art!=='lab'?`<div class="hart${h.art==='mad'?' mad':''}" id="art_${h.id}"></div>`:''}<div class="chips" id="chips_${h.id}"></div><div class="live" id="live_${h.id}"></div></div>`).join('');
 }
 function toolsHTML(){
- return `<div class="tray"><b>Tools</b> <span class="note">Tap blocks to pick them, then tap a tool. Or drag a block onto a tool. Drag one block onto another to combine.</span><div class="toolbar" id="toolbar">`+TOOLS.map(t=>`<button class="tbtn" data-act="tool" data-tool="${t[0]}" title="${esc(t[2])}">${t[1]}</button>`).join('')+`<button class="tbtn" data-act="bbundo">Undo</button></div></div>`;
+ return `<div class="tray"><b>Tools</b> <span class="note">Tap blocks to pick them, then tap a tool. Or drag a block onto a tool. Drag one block onto another to combine.</span><div class="toolbar" id="toolbar">`+TOOLS.map(t=>`<button class="tbtn" data-act="tool" data-tool="${t[0]}" title="${esc(t[2])}">${t[1]}</button>`).join('')+`</div></div>`;
 }
 function blueprintHTML(){
  const lab=B.pz.mode==='lab';
- return `<div class="bp"><b>${lab?'Blueprint \u2013 build this creature exactly:':'The order:'}</b>`+B.holders.map(h=>`<span class="bpi">${itemHTML(h)} <small>(${formNote[h.target.form]})</small></span>`).join('')+`</div>`;
+ return `<div class="bp"><b>${lab?'Secret formula \u2013 brew exactly:':'The order:'}</b>`+B.holders.map(h=>`<span class="bpi">${itemHTML(h)} <small>(${formNote[h.target.form]})</small></span>`).join('')+`</div>`;
 }
 
 /* ----- live sync: numbers and pictures redraw from the same blocks ----- */
@@ -547,6 +687,7 @@ function bbChanged(){
  });
  bbRenderLive();
  document.querySelectorAll('.tile').forEach(t=>t.classList.toggle('hold',!!B.hold&&t.dataset.k===B.hold.k&&+t.dataset.d===B.hold.d));
+ document.body.classList.toggle('holding',!!B.hold);
  const hm=$('#holdmsg');if(hm)hm.textContent=B.hold?`Holding ${tileLabel(B.hold.k,B.hold.d)}. Tap where it goes. Tap it again to stop.`:'';
 }
 function bbRenderLive(){
@@ -557,8 +698,7 @@ function bbRenderLive(){
   if(el)el.innerHTML=`<span${pv?' class="pv"':''}>Now: ${totalHTML(v.N,v.D)}${v.h.unit&&v.N>0?' '+unitOf(v.h,v.N,v.D):''}</span>${pv?'<small class="pv">(preview: drop to add)</small>':''}`;
   const ar=$('#art_'+v.id);if(ar)ar.innerHTML=holderArt(v.h,v.N,v.D);
  });
- const st=$('#stage');
- if(st&&B.pz.mode==='lab')st.innerHTML=stageSVG({col:B.col,parts:vh.map(v=>({id:v.id,N:v.N,D:v.D}))},{alt:'Your creature so far'});
+ if(B.pz.mode==='lab')labLive(vh);
 }
 
 /* ----- block operations ----- */
@@ -639,12 +779,12 @@ document.addEventListener('pointerdown',e=>{
  if(e.button>0)return;
  const el=e.target.closest&&e.target.closest('.tile,.chip');
  if(!el){const pc=e.target.closest&&e.target.closest('.pcard');TAPPC=(pc&&e.pointerType!=='mouse')?{el:pc,x0:e.clientX,y0:e.clientY}:null;return}
- DR={el,x0:e.clientX,y0:e.clientY,moved:false,ghost:null,kind:el.classList.contains('tile')?'tile':'chip',over:null};
+ DR={el,x0:e.clientX,y0:e.clientY,moved:false,ghost:null,kind:el.classList.contains('tile')?'tile':'chip',over:null,touch:e.pointerType&&e.pointerType!=='mouse'};
 });
 document.addEventListener('pointermove',e=>{
  if(!DR)return;
  if(!DR.moved&&Math.hypot(e.clientX-DR.x0,e.clientY-DR.y0)>8){
-  DR.moved=true;const g=DR.el.cloneNode(true);g.classList.add('dghost');g.removeAttribute('data-act');
+  DR.moved=true;const g=DR.el.cloneNode(true);g.classList.add('dghost');if(DR.touch)g.classList.add('touchg');g.removeAttribute('data-act');
   g.style.width=DR.el.offsetWidth+'px';document.body.appendChild(g);DR.ghost=g;DR.el.classList.add('drag-src');
  }
  if(!DR.moved)return;
@@ -954,8 +1094,9 @@ function sceneSVG(hue,pz){
  return s+'</svg>';
 }
 function bakeryLeft(pz){
- return `<div class="scene" id="scene">${sceneSVG(pz.cust.hue,pz)}</div><div class="bubble"><b class="cn">${esc(pz.cust.n)}:</b> \u201C${esc(pz.intro)}\u201D</div>${pz.big?'<div class="bigbake">\u2605 Big Bake: worth double coins and a trophy! \u2605</div>':''}`;
+ return `<div class="scene inplay" id="scene">${sceneSVG(pz.cust.hue,pz)}</div><div class="bubble">${custFace(pz.cust.hue)}<span><b class="cn">${esc(pz.cust.n)}:</b> \u201C${esc(pz.intro)}\u201D</span></div>${pz.big?'<div class="bigbake">\u2605 Big Bake: worth double coins and a trophy! \u2605</div>':''}`;
 }
+function custFace(hue){const skin=['#f5cfa8','#d9a073','#8d5a3b','#f2c6a0'][hue%4];return `<svg class="custface" viewBox="-44 -10 88 100" aria-hidden="true"><circle cx="0" cy="44" r="40" fill="${skin}" stroke="${INK}" stroke-width="4"/><path d="M-36 30 Q0 -14 36 30Z" fill="hsl(${(hue+40)%360},60%,40%)"/><circle cx="-14" cy="46" r="6" fill="#fff"/><circle cx="14" cy="46" r="6" fill="#fff"/><circle cx="-13" cy="47" r="3" fill="${INK}"/><circle cx="15" cy="47" r="3" fill="${INK}"/><path d="M-14 62 Q0 76 14 62" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`}
 function bakeryDone(outcome,msg){
  const nm=B.pz.cust.n;
  fb(`<b>${msg}</b> Order up! ${esc(nm)} is delighted.<br>${B.holders.map(itemHTML).join(' \u00B7 ')}`,'ok');
@@ -986,16 +1127,93 @@ function buy(k){
  save();sfx('chest');updateHud();openShop();toast('Added to your bakery!');
 }
 
-/* ===== Creature Lab: generators and flow ===== */
-const LABKIND={l1:'Build & combine',l2:'Simplify',l3:'Regroup'};
-const PINFO={head:{n:'head',pl:'heads'},wing:{n:'wing',pl:'wings'},tail:{n:'tail',pl:'tails'},feet:{n:'set of feet',pl:'sets of feet'}};
-const PTYPES=['head','wing','tail','feet'];
-const BCOLS=['#7bd389','#ffb86b','#8fb8ff','#e6a1ff','#ffd966','#6fd6d0'];
+/* ===== Creature Lab: a spooky-silly MAD SCIENCE lab ===== */
+const LABKIND={l1:'Measure & combine',l2:'Simplify the formula',l3:'Overflow & regroup'};
+const HOST={name:'Dr. Wanda Wobblesprocket'};
+/* ingredients: each has its own container (fill shows the fraction) and its own creature feature */
+const MADING={
+ lightning:{name:'Lightning Essence',noun:'lightning essence',unit:'flask',pl:'flasks',shape:'flask',col:'#ffe14d',col2:'#fff9c4',feat:'crown of sparks',featPl:'crowns of sparks'},
+ moon:{name:'Essence of Moon',noun:'moon essence',unit:'vial',pl:'vials',shape:'vial',col:'#b8c6ff',col2:'#f1f4ff',feat:'glowing moon marking',featPl:'glowing moon markings'},
+ toenail:{name:'Thousand-Year-Old Dragon Toenail',noun:'dragon toenail',unit:'clipping',pl:'clippings',shape:'claw',col:'#8fd16a',col2:'#e4ffc4',feat:'dragon horn',featPl:'dragon horns'},
+ goo:{name:'Ghost Goo',noun:'ghost goo',unit:'jar',pl:'jars',shape:'jar',col:'#9ef5d6',col2:'#e9fff7',feat:'set of goo drips',featPl:'sets of goo drips'},
+ ink:{name:'Kraken Ink',noun:'kraken ink',unit:'bottle',pl:'bottles',shape:'bottle',col:'#6a4cc2',col2:'#b9a6ff',feat:'tentacle',featPl:'tentacles'},
+ sneeze:{name:'Unicorn Sneeze',noun:'unicorn sneeze',unit:'sneeze',pl:'sneezes',shape:'round',col:'#ff8fd8',col2:'#fff0fb',feat:'rainbow horn',featPl:'rainbow horns'},
+ phoenix:{name:'Phoenix Feather Fluff',noun:'phoenix fluff',unit:'feather',pl:'feathers',shape:'fan',col:'#ff7a2e',col2:'#ffd23f',feat:'fiery wing',featPl:'fiery wings'},
+ troll:{name:'Troll Burp Gas',noun:'troll burp gas',unit:'balloon',pl:'balloons',shape:'balloon',col:'#8fd14f',col2:'#e2f7c9',feat:'burp cloud',featPl:'burp clouds'},
+ yeti:{name:'Yeti Fur',noun:'yeti fur',unit:'tuft',pl:'tufts',shape:'strip',col:'#f4f8ff',col2:'#c9d6ff',feat:'fluffy beard',featPl:'fluffy beards'}
+};
+const MADKEYS=Object.keys(MADING);
+const RAINBOW=['#ff5a5a','#ffa53a','#ffe14d','#6fdc6f','#5ab4ff','#a77bff'];
+
+/* ----- container art: 100x100 box, the fill shows exactly n of D ----- */
+const MSHAPE={ // body path, liquid top y, liquid bottom y
+ flask:['M42 6 h16 v28 l26 50 q5 10 -7 10 H23 q-12 0 -7 -10 l26 -50Z',34,94],
+ vial:['M37 4 h26 v80 a13 13 0 0 1 -26 0Z',10,97],
+ jar:['M30 14 h40 v8 q12 6 12 22 v40 q0 12 -12 12 H30 q-12 0 -12 -12 v-40 q0 -16 12 -22Z',24,96],
+ bottle:['M41 4 h18 v16 q24 8 24 32 v34 q0 12 -12 12 H29 q-12 0 -12 -12 v-34 q0 -24 24 -32Z',22,98],
+ round:['M43 4 h14 v22 a33 33 0 1 1 -14 0Z',28,97]
+};
+function levelArt(I,n,D){
+ const [path,y0,y1]=MSHAPE[I.shape],id='ml'+(++ART),H=y1-y0,hh=H*Math.min(n,D)/D;
+ let s=`<clipPath id="${id}"><path d="${path}"/></clipPath><path d="${path}" fill="#ffffff" fill-opacity=".12"/>`;
+ if(n>0){
+  s+=`<g clip-path="url(#${id})">`;
+  if(I.shape==='round'){RAINBOW.forEach((c,i)=>{s+=`<rect x="0" y="${(y1-hh+hh*i/6).toFixed(1)}" width="100" height="${(hh/6+.5).toFixed(1)}" fill="${c}"/>`})}
+  else s+=`<rect x="0" y="${(y1-hh).toFixed(1)}" width="100" height="${hh.toFixed(1)}" fill="${I.col}"/>`;
+  s+=`<circle cx="44" cy="${(y1-hh*.3).toFixed(1)}" r="3" fill="${I.col2}" opacity=".9"/><circle cx="56" cy="${(y1-hh*.65).toFixed(1)}" r="2.2" fill="${I.col2}" opacity=".9"/>`;
+  if(I.shape==='flask'&&hh>8)s+=`<path d="M46 ${(y1-hh*.75).toFixed(1)} l8 0 -5 7 6 0 -10 12 3 -9 -5 0z" fill="#fff" opacity=".85"/>`;
+  s+=`</g>`;
+  if(n<D)s+=`<line x1="10" y1="${(y1-hh).toFixed(1)}" x2="90" y2="${(y1-hh).toFixed(1)}" stroke="#fff" stroke-width="1.6" stroke-opacity=".8" clip-path="url(#${id})"/>`;
+ }
+ s+=`<path d="${path}" fill="none" stroke="#e9e2ff" stroke-width="3.2" stroke-linejoin="round"/><path d="M${I.shape==='vial'?42:I.shape==='flask'?45:30} ${y0+6} q-3 18 0 34" stroke="#fff" stroke-opacity=".45" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+ if(D>1&&D<=16)for(let k=1;k<D;k++){const y=y1-H*k/D;s+=`<line x1="${I.shape==='vial'?37:I.shape==='flask'?40:22}" y1="${y.toFixed(1)}" x2="${I.shape==='vial'?45:I.shape==='flask'?48:30}" y2="${y.toFixed(1)}" stroke="#fff" stroke-width="1.6" stroke-opacity=".8" clip-path="url(#${id})"/>`}
+ return s;
+}
+function clawArt(I,n,D){ // a curved dragon toenail cut into D strips
+ const id='mc'+(++ART),path='M8 80 Q20 26 74 12 Q96 8 92 22 Q62 36 52 84 Q30 92 8 80Z';
+ let s=`<clipPath id="${id}"><path d="${path}"/></clipPath><path d="${path}" fill="#ffffff" fill-opacity=".1"/>`;
+ s+=`<g clip-path="url(#${id})">`;
+ for(let i=0;i<D;i++){const x=8+84*i/D,w=84/D;if(i<n)s+=`<rect x="${x.toFixed(2)}" y="0" width="${(w+.3).toFixed(2)}" height="100" fill="${i%2?I.col:'#a8e07f'}"/><circle cx="${(x+w/2).toFixed(1)}" cy="${(60-i*30/D).toFixed(1)}" r="${Math.max(1.5,w/5).toFixed(1)}" fill="#5c9a3a"/>`;
+  s+=`<line x1="${x.toFixed(2)}" y1="0" x2="${x.toFixed(2)}" y2="100" stroke="#e9e2ff" stroke-width="1.4" stroke-opacity="${i?'.7':'0'}"/>`}
+ return s+`</g><path d="${path}" fill="none" stroke="#e9e2ff" stroke-width="3" stroke-dasharray="${n>=D?'0':'0'}"/>`;
+}
+function furArt(I,n,D){ // yeti fur strip, 200 wide
+ let s='';const x0=6,w=188,y=28,h=50;
+ for(let i=0;i<D;i++){const vis=i<n,x=x0+w*i/D,ww=w/D;
+  if(vis){s+=`<rect x="${x.toFixed(2)}" y="${y}" width="${ww.toFixed(2)}" height="${h}" fill="${i%2?'#ffffff':'#e8eeff'}" stroke="#9fb0e0" stroke-width="2"/>`;
+   const k=Math.max(2,Math.round(ww/10));for(let j=0;j<k;j++){const xx=x+ww*(j+.5)/k;s+=`<path d="M${(xx-4).toFixed(1)} ${y} q4 -14 8 0" fill="#fff" stroke="#9fb0e0" stroke-width="1.5"/>`}}
+  else s+=`<rect x="${x.toFixed(2)}" y="${y}" width="${ww.toFixed(2)}" height="${h}" fill="none" stroke="#e9e2ff" stroke-opacity=".45" stroke-dasharray="4 3" stroke-width="1.6"/>`}
+ return s;
+}
+function fanArt(I,n,D){ // phoenix feathers fanned out
+ const cx=50,cy=92,r=50,wp=i=>wedgePath(i,D,cx,cy,r,-180,180);let s='';
+ for(let i=0;i<D;i++){const vis=i<n;s+=`<path d="${wp(i)}" ${vis?`fill="${i%2?I.col:I.col2}" stroke="#7a1e00" stroke-width="2"`:`fill="none" stroke="#e9e2ff" stroke-opacity=".45" stroke-dasharray="4 3" stroke-width="1.6"`}/>`}
+ return s;
+}
+function balloonArt(I,n,D){
+ const inner=`<circle cx="50" cy="48" r="40" fill="${I.col}" stroke="#2f5a12" stroke-width="3"/><circle cx="36" cy="34" r="8" fill="#fff" opacity=".5"/><text x="50" y="58" text-anchor="middle" font-size="26" font-weight="900" fill="#2f5a12" opacity=".55">B</text>`;
+ return pieArt(n,D,inner,50,48,40).replace(/stroke="#2b2350" stroke-opacity=".35"/g,'stroke="#e9e2ff" stroke-opacity=".5"')+`<path d="M50 88 q-6 6 0 10" stroke="#e9e2ff" stroke-width="2" fill="none"/>`;
+}
+function madArt(type,n,D){
+ const I=MADING[type]||MADING.lightning;
+ if(I.shape==='claw')return clawArt(I,n,D);
+ if(I.shape==='strip')return furArt(I,n,D);
+ if(I.shape==='fan')return fanArt(I,n,D);
+ if(I.shape==='balloon')return balloonArt(I,n,D);
+ return levelArt(I,n,D);
+}
+
+/* ----- formula generator (same three skills as before) ----- */
+const HOSTLINE={
+ l1:['Mwah-ha-ha! Measure each ingredient with fraction blocks, then COMBINE them into one dose!','Fetch the doses, apprentice! Drop the blocks in and combine same-size pieces.'],
+ l2:['Precision, my apprentice! The formula wants the SIMPLEST amounts. Squish those pieces bigger!','A true scientist simplifies! Combine, then use the fewest, biggest pieces.'],
+ l3:['Overflowing flasks! Regroup a full container into a whole, or mash wholes back into improper amounts!','Bubble, bubble! More than one whole? Regroup it like a real mad scientist.']
+};
 function genLab(kind,tier){
  const nparts=tier===1?rnd(1,2):tier===2?2:rnd(2,3);
- const ids=shuffle(PTYPES).slice(0,nparts),pal=new Set();let anyWhole=false;
- const parts=ids.map(id=>{
-  let target,blocks0=[],explain,sol=null;
+ const ids=shuffle(MADKEYS).slice(0,nparts),pal=new Set();let anyWhole=false;
+ const parts=ids.map((type,i)=>{
+  const I=MADING[type];let target,blocks0=[],explain,sol=null,note='';
   if(kind==='l1'){
    const ds=tier===1?[2,3,4]:tier===2?[4,5,6,8]:[6,8,10,12];
    const d=pick(ds),cp=coprimes(d).filter(x=>x<=(tier===1?3:tier===2?5:7));
@@ -1009,7 +1227,7 @@ function genLab(kind,tier){
    if(tier>=2&&Math.random()<.6){
     const a=rnd(1,N-1);blocks0=[{n:a,d:D},{n:N-a,d:D}];
     if(tier===3&&D%2===0&&(N-a)%2===0&&Math.random()<.6){blocks0=[{n:a,d:D},{n:(N-a)/2,d:D/2}]}
-    pal.add(d);
+    pal.add(d);note='The assistant already poured some in. Tidy it up!';
     explain=`Start with the blocks you have. ${blocks0[1].d!==blocks0[0].d?`<b>Slice</b> the bigger piece so both are ${D}ths, then `:''}<b>Combine</b> into ${N}/${D}, then <b>Simplify</b> (divide top and bottom by ${k}) to ${n}/${d}.`;
    }else{
     pal.add(D);sol=[{k:'blk',d:D,c:N}];
@@ -1021,47 +1239,218 @@ function genLab(kind,tier){
    const mixed=Math.random()<.6;anyWhole=true;
    if(mixed){
     target={n:N,d,form:'mixed'};pal.add(d);
-    if(N>9||Math.random()<.55)blocks0=[{n:N,d}];else sol=[{k:'blk',d,c:N}];
+    if(N>9||Math.random()<.55){blocks0=[{n:N,d}];note=`It bubbled over: ${N}/${d} ${I.pl}! Regroup the full ${I.pl} into wholes.`}else sol=[{k:'blk',d,c:N}];
     explain=`${N}/${d} holds ${w} whole${w>1?'s':''} (${w} \u00D7 ${d} = ${w*d}) with ${r} left over. ${blocks0.length?'':`Drop ${N} blocks of 1/${d}, <b>Combine</b> them, then `}Use <b>Regroup</b> to get ${w} whole${w>1?'s':''} plus ${r}/${d}.`;
    }else{
     target={n:N,d,form:'improper'};pal.add(d);
-    blocks0=[{n:w,d:1},{n:r,d}];
+    blocks0=[{n:w,d:1},{n:r,d}];note='This formula wants ONE improper-fraction dose.';
     explain=`<b>Slice</b> the ${w} whole${w>1?'s':''} into ${d}ths (${w} \u00D7 ${d} = ${w*d} pieces), then <b>Combine</b> with the ${r}/${d} block to make ${N}/${d}.`;
    }
   }
-  const pn=PINFO[id].n;
-  return{id,type:'lab',name:cap(pn),noun:pn,unit:'',unitPl:'',bigger:'make fewer, bigger pieces',accept:['blk'],art:'lab',target,blocks0,sol,note:'',explain:`${cap(pn)}: ${explain}`};
+  return{id:'h'+i,type,name:I.name,noun:I.noun,unit:I.unit,unitPl:I.pl,bigger:'make fewer, bigger pieces',accept:['blk'],art:'mad',target,blocks0,sol,note,explain:`${I.name}: ${explain}`};
  });
  if(tier>=2){const extra=pick([2,3,4,6,8]);if(pal.size<4)pal.add(extra)}
  const palette=[...pal].sort((a,b)=>a-b);
  const tiles=palette.map(d=>({k:'blk',d}));
  if(anyWhole||parts.some(p=>p.blocks0.some(b=>b.d===1)))tiles.push({k:'blk',d:1});
- const label=parts.map(p=>`${txm(p.target.n,p.target.d)} ${p.target.n>p.target.d?PINFO[p.id].pl:PINFO[p.id].n}`).join(' + ');
- return{mode:'lab',kind,skill:kind,tier,holders:parts,tiles,palette,label,badge:`Creature Lab \u00B7 ${LABKIND[kind]}`};
+ const label=parts.map(p=>`${txm(p.target.n,p.target.d)} ${p.target.n>p.target.d?p.unitPl:p.unit} ${p.noun}`).join(' + ');
+ return{mode:'lab',kind,skill:kind,tier,holders:parts,tiles,palette,label,intro:pick(HOSTLINE[kind]),badge:`Creature Lab \u00B7 ${LABKIND[kind]}`};
 }
-function labLeft(){return `<div class="stagebox" id="stage"></div>`}
-const GN1=['Sir','Captain','Professor','Lady','Baron','Little','Princess','Doctor','Admiral','Madam'];
-const GN2=['Wingly','Fluffernut','Zigzag','Noodle','Bumblefrac','Sprocket','Tailsworth','Pie-lot','Wobble','Munchkin','Fraxel','Quibble'];
+
+/* ----- the lab scene (left column): host, cauldron, Tesla coil, bubbling beakers ----- */
+function hostSVG(sz){
+ return `<svg class="host" viewBox="0 0 120 140" width="${sz}" height="${sz*140/120}" aria-hidden="true"><g class="bob">
+ <path d="M14 140 q6 -46 46 -48 q40 2 46 48Z" fill="#f4f7ff" stroke="${INK}" stroke-width="3"/><path d="M60 92 l-8 48 M60 92 l8 48" stroke="#c9d3f0" stroke-width="3"/><circle cx="60" cy="112" r="4" fill="#ff5a8a"/>
+ <g fill="#ffffff" stroke="#b9c1e0" stroke-width="2"><circle cx="24" cy="40" r="15"/><circle cx="96" cy="40" r="15"/><circle cx="34" cy="20" r="14"/><circle cx="86" cy="20" r="14"/><circle cx="60" cy="12" r="15"/></g>
+ <circle cx="60" cy="56" r="32" fill="#f7c9a0" stroke="${INK}" stroke-width="3"/>
+ <rect x="26" y="42" width="68" height="10" fill="#3a2a5a"/><circle cx="45" cy="47" r="12" fill="#bff3ff" stroke="#3a2a5a" stroke-width="4"/><circle cx="75" cy="47" r="12" fill="#bff3ff" stroke="#3a2a5a" stroke-width="4"/>
+ <g class="blink"><circle cx="47" cy="48" r="4" fill="${INK}"/><circle cx="73" cy="46" r="4" fill="${INK}"/></g>
+ <path d="M42 68 q18 18 36 0 q-18 6 -36 0Z" fill="#7a1f3d" stroke="${INK}" stroke-width="2.5"/><rect x="54" y="68" width="6" height="5" fill="#fff"/>
+ <path d="M30 60 q-8 6 -4 12" stroke="${INK}" stroke-width="2" fill="none"/></g></svg>`;
+}
+function labSceneSVG(cols,fill){
+ const liq=cols.length?cols[cols.length-1]:'#5e4b8b';
+ let s=`<svg viewBox="0 0 760 380" role="img" aria-label="The mad science lab">`;
+ s+=`<defs><radialGradient id="labglow" cx="50%" cy="80%" r="70%"><stop offset="0" stop-color="#5b3f9a"/><stop offset="1" stop-color="#1c1233"/></radialGradient></defs><rect width="760" height="380" fill="url(#labglow)"/>`;
+ for(let r=0;r<5;r++)for(let c=0;c<10;c++)s+=`<rect x="${c*80+(r%2?40:0)-20}" y="${r*44}" width="76" height="40" rx="5" fill="#2c1f4d" opacity=".55"/>`;
+ s+=`<rect y="300" width="760" height="80" fill="#22183d"/>`;
+ // shelf with bubbling beakers
+ s+=`<rect x="20" y="120" width="230" height="10" rx="3" fill="#6b4a2b"/>`;
+ [['#ffe14d',50,'flask'],['#9ef5d6',110,'jar'],['#ff8fd8',170,'round'],['#b8c6ff',220,'vial']].forEach(([c,x,sh],i)=>{
+  s+=`<g transform="translate(${x-24} 70) scale(.48)">${levelArt(Object.assign({},MADING.lightning,{shape:sh,col:c}),2,3)}</g>`;
+  s+=`<circle class="bub" style="animation-delay:${i*.5}s" cx="${x}" cy="76" r="4" fill="${c}"/>`});
+ // tesla coil
+ s+=`<g transform="translate(640 120)"><rect x="-14" y="40" width="28" height="140" fill="#8a8fb0" stroke="${INK}" stroke-width="3"/>${[50,70,90,110,130,150].map(y=>`<rect x="-20" y="${y}" width="40" height="8" rx="4" fill="#d9822b"/>`).join('')}<ellipse cx="0" cy="34" rx="34" ry="16" fill="#c9cde6" stroke="${INK}" stroke-width="3"/><path class="arc" d="M30 30 l22 -14 -8 18 26 -10 -12 22 30 -6" stroke="#9ff6ff" stroke-width="4" fill="none"/><path class="arc a2" d="M-30 30 l-20 -18 4 18 -26 -14 10 22 -28 -4" stroke="#fff59f" stroke-width="3" fill="none"/></g>`;
+ // cauldron
+ s+=`<g transform="translate(380 250)"><path d="M-110 -40 h220 q0 110 -110 110 q-110 0 -110 -110Z" fill="#2a2a36" stroke="#111" stroke-width="4"/><ellipse cx="0" cy="-40" rx="114" ry="22" fill="#3a3a4a" stroke="#111" stroke-width="4"/>
+  <ellipse id="cauldronLiquid" cx="0" cy="-38" rx="100" ry="15" fill="${liq}"/>`;
+ const nb=Math.min(9,2+fill*2);for(let i=0;i<nb;i++)s+=`<circle class="bub2" style="animation-delay:${(i*.37).toFixed(2)}s" cx="${-80+i*20}" cy="-40" r="${5+(i%3)*3}" fill="${cols[i%Math.max(1,cols.length)]||'#7f6ab0'}" opacity=".9"/>`;
+ s+=`<path d="M-60 70 l-20 30 M60 70 l20 30" stroke="#111" stroke-width="8"/>${[-50,-20,10,40].map((x,i)=>`<path class="flame" style="animation-delay:${i*.2}s" d="M${x} 110 q10 -30 16 0 q-8 10 -16 0Z" fill="#ff8a2a"/>`).join('')}</g>`;
+ s+=`<g transform="translate(150 186)">${hostSVG(120).replace('<svg class="host"','<svg class="host" x="-60" y="-10"')}</g>`;
+ return s+'</svg>';
+}
+function labLeft(pz){
+ return `<div class="scene inplay labscene" id="labscene">${labSceneSVG([],0)}</div><div class="bubble madbubble">${hostSVG(40)}<span><b class="cn">${HOST.name}:</b> \u201C${esc(pz.intro)}\u201D</span></div><div id="reveal"></div>`;
+}
+function labLive(vh){
+ const cols=vh.filter(v=>v.N>0).map(v=>MADING[v.h.type]?MADING[v.h.type].col:'#7f6ab0');
+ const el=$('#labscene');if(el&&!B.revealed)el.innerHTML=labSceneSVG(cols,cols.length);
+}
+
+/* ----- seeded randomness, so a saved creature looks the same in the gallery ----- */
+function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+const BCOLS=['#7bd389','#ffb86b','#8fb8ff','#e6a1ff','#ffd966','#6fd6d0'];
+const BODYCOL=['#7bd389','#ff8fb1','#8fb8ff','#c59bff','#ffb86b','#6fd6d0','#f6e05e','#ff9e7a'];
+
+/* ----- creature parts: each copy shows n of D pieces, so 1 1/2 horns = a full horn + half a horn ----- */
+const GH=`fill="none" stroke="#5a4a80" stroke-opacity=".5" stroke-dasharray="3 3" stroke-width="1.5"`;
+function cTuft(n,D){ // lightning hair: D zigzag spikes, local box 60 wide, 46 tall (base at y=0)
+ let s='';const w=60/D;
+ for(let i=0;i<D;i++){const x=-30+w*i,p=`M${x.toFixed(1)} 0 L${(x+w*.25).toFixed(1)} -24 L${(x+w*.55).toFixed(1)} -18 L${(x+w*.5).toFixed(1)} -44 L${(x+w*.8).toFixed(1)} -14 L${(x+w*.55).toFixed(1)} -18 L${(x+w).toFixed(1)} 0Z`;
+  s+=i<n?`<path d="${p}" fill="#ffe14d" stroke="#8a6a00" stroke-width="2" stroke-linejoin="round"/>`:`<path d="${p}" ${GH}/>`}
+ return s;
+}
+function cHorn(n,D){ // rainbow unicorn horn, base at y=0, 26 wide, 58 tall, D bands from the base up
+ const id='uh'+(++ART),p='M-13 0 L0 -58 L13 0Z';let s=`<clipPath id="${id}"><path d="${p}"/></clipPath><path d="${p}" ${GH}/><g clip-path="url(#${id})">`;
+ for(let i=0;i<D;i++){const y0=-58*(i+1)/D,h=58/D;if(i<n)s+=`<rect x="-14" y="${y0.toFixed(2)}" width="28" height="${(h+.3).toFixed(2)}" fill="${RAINBOW[i%6]}"/>`;s+=`<line x1="-14" x2="14" y1="${y0.toFixed(2)}" y2="${y0.toFixed(2)}" stroke="#fff" stroke-width="1"/>`}
+ return s+`</g>`+(n>=D?`<path d="${p}" fill="none" stroke="${INK}" stroke-width="2"/>`:'');
+}
+function cDHorn(n,D,flip){ // curved dragon horn, base at (0,0), bands from the base out
+ const id='dh'+(++ART),p='M-10 0 Q-4 -30 24 -54 Q10 -24 10 0Z';
+ let s=`<g transform="scale(${flip?-1:1} 1)"><clipPath id="${id}"><path d="${p}"/></clipPath><path d="${p}" ${GH}/><g clip-path="url(#${id})">`;
+ for(let i=0;i<D;i++){const y0=-56*(i+1)/D,h=56/D;if(i<n)s+=`<rect x="-12" y="${y0.toFixed(2)}" width="40" height="${(h+.3).toFixed(2)}" fill="${i%2?'#cfe9a0':'#9fd06e'}" stroke="#4d7a2a" stroke-width="1"/>`}
+ return s+`</g>${n>=D?`<path d="${p}" fill="none" stroke="#3d5f22" stroke-width="2"/>`:''}</g>`;
+}
+function cWing(n,D,flip){ // phoenix wing: fan of D feathers pointing outward
+ let s=`<g transform="scale(${flip?-1:1} 1)"><g class="flap">`;
+ for(let i=0;i<D;i++){const p=wedgePath(i,D,0,0,46,-80,160);s+=i<n?`<path d="${p}" fill="${i%2?'#ff7a2e':'#ffd23f'}" stroke="#7a1e00" stroke-width="1.8"/>`:`<path d="${p}" ${GH}/>`}
+ return s+`</g></g>`;
+}
+function cMoon(n,D){ // moon marking on the belly: a disc cut in D wedges (pieArt centred at 50,52)
+ const inner=`<circle cx="50" cy="52" r="21" fill="#fff6c8" stroke="#c9b45a" stroke-width="2"/><circle cx="57" cy="48" r="4" fill="#e6d68a"/><circle cx="43" cy="59" r="3" fill="#e6d68a"/><circle cx="44" cy="44" r="2" fill="#e6d68a"/>`;
+ return `<g transform="translate(-50 -52)">`+pieArt(n,D,inner,50,52,21).replace(/stroke="#2b2350" stroke-opacity=".35"/g,'stroke="#5a4a80" stroke-opacity=".5"')+`</g>`;
+}
+function cTentacle(n,D,i){ // curly kraken tentacle, base at y=0, 76 long, cut in D bands from the base down
+ const id='kt'+(++ART),f=i%2?-1:1,p=`M-13 0 C-13 30 ${-6*f} 50 ${10*f} 64 C${20*f} 72 ${26*f} 62 ${18*f} 56 C${14*f} 52 ${10*f} 58 ${12*f} 60 C${2*f} 48 ${8*f} 28 13 0Z`;
+ let s=`<g class="wig" style="animation-delay:${(i*.3).toFixed(1)}s"><clipPath id="${id}"><path d="${p}"/></clipPath><path d="${p}" ${GH}/><g clip-path="url(#${id})">`;
+ for(let k=0;k<D;k++){const y0=76*k/D,h=76/D;if(k<n)s+=`<rect x="-30" y="${y0.toFixed(2)}" width="60" height="${(h+.3).toFixed(2)}" fill="${k%2?'#9d7ee6':'#8b6ad8'}"/>`;s+=`<line x1="-30" x2="30" y1="${(y0+h).toFixed(2)}" y2="${(y0+h).toFixed(2)}" stroke="#3a2470" stroke-width="1" stroke-opacity=".6"/>`}
+ s+=`</g>`;
+ if(n>0){const lim=76*Math.min(n,D)/D;[14,28,42].forEach(y=>{if(y<lim)s+=`<circle cx="${(f*(y>30?2:-3)).toFixed(0)}" cy="${y}" r="3.2" fill="#e3d6ff" stroke="#3a2470" stroke-width="1"/>`})}
+ return s+(n>=D?`<path d="${p}" fill="none" stroke="#3a2470" stroke-width="2.2"/>`:'')+`</g>`;
+}
+function cDrips(n,D){ // ghost goo drips
+ let s='';const w=40/D;
+ for(let k=0;k<D;k++){const x=-20+w*(k+.5),h=12+((k*7)%3)*6,p=`M${(x-w*.35).toFixed(1)} 0 Q${x.toFixed(1)} ${h*1.7} ${(x+w*.35).toFixed(1)} 0Z`;s+=k<n?`<path d="${p}" fill="#9ef5d6" fill-opacity=".85" stroke="#3aa58a" stroke-width="1.5"/>`:`<path d="${p}" ${GH}/>`}
+ return s;
+}
+function cCloud(n,D){ // troll burp cloud: D puffs
+ let s='<g class="float">';
+ for(let k=0;k<D;k++){const a=Math.PI*(1-k/(Math.max(1,D-1)||1)),x=Math.cos(a)*18,y=-Math.sin(a)*10,r=9;s+=k<n?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#a6e06a" stroke="#4d7a2a" stroke-width="1.8"/>`:`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" ${GH}/>`}
+ if(D===1&&n>0)s+=`<text x="0" y="4" text-anchor="middle" font-size="9" font-weight="900" fill="#2f5a12">BURP</text>`;
+ return s+'</g>';
+}
+function cBeard(n,D){ // yeti beard: D fluffy tufts
+ let s='';const w=56/D;
+ for(let k=0;k<D;k++){const x=-28+w*k,p=`M${x.toFixed(1)} 0 Q${(x+w/2).toFixed(1)} 30 ${(x+w).toFixed(1)} 0Z`;s+=k<n?`<path d="${p}" fill="#ffffff" stroke="#9fb0e0" stroke-width="1.8"/>`:`<path d="${p}" ${GH}/>`}
+ return s;
+}
+function amountCopies(t){const D=Math.min(t.D,24);return t.N>0?partCopies(t.N,D).map(n=>({n,D})):[]}
+function creatureSVG(spec,o){
+ o=o||{};const R=rng(spec.seed||1),tr={};(spec.traits||[]).forEach(t=>tr[t.type]=t);
+ const col=spec.col||BODYCOL[Math.floor(R()*BODYCOL.length)],dark='#2b2350';
+ const eyes=1+Math.floor(R()*3),mouth=Math.floor(R()*5),bodyShape=Math.floor(R()*3);
+ const goo=!!tr.goo,glow=!!tr.moon;
+ const cx=150,cy=176,rx=bodyShape===1?80:70,ry=bodyShape===2?72:62,top=cy-ry;
+ let back='',front='',fx='';
+ // wings (behind body)
+ if(tr.phoenix){amountCopies(tr.phoenix).forEach((c,i)=>{const side=i%2,step=Math.floor(i/2),x=side?cx+rx-6+step*14:cx-rx+6-step*14,y=cy-10-step*22;back+=`<g transform="translate(${x} ${y})">${cWing(c.n,c.D,!side)}</g>`})}
+ // dragon horns (sides of head)
+ if(tr.toenail){amountCopies(tr.toenail).forEach((c,i)=>{const side=i%2,step=Math.floor(i/2),x=side?cx+rx*.55+step*16:cx-rx*.55-step*16,y=top+14+step*16;back+=`<g transform="translate(${x} ${y}) rotate(${side?14:-14})">${cDHorn(c.n,c.D,!side)}</g>`})}
+ // top row: lightning tufts + unicorn horns
+ const topItems=[];if(tr.lightning)amountCopies(tr.lightning).forEach(c=>topItems.push(['t',c]));if(tr.sneeze)amountCopies(tr.sneeze).forEach(c=>topItems.push(['h',c]));
+ if(topItems.length){const span=Math.min(150,topItems.length*58),sc=Math.min(1,span/(topItems.length*58));topItems.forEach((it,i)=>{const x=cx-span/2+span*(i+.5)/topItems.length;back+=`<g transform="translate(${x.toFixed(1)} ${top+10}) scale(${sc.toFixed(2)})">${it[0]==='t'?cTuft(it[1].n,it[1].D):cHorn(it[1].n,it[1].D)}</g>`})}
+ // bottom row: tentacles + goo drips, else feet
+ const botItems=[];if(tr.ink)amountCopies(tr.ink).forEach(c=>botItems.push(['k',c]));if(tr.goo)amountCopies(tr.goo).forEach(c=>botItems.push(['g',c]));
+ if(botItems.length){const span=Math.min(rx*1.9,botItems.length*44);botItems.forEach((it,i)=>{const x=cx-span/2+span*(i+.5)/botItems.length,y=cy+ry-(it[0]==='k'?16:8);back+=`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${Math.min(1,span/(botItems.length*44)).toFixed(2)})">${it[0]==='k'?cTentacle(it[1].n,it[1].D,i):cDrips(it[1].n,it[1].D)}</g>`})}
+ if(!tr.ink){[cx-30,cx+30].forEach(x=>{back+=`<ellipse cx="${x}" cy="${cy+ry-2}" rx="18" ry="10" fill="${col}" stroke="${dark}" stroke-width="3"/>`;if(tr.toenail)back+=`<path d="M${x-12} ${cy+ry+4} l4 8 4 -8 4 8 4 -8 4 8" fill="#fff" stroke="${dark}" stroke-width="1.5"/>`})}
+ // body
+ const bp=bodyShape===0?`M${cx-rx} ${cy} Q${cx-rx} ${top} ${cx} ${top} Q${cx+rx} ${top} ${cx+rx} ${cy} Q${cx+rx} ${cy+ry} ${cx} ${cy+ry} Q${cx-rx} ${cy+ry} ${cx-rx} ${cy}Z`:`M${cx-rx} ${cy+10} Q${cx-rx+6} ${top} ${cx} ${top} Q${cx+rx-6} ${top} ${cx+rx} ${cy+10} Q${cx+rx} ${cy+ry} ${cx} ${cy+ry} Q${cx-rx} ${cy+ry} ${cx-rx} ${cy+10}Z`;
+ front+=`<g class="${goo?'wob':''}"><path class="cbody" d="${bp}" fill="${col}" ${goo?'fill-opacity=".55"':''} stroke="${dark}" stroke-width="4"/>`;
+ front+=`<ellipse cx="${cx}" cy="${cy+ry*.35}" rx="${rx*.55}" ry="${ry*.42}" fill="#ffffff" fill-opacity="${goo?.25:.4}"/>`;
+ if(tr.yeti)front+=`<path d="${bp}" fill="none" stroke="#ffffff" stroke-width="7" stroke-dasharray="2 9" stroke-linecap="round" opacity=".9"/>`;
+ // moon markings on the belly
+ if(tr.moon){const cps=amountCopies(tr.moon),span=Math.min(rx*1.5,cps.length*48);cps.forEach((c,i)=>{const x=cx-span/2+span*(i+.5)/cps.length;front+=`<g transform="translate(${x.toFixed(1)} ${cy+ry*.55}) scale(${Math.min(1,span/(cps.length*48)).toFixed(2)})">${cMoon(c.n,c.D)}</g>`})}
+ // eyes
+ const ey=cy-ry*.38,ex=eyes===1?[cx]:eyes===2?[cx-24,cx+24]:[cx-34,cx,cx+34];
+ ex.forEach((x,i)=>{const r=eyes===1?22:eyes===2?17:13,px=(R()-.5)*r*.8,py=(R()-.5)*r*.8,yy=ey+(eyes===3&&i===1?-10:0);
+  front+=`<g class="blink" style="animation-delay:${(R()*3).toFixed(1)}s"><circle cx="${x}" cy="${yy}" r="${r}" fill="#fff" stroke="${dark}" stroke-width="3"/><circle cx="${(x+px).toFixed(1)}" cy="${(yy+py).toFixed(1)}" r="${(r*.45).toFixed(1)}" fill="${dark}"/><circle cx="${(x+px+r*.15).toFixed(1)}" cy="${(yy+py-r*.15).toFixed(1)}" r="${(r*.14).toFixed(1)}" fill="#fff"/></g>`});
+ // mouth
+ const my=cy+ry*.1;
+ if(mouth===0)front+=`<path d="M${cx-26} ${my} Q${cx} ${my+30} ${cx+26} ${my}Z" fill="#7a1f3d" stroke="${dark}" stroke-width="3"/><rect x="${cx-6}" y="${my}" width="10" height="9" fill="#fff" stroke="${dark}" stroke-width="1.5"/>`;
+ else if(mouth===1)front+=`<path d="M${cx-24} ${my+4} q8 -8 16 0 q8 8 16 0 q8 -8 16 0" stroke="${dark}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+ else if(mouth===2)front+=`<ellipse cx="${cx}" cy="${my+6}" rx="10" ry="13" fill="#7a1f3d" stroke="${dark}" stroke-width="3"/>`;
+ else if(mouth===3)front+=`<path d="M${cx-20} ${my} Q${cx} ${my+18} ${cx+20} ${my}" stroke="${dark}" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M${cx+2} ${my+8} q6 16 12 2" fill="#ff7a93" stroke="${dark}" stroke-width="2"/>`;
+ else front+=`<path d="M${cx-22} ${my} Q${cx} ${my+22} ${cx+22} ${my}Z" fill="#7a1f3d" stroke="${dark}" stroke-width="3"/><path d="M${cx-14} ${my+1} l4 9 4 -8 M${cx+6} ${my+1} l4 8 4 -9" fill="#fff" stroke="#fff" stroke-width="2"/>`;
+ front+=`<circle cx="${cx-rx*.62}" cy="${my-4}" r="7" fill="${tr.troll?'#8fd14f':'#ff9aa9'}" opacity=".7"/><circle cx="${cx+rx*.62}" cy="${my-4}" r="7" fill="${tr.troll?'#8fd14f':'#ff9aa9'}" opacity=".7"/>`;
+ // beard + burp clouds
+ if(tr.yeti){const cps=amountCopies(tr.yeti),span=Math.min(rx*1.4,cps.length*58);cps.forEach((c,i)=>{const x=cx-span/2+span*(i+.5)/cps.length;front+=`<g transform="translate(${x.toFixed(1)} ${my+18}) scale(${Math.min(1,span/(cps.length*58)).toFixed(2)})">${cBeard(c.n,c.D)}</g>`})}
+ if(tr.troll){amountCopies(tr.troll).forEach((c,i)=>{fx+=`<g transform="translate(${cx+rx+14+(i%2)*10} ${my-10-i*26})">${cCloud(c.n,c.D)}</g>`})}
+ front+=`</g>`;
+ // sparks + sparkles
+ if(tr.lightning)for(let i=0;i<4;i++){const x=cx-80+i*52+R()*10,y=top-20-R()*20;fx+=`<path class="flick" style="animation-delay:${(i*.15).toFixed(2)}s" d="M${x.toFixed(0)} ${y.toFixed(0)} l6 -10 -2 8 7 -3 -8 12 2 -7Z" fill="#fff59f" stroke="#c9a400" stroke-width="1"/>`}
+ if(tr.sneeze)for(let i=0;i<5;i++){const x=40+R()*220,y=40+R()*200;fx+=`<path class="twink" style="animation-delay:${(i*.3).toFixed(1)}s" d="M${x.toFixed(0)} ${(y-7).toFixed(0)} l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2Z" fill="${RAINBOW[i%6]}"/>`}
+ if(glow)fx+=`<path d="M${cx+rx*.3} ${top+18} a10 10 0 1 0 8 -12 a8 8 0 1 1 -8 12Z" fill="#fff6c8" opacity=".9"/>`;
+ const w=o.w?`width="${o.w}"`:'';
+ return `<svg class="cr${glow?' glow':''}" viewBox="0 0 300 300" ${w} role="img" aria-label="${esc(o.alt||spec.name||'creature')}"><ellipse cx="150" cy="288" rx="90" ry="8" fill="#000" opacity=".18"/><g class="bob">${back}${front}${fx}</g></svg>`;
+}
+
+/* ----- names, catchphrases, reveal ----- */
+const CFIRST={lightning:['Sparky','Zappo','Volta'],moon:['Luna','Moonbeam','Glimmer'],toenail:['Clawdia','Scalesworth','Snaggle'],goo:['Gloop','Wobblina','Boo-Blob'],ink:['Squiggles','Inky','Captain Suckers'],sneeze:['Sparkle','Ah-Choo','Twinkletoes'],phoenix:['Blaze','Flapjack','Toasty'],troll:['Burpington','Gassy Gus','Rumbles'],yeti:['Fluffernutter','Snowbeard','Floof']};
+const CLAST=['McWiggles','the Magnificent','von Bubbles','Fluffbottom','the Slightly Damp','Zapsworth','the Third-and-a-Half','Gigglesnort','Noodlehead','of the Cauldron','Pickleworth','the Unstable'];
+const PHRASES=['Blorp! Is it snack time?','I am 100% fraction and 0% sense!','Who wants a soggy hug?','Bwa-ha-ha... achoo!','I simplify, therefore I am!','My favorite number is three-quarters-ish.','Do not poke the goo. Okay, poke it once.','I was brewed for greatness. And naps.','Ooh, a flask! Can I lick it?','Fear me! Or tickle me. Your choice.'];
+function makeCreature(){
+ const seed=Math.floor(Math.random()*2**31);const R=rng(seed+7);
+ const traits=B.holders.map(h=>{const r=redu(h.target.n,h.target.d);return{type:h.type,N:r.n,D:r.d}});
+ const big=traits.slice().sort((a,b)=>b.N/b.D-a.N/a.D)[0];
+ const first=pick((CFIRST[big.type]||['Glorbo']));
+ const name=`${first} ${CLAST[Math.floor(R()*CLAST.length)]}`;
+ const ft=traits[Math.floor(R()*traits.length)],I=MADING[ft.type];
+ const phrase=R()<.5?`I have ${txm(ft.N,ft.D)} ${ft.N>ft.D?I.featPl:I.feat} and zero regrets!`:PHRASES[Math.floor(R()*PHRASES.length)];
+ return{v:2,name,phrase,seed,col:BODYCOL[Math.floor(R()*BODYCOL.length)],traits,d:Date.now()};
+}
+function traitList(c){return c.traits.map(t=>{const I=MADING[t.type];return `<li>${showVal(t.N,t.D)} ${t.N>t.D?I.pl:I.unit} ${esc(I.noun)} \u2192 <b>${showVal(t.N,t.D)} ${t.N>t.D?I.featPl:I.feat}</b></li>`}).join('')}
+function labReveal(c){
+ B.revealed=true;document.body.classList.add('revealed');
+ const el=$('#reveal');if(!el)return;
+ const sc=$('#labscene');if(sc)sc.classList.add('zapped');
+ el.innerHTML=`<div class="reveal"><div class="zapflash"></div><div class="revcr">${creatureSVG(c,{alt:c.name})}</div><h3>${esc(c.name)}</h3><p class="phrase">\u201C${esc(c.phrase)}\u201D</p><ul class="traits">${traitList(c)}</ul></div>`;
+ try{sfx('zap')}catch(e){}
+ const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(innerWidth<=700||innerHeight<=500)el.scrollIntoView({block:'start',behavior:reduce?'auto':'smooth'});
+}
 function labSaveCreature(){
- const name=pick(GN1)+' '+pick(GN2);
- const parts=B.holders.map(h=>{const {N,D}=bbSum(bbCanonBlocks(h.target));const r=redu(N,D);return{id:h.id,N:r.n,D:r.d}});
- S.gallery.unshift({name,col:B.col,parts,d:Date.now()});S.gallery=S.gallery.slice(0,60);
- G.built=(G.built||0)+1;save();return name;
+ const c=makeCreature();
+ S.gallery.unshift(c);S.gallery=S.gallery.slice(0,60);
+ G.built=(G.built||0)+1;save();labReveal(c);return c;
 }
 function labDone(outcome,msg){
- const name=labSaveCreature();
- fb(`<b>${msg}</b> Meet <b>${esc(name)}</b>! They are in your gallery now.<br>${B.holders.map(itemHTML).join(' \u00B7 ')}`,'ok');
+ const c=labSaveCreature();
+ fb(`<b>${msg}</b> The cauldron zaps... meet <b>${esc(c.name)}</b>! Saved to your gallery.<br>${B.holders.map(itemHTML).join(' \u00B7 ')}`,'ok');
 }
 function labShown(txt){
- const name=labSaveCreature();
- fb(`<b>Let\u2019s learn from this one. You will see this kind again soon!</b><br>${txt}<br>Meet <b>${esc(name)}</b>, saved to your gallery.`,'info');
+ const c=labSaveCreature();
+ fb(`<b>Let\u2019s learn from this one. You will see this kind again soon!</b><br>${txt}<br>Meet <b>${esc(c.name)}</b>, saved to your gallery.`,'info');
 }
 function labAfter(outcome){updateHud();bbNextBtn()}
+function galleryCard(g){
+ if(g.v===2)return `<div class="gc madgc">${creatureSVG(g,{alt:g.name})}${esc(g.name)}<small class="phrase">\u201C${esc(g.phrase)}\u201D</small><small>${g.traits.map(t=>`${txm(t.N,t.D)} ${t.N>t.D?MADING[t.type].pl:MADING[t.type].unit} ${MADING[t.type].noun}`).join(' \u00B7 ')}</small></div>`;
+ return `<div class="gc">${stageSVG({col:g.col,parts:g.parts},{alt:g.name})}${esc(g.name)}</div>`; // creatures from the earlier version
+}
 function gallery(){
- G=null;B=null;modal('');
+ G=null;B=null;modal('');setPlay(false);document.body.classList.add('madmode');
  $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">Creature gallery: ${S.gallery.length}</span></div>
- <div class="card"><h2>My creature gallery</h2><p>Every creature you finish in Creature Lab lives here.</p>
- ${S.gallery.length?`<div class="gal">${S.gallery.map(g=>`<div class="gc">${stageSVG({col:g.col,parts:g.parts},{alt:g.name})}${esc(g.name)}<small>${g.parts.map(p=>`${txm(p.N,p.D)} ${p.N>p.D?PINFO[p.id].pl:PINFO[p.id].n}`).join(' \u00B7 ')}</small></div>`).join('')}</div>`:`<p class="note">No creatures yet. Open Creature Lab and build your first one!</p>`}</div>`;
+ <div class="card madcard"><h2>My creature gallery</h2><p>Every creature brewed in the Creature Lab lives here. Look how their ingredients show!</p>
+ ${S.gallery.length?`<div class="gal">${S.gallery.map(galleryCard).join('')}</div>`:`<p class="note">No creatures yet. Open the Creature Lab and brew your first one!</p>`}</div>`;
 }
 
 /* ===== Run flow ===== */
@@ -1078,7 +1467,7 @@ function startRun(mode,level){
 function updateHud(){
  if(!G||!$('#hud'))return;
  const bk=G.mode==='bakery';
- let h=`<button class="btn small ghost" data-act="quit">\u2190 Home</button><span class="pill">${MODES[G.mode].name}</span><span class="pill g">Coins: ${S.coins}</span><span class="pill">${bk?'Order':'Creature'} ${Math.min(G.qn,G.total)} of ${G.total}</span><span class="pill" title="Perfect first tries in a row">Streak: ${G.streak}</span><span class="sp"></span>`;
+ let h=`<button class="btn small ghost" data-act="quit">\u2190 Home</button><span class="pill opt">${MODES[G.mode].name}</span><span class="pill g">Coins: ${S.coins}</span><span class="pill">${bk?'Order':'Creature'} ${Math.min(G.qn,G.total)} of ${G.total}</span><span class="pill opt" title="Perfect first tries in a row">Streak: ${G.streak}</span><span class="sp"></span>`;
  if(bk)h+=`<button class="btn small gold" data-act="shop">Shop</button>`;
  h+=`<button class="btn small ghost" data-act="mute" aria-label="Toggle sound">${S.settings.mute?'Sound: off':'Sound: on'}</button>`;
  $('#hud').innerHTML=h;
@@ -1103,21 +1492,21 @@ function beginBoard(pz){
  const bk=pz.mode==='bakery';
  B={pz,holders:pz.holders.map(h=>Object.assign({},h,{blocks:h.blocks0.map(b=>Object.assign({},b))})),hist:[],sel:null,hold:null,preview:null,col:pick(BCOLS),
   onDone:bk?bakeryDone:labDone,onShown:bk?bakeryShown:labShown,after:bk?bakeryAfter:labAfter};
- drawBoard(bk?bakeryLeft(pz):labLeft());
+ drawBoard(bk?bakeryLeft(pz):labLeft(pz));
 }
 function drawBoard(left){
  const pz=B.pz,r=rec(pz.skill),bk=pz.mode==='bakery';
  let h=`<div class="row"><span class="skillbadge">${esc(pz.badge)}</span><span class="sp"></span>${r.tier>1?`<small class="star">${'\u2605'.repeat(r.tier-1)} power</small>`:''}</div>`;
  h+=blueprintHTML();
  h+=`<div class="labgrid"><div id="leftcol">${left}</div><div id="partscol">${holdersHTML(pz)}</div></div>`;
- h+=trayHTML(pz)+toolsHTML();
- h+=`<div id="fb" class="fb" role="status"></div><div class="tools" id="tools"></div><div class="row" id="bbbtns" style="justify-content:center;margin-top:8px"><button class="btn green" style="min-width:55%;font-size:1.25rem" data-act="bbcheck">${bk?'Check my order':'Check my creature'} \u2713</button></div>`;
+ h+=`<div class="dock" id="dock">${trayHTML(pz)}${toolsHTML()}<div id="fb" class="fb" role="status"></div><div class="actrow"><div class="tools" id="tools"></div><button class="btn small ghost" data-act="bbundo">Undo</button><div id="bbbtns"><button class="btn green" data-act="bbcheck">Check<span class="chk-long"> my ${bk?'order':'creature'}</span> \u2713</button></div></div></div>`;
  $('#qcard').innerHTML=h;
+ setPlay(true);
  bbChanged();bbTools();updateHud();
 }
 function bbNextBtn(){
  const last=G.qn>=G.total,bk=G.mode==='bakery';
- const b=$('#bbbtns');if(b)b.innerHTML=`<button class="btn green" style="min-width:60%;font-size:1.3rem" data-act="next">${last?'Finish \u2713':bk?'Next order \u25B8':'Next creature \u25B8'}</button>${bk?'':`<button class="btn ghost" data-act="gallery">See gallery</button>`}`;
+ const b=$('#bbbtns');if(b)b.innerHTML=`<button class="btn green" data-act="next">${last?'Finish \u2713':bk?'Next order \u25B8':'Next creature \u25B8'}</button>${bk?'':`<button class="btn ghost" data-act="gallery">See gallery</button>`}`;
  G.stage='next';
 }
 function finishPuzzle(outcome){
@@ -1139,6 +1528,7 @@ function finishPuzzle(outcome){
  B.after(outcome);
 }
 function endRun(finished){
+ setPlay(false);
  const g=G,mode=g.mode;
  S.sessions.unshift({d:Date.now(),m:mode,n:g.answered,full:g.full,partial:g.partial,retry:g.retry,shown:g.shown,score:g.score});S.sessions=S.sessions.slice(0,30);
  S.best[mode]=Math.max(S.best[mode]||0,g.score);save();
@@ -1153,18 +1543,32 @@ function endRun(finished){
  if(finished){confetti(160);sfx('win')}
 }
 
+/* ===== Phone layout helpers: the dock (shelf, tools, Check) stays on screen ===== */
+let DOCKRO=null;
+function setPlay(on){
+ document.body.classList.toggle('inplay',!!on);
+ document.body.classList.remove('revealed');
+ document.body.classList.toggle('madmode',!!(on&&B&&B.pz&&B.pz.mode==='lab'));
+ if(!on){document.body.classList.remove('holding');return}
+ const d=$('#dock');if(!d)return;
+ const upd=()=>document.documentElement.style.setProperty('--dockh',d.offsetHeight+'px');
+ upd();if(window.ResizeObserver){if(DOCKRO)DOCKRO.disconnect();DOCKRO=new ResizeObserver(upd);DOCKRO.observe(d)}
+}
+addEventListener('resize',()=>{const d=$('#dock');if(d)document.documentElement.style.setProperty('--dockh',d.offsetHeight+'px')});
 /* ===== Screens ===== */
 let SEL='mix';
 function home(){
  G=null;B=null;modal('');
+ setPlay(false);
  const card=(m,cls,art)=>`<button class="mode ${cls}" data-act="mode" data-m="${m}"><div class="art">${art}</div><h2>${MODES[m].name}</h2><p>${MODES[m].tag}</p><span class="best">Best score: ${S.best[m]||0}</span></button>`;
  $('#screen').innerHTML=`<div class="top"><span class="pill">Coins: ${S.coins}</span><span class="sp"></span><button class="btn small ghost" data-act="mute">${S.settings.mute?'Sound: off':'Sound: on'}</button><button class="btn small ghost" data-act="textsize" aria-label="Change text size">Text size: ${['A','A+','A++'][S.settings.big||0]}</button></div>
  <div class="hero"><h1>Batter Blocks</h1><h2 style="margin:0;font-size:1.3rem">The Fraction Bakery</h2><p>Welcome, Kenny! Every fraction is a number AND blocks you can move. No timers, no lives.</p></div>
- <div class="modes">${card('bakery','bk',`<svg viewBox="0 0 300 100" width="240" height="80" aria-hidden="true"><g transform="translate(10 0)">${cupArt(3,4,'#f3e4c1','#d2bd8a')}</g><g transform="translate(100 0)">${stickArt(3,4)}</g><g transform="translate(190 0)">${pieArt(3,8,cakeInner(8))}</g></svg>`)}${card('lab','l',stageSVG({col:'#7bd389',parts:[{id:'head',N:3,D:4},{id:'wing',N:1,D:2},{id:'tail',N:5,D:8}]},{w:170}))}</div>
+ <div class="modes">${card('bakery','bk',`<svg viewBox="0 0 300 100" width="240" height="80" aria-hidden="true"><g transform="translate(10 0)">${cupArt(3,4,'#f3e4c1','#d2bd8a')}</g><g transform="translate(100 0)">${stickArt(3,4)}</g><g transform="translate(190 0)">${pieArt(3,8,cakeInner(8))}</g></svg>`)}${card('lab','l',`<div class="row" style="justify-content:center;gap:4px">${hostSVG(62)}${creatureSVG({seed:42,col:'#c59bff',traits:[{type:'lightning',N:3,D:4},{type:'ink',N:3,D:2},{type:'sneeze',N:1,D:1}]},{w:96,alt:'A lab creature'})}</div>`)}</div>
  <div class="card"><div class="row"><b>Your bakery:</b><span>${S.bakery.served} orders served \u00B7 ${S.bakery.decor.length} decorations \u00B7 ${S.bakery.trophies} Big Bake trophies</span></div><div class="scene" style="margin:8px auto 0;max-width:560px">${sceneSVG(210,null)}</div></div>
  <div class="footrow"><button class="btn" data-act="shop">Bakery shop</button><button class="btn" data-act="gallery">Creature gallery (${S.gallery.length})</button><button class="btn small ghost" data-act="parent" style="align-self:center">Parent</button></div>`;
 }
 function setup(m){
+ setPlay(false);
  const bk=m==='bakery',ids=bk?BAKEIDS:LABIDS;
  const lv=[['mix','Smart Mix','Recommended: picks what you need most'+(bk?', and ends with a Big Bake':'')]].concat(ids.map(id=>[id,SK[id].name,SK[id].desc]));
  const stars=id=>{const r=rec(id),p=pct(r);return p===null?'':`<span class="star">${'\u2605'.repeat(p>=90?3:p>=70?2:p>=40?1:0)||'\u2606'}</span>`};
@@ -1192,11 +1596,12 @@ function summaryText(){
  return t;
 }
 function parent(){
+ setPlay(false);
  const worst=missed();
  const col=p=>p===null?'#ccc':p>=85?'#1fa863':p>=60?'#ffb400':'#e0654f';
  $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">Parent corner</span></div>
  <div class="card"><h2>Accuracy by skill</h2><p class="note">Stored only in this browser on this device. Nothing is sent anywhere. Partial credit means the amount was right but needed a nudge (for example, to simplify).</p>
- <table><tr><th>Skill</th><th>Tried</th><th>Score</th><th></th><th>Level</th></tr>${ALLSK.map(id=>{const r=rec(id),p=pct(r);return `<tr><td><b>${SK[id].n}.</b> ${esc(SK[id].name)}</td><td>${r.att}</td><td>${p===null?'\u2014':p+'%'}</td><td><div class="bar2"><i style="width:${p||0}%;background:${col(p)}"></i></div></td><td>${r.tier}/3</td></tr>`}).join('')}</table>
+ <div class="tblwrap"><table><tr><th>Skill</th><th>Tried</th><th>Score</th><th></th><th>Level</th></tr>${ALLSK.map(id=>{const r=rec(id),p=pct(r);return `<tr><td><b>${SK[id].n}.</b> ${esc(SK[id].name)}</td><td>${r.att}</td><td>${p===null?'\u2014':p+'%'}</td><td><div class="bar2"><i style="width:${p||0}%;background:${col(p)}"></i></div></td><td>${r.tier}/3</td></tr>`}).join('')}</table></div>
  <h3>Most-missed skills</h3><p>${worst.length?worst.map(w=>`<b>${esc(SK[w.id].name)}</b> (${w.p}%)`).join('<br>'):'Not enough practice yet to tell. Play a few rounds!'}</p>
  <p class="note">Bakery orders served: <b>${S.bakery.served}</b> \u00B7 Creatures built: <b>${S.gallery.length}</b></p>
  <h3>Habits to watch</h3><p>${Object.keys(S.tags).filter(k=>S.tags[k]>0).map(k=>`${esc(TAGNAME[k]||k)}: <b>${S.tags[k]}</b>`).join('<br>')||'None noticed yet.'}</p>
@@ -1230,8 +1635,24 @@ const ACT={
  resetask:()=>modal(`<h2>Erase everything?</h2><p>This clears coins, bakery, creatures and scores on this device. It cannot be undone.</p><div class="row" style="justify-content:center"><button class="btn green" data-act="closemodal">No, keep it</button><button class="btn ghost" data-act="resetyes">Yes, erase</button></div>`),
  resetyes:()=>{try{localStorage.removeItem(KEY)}catch(e){}S=defState();ALLSK.forEach(rec);save();modal('');applyFS();home();toast('Progress erased')}
 };
+/* Touch safety net: if a finger tap on a button does not produce a click (some mobile browsers drop it
+   after a drag), run the button's action ourselves. A late real click is then ignored, so nothing runs twice. */
+let PEND=null,LASTP=null,FBEL=null,FBT=0;
+document.addEventListener('pointerdown',e=>{
+ if(e.pointerType==='mouse'){PEND=null;return}
+ const t=e.target.closest&&e.target.closest('[data-act]');
+ PEND=(t&&!t.closest('.tile,.chip,.pcard'))?{el:t,x:e.clientX,y:e.clientY,clicked:false}:null;
+},true);
+document.addEventListener('pointermove',e=>{if(PEND&&Math.hypot(e.clientX-PEND.x,e.clientY-PEND.y)>12)PEND=null},true);
+document.addEventListener('pointercancel',()=>{PEND=null},true);
+document.addEventListener('pointerup',e=>{
+ if(!PEND)return;const p=PEND;PEND=null;LASTP=p;
+ setTimeout(()=>{if(p.clicked||!p.el.isConnected)return;FBEL=p.el;FBT=Date.now();audio();const f=ACT[p.el.dataset.act];if(f)f(p.el.dataset)},350);
+},true);
 document.addEventListener('click',e=>{
  const t=e.target.closest&&e.target.closest('[data-act]');if(!t)return;
+ if(LASTP&&LASTP.el===t)LASTP.clicked=true;
+ if(FBEL===t&&Date.now()-FBT<1500)return;
  audio();const f=ACT[t.dataset.act];if(f)f(t.dataset,e);
 });
 document.addEventListener('keydown',e=>{
