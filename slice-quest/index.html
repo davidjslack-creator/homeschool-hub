@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Slice Quest – a fractions adventure</title>
+<style>
+:root{--fs:20px;--ink:#2b2350;--purple:#6b4fd8;--purple2:#8a73f0;--gold:#ffbf1f;--green:#1fa863;--red:#d9534f;--card:#ffffff;--bg1:#5b3fd1;--bg2:#2a8ee0;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:var(--fs)}
+body{margin:0;min-height:100vh;font-family:"Avenir Next","Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer}
+#app{max-width:1180px;margin:0 auto;padding:12px 14px 40px}
+.card{background:var(--card);border-radius:22px;padding:16px 18px;box-shadow:0 6px 0 rgba(0,0,0,.12),0 10px 24px rgba(0,0,0,.18)}
+h1,h2,h3{margin:.2em 0}
+.btn{border:0;border-radius:16px;padding:.7em 1.2em;font-weight:800;font-size:1.05rem;min-height:56px;background:var(--purple);color:#fff;box-shadow:0 5px 0 #4330a3;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #4330a3}
+.btn.gold{background:var(--gold);color:#4a3200;box-shadow:0 5px 0 #c68e00}
+.btn.green{background:var(--green);box-shadow:0 5px 0 #0f7a45}
+.btn.ghost{background:#efeaff;color:var(--purple);box-shadow:0 4px 0 #cfc6f5}
+.btn.small{min-height:44px;padding:.4em .9em;font-size:.9rem}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#fff}
+.top .pill{background:rgba(255,255,255,.2);padding:.25em .8em;border-radius:999px;font-weight:800}
+/* home */
+.hero{text-align:center;color:#fff;padding:10px 0 4px}
+.hero h1{font-size:2.6rem;text-shadow:0 4px 0 rgba(0,0,0,.25);letter-spacing:.5px}
+.hero p{font-size:1.1rem;margin:.2em 0 .6em;opacity:.95}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:14px 0}
+.mode{text-align:left;border:0;background:#fff;border-radius:24px;padding:16px;box-shadow:0 7px 0 rgba(0,0,0,.18);display:flex;flex-direction:column;gap:6px}
+.mode:active{transform:translateY(3px)}
+.mode h2{font-size:1.4rem;margin:0}
+.mode p{margin:0;font-size:.95rem;line-height:1.35}
+.mode .art{height:90px;display:flex;align-items:center;justify-content:center;border-radius:16px}
+.mode .best{font-size:.85rem;font-weight:800;color:var(--purple)}
+.mode.q .art{background:linear-gradient(135deg,#ffe58a,#ffb347)}
+.mode.p .art{background:linear-gradient(135deg,#ffd0c0,#ff8f7a)}
+.mode.b .art{background:linear-gradient(135deg,#d8c9ff,#8e72ee)}
+.footrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.progress{height:16px;background:#e7e1fb;border-radius:99px;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,#ffb400,#ff7a00);border-radius:99px;transition:width .4s}
+/* setup */
+.lv{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin:12px 0}
+.lvb{border:3px solid #d8d0fa;background:#fff;border-radius:16px;padding:10px 12px;text-align:left;display:flex;gap:10px;align-items:center;min-height:64px}
+.lvb.on{border-color:var(--purple);background:#f1edff;box-shadow:0 0 0 3px #cfc3ff}
+.lvb b.n{background:var(--purple);color:#fff;border-radius:50%;width:2em;height:2em;display:flex;align-items:center;justify-content:center;flex:none}
+.lvb small{display:block;opacity:.75}
+.star{color:#ffb400;font-size:.85rem}
+/* play */
+.hud{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.hud .pill{background:#fff;border-radius:999px;padding:.3em .9em;font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.15);font-size:.95rem}
+.hud .pill.g{background:#fff4c9}
+.strip{margin-bottom:10px}
+.main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,1fr);gap:14px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.skillbadge{display:inline-block;background:#efeaff;color:var(--purple);border-radius:99px;padding:.15em .8em;font-weight:800;font-size:.8rem}
+.prompt{font-size:1.35rem;font-weight:700;margin:.5em 0;line-height:1.35}
+.model{display:flex;justify-content:center;margin:6px 0 10px;overflow-x:auto}
+.shapes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
+.shape{display:block}
+.shape .cell{cursor:default}
+.shapes.tap .cell{cursor:pointer}
+.shapes.tap .cell:hover{filter:brightness(.92)}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:800}
+.fr>span:first-child{border-bottom:.11em solid currentColor;padding:0 .22em .04em}
+.fr>span:last-child{padding:.04em .22em 0}
+.mx{display:inline-flex;align-items:center;gap:.08em;vertical-align:middle}
+.mx .wn{font-weight:800;font-size:1.25em;margin-right:.05em}
+.entry{display:flex;flex-direction:column;gap:10px;align-items:center;margin:8px 0}
+.slot{display:inline-flex;align-items:center;gap:8px;font-size:1.5rem;font-weight:800;position:relative;padding:4px 8px;border-radius:14px}
+.slot .pre{display:inline-flex;align-items:center;gap:6px}
+.fld,.fstatic{min-width:3.1rem;height:3.1rem;border:3px solid var(--purple2);border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:800;padding:0 .3rem}
+.fstatic{border-color:transparent;background:none}
+.fld{cursor:pointer}
+.fld.active{outline:5px solid #ffc83a;outline-offset:1px;background:#fffbe9}
+.fld.good{background:#d8f6e3;border-color:var(--green)}
+.fld.bad{background:#ffe4e1;border-color:var(--red)}
+.fld.big{min-width:5rem}
+.fld.w{min-width:3.6rem}
+.fracbox{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
+.fracbox .bar{width:100%;height:5px;background:var(--ink);border-radius:3px}
+.cap{font-size:.7rem;font-weight:700;opacity:.75;text-align:left;width:9rem;line-height:1.15;position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
+.colcap{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+.colcap>.cap{position:static;transform:none;text-align:center;width:6rem}
+.frow{position:relative;display:flex}
+.fracbox .bar{width:3.6rem}
+.slot small{font-size:.7rem}
+.snote{position:absolute;left:0;right:0;top:-1.3em;text-align:center;font-size:.72rem;font-weight:800;color:#3f6fc6;white-space:nowrap}
+.gem{background:#e9fbff;border:3px solid #52c6e8;border-radius:14px;padding:.5em .8em;font-size:.95rem;margin:6px 0;line-height:1.5}
+.gem b.big{color:#0a7fa0;font-size:1.15em}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pad .btn{font-size:1.7rem;min-height:68px;padding:.2em}
+.pad .btn.k{background:#fff;color:var(--ink);border:3px solid #cfc6f5;box-shadow:0 5px 0 #cfc6f5}
+.pad .btn.k:active{box-shadow:0 2px 0 #cfc6f5}
+.pad .wide{grid-column:1/-1}
+.fb{min-height:3.2em;border-radius:16px;padding:.6em .9em;margin:8px 0;font-size:1.02rem;line-height:1.4;display:none}
+.fb.show{display:block}
+.fb.ok{background:#dcf7e7;border:3px solid var(--green)}
+.fb.hint{background:#fff3d6;border:3px solid #ffb400}
+.fb.part{background:#e4f0ff;border:3px solid #3f8cff}
+.fb.info{background:#f1edff;border:3px solid var(--purple2)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.mc{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:10px 0}
+.mc.sym{grid-template-columns:repeat(3,1fr)}
+.opt{border:3px solid #cfc6f5;background:#fff;border-radius:16px;min-height:76px;font-size:1.5rem;font-weight:800;padding:8px;display:flex;align-items:center;justify-content:center}
+.opt:active{transform:translateY(2px)}
+.opt.gone{opacity:.35;pointer-events:none;background:#eee}
+.opt.right{background:#d8f6e3;border-color:var(--green)}
+.ordcards{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:8px 0}
+.ordc{border:3px solid #cfc6f5;background:#fff;border-radius:16px;min-width:96px;min-height:90px;font-size:1.6rem;padding:8px 12px;position:relative}
+.ordc.sel{background:#f1edff;border-color:var(--purple);opacity:.6}
+.ordc .badge{position:absolute;top:-10px;right:-8px;background:var(--gold);border-radius:50%;width:1.6em;height:1.6em;font-size:.9rem;font-weight:900;display:none;align-items:center;justify-content:center}
+.ordc.sel .badge{display:flex}
+.ltr{font-weight:900;color:var(--purple);margin-right:.3em}
+.seqrow{text-align:center;font-size:1rem;min-height:1.6em;font-weight:700}
+.chain{display:grid;grid-template-columns:1fr auto 1fr;gap:6px 6px;align-items:center;justify-items:center;margin:6px auto;max-width:560px}
+.chain .op{font-weight:900;font-size:1.15rem;background:#fff4c9;border-radius:12px;padding:.2em .6em;display:inline-flex;gap:.3em;align-items:center;border:2px solid #ffd45c}
+.chain .node{background:#eef4ff;border:3px solid #7ba7ff;border-radius:18px;padding:8px 10px;min-width:100px;display:flex;justify-content:center;font-size:1.5rem}
+.chain .node.given{background:#e1f7e8;border-color:#3cb371}
+.chain .node.pick{background:#fffbe9}
+.nodeslot .slot{padding:0}
+/* overlays */
+.modal{position:fixed;inset:0;background:rgba(30,15,80,.6);display:flex;align-items:center;justify-content:center;padding:14px;z-index:50}
+.modal .card{max-width:640px;width:100%;max-height:92vh;overflow:auto}
+.chests{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.chest{background:none;border:0;padding:6px;border-radius:18px;min-width:120px}
+.chest svg{display:block;margin:auto}
+.chest:hover{background:#fff3c4}
+.chest.dim{opacity:.35;pointer-events:none}
+.chest.open{background:#fff3c4;animation:pop .4s}
+@keyframes pop{from{transform:scale(.85)}to{transform:scale(1)}}
+.chestmsg{font-size:1.25rem;font-weight:800;text-align:center;min-height:2.6em}
+.riv{display:flex;gap:8px;flex-wrap:wrap}
+.rv{background:#fff;border-radius:16px;padding:6px 12px 6px 6px;display:flex;align-items:center;gap:6px;font-weight:800;font-size:.9rem;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.rv.me{background:#fff4c9}
+.rv small{display:block;font-weight:600;opacity:.7;font-size:.75rem;line-height:1}
+.boss{display:flex;align-items:center;gap:14px;background:#fff;border-radius:20px;padding:8px 14px;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.boss .hp{flex:1}
+.hpbar{height:22px;background:#e9e2fb;border-radius:99px;overflow:hidden;border:3px solid #fff;box-shadow:inset 0 0 0 2px #cfc6f5}
+.hpbar>i{display:block;height:100%;background:linear-gradient(90deg,#ff5d73,#ff9c5a);transition:width .5s}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px) rotate(-3deg)}75%{transform:translateX(6px) rotate(3deg)}}
+.shop{display:grid;gap:10px;margin:10px 0}
+.shopi{display:flex;gap:10px;align-items:center;border:3px solid #e1daf9;border-radius:16px;padding:8px 12px}
+.shopi .t{flex:1}
+.shopi small{display:block;opacity:.75}
+.cust{display:flex;gap:10px;align-items:center;background:#fff;border-radius:20px;padding:6px 14px;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.collect{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:10px}
+.cc{background:#f7f4ff;border-radius:18px;padding:8px;text-align:center;font-weight:800;font-size:.9rem}
+.cc small{display:block;font-weight:600;opacity:.7}
+.crt.locked{filter:brightness(0) opacity(.22)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:.45em .5em;border-bottom:2px solid #eee;text-align:left;vertical-align:middle}
+.bar2{height:14px;border-radius:99px;background:#eee;overflow:hidden;min-width:90px}
+.bar2>i{display:block;height:100%}
+textarea.sum{width:100%;min-height:210px;font:15px/1.4 ui-monospace,Menlo,Consolas,monospace;border:3px solid #d8d0fa;border-radius:12px;padding:10px;-webkit-user-select:text;user-select:text}
+.note{font-size:.85rem;opacity:.8}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b2350;color:#fff;padding:.7em 1.2em;border-radius:99px;font-weight:800;z-index:120;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}
+#toast.on{opacity:1}
+.center{text-align:center}
+:focus-visible{outline:4px solid #ffc83a;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><div id="screen"></div></div>
+<div id="modal"></div>
+<canvas id="confetti"></canvas>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* ===== tiny helpers ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t}return a};
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const wpick=pairs=>{let t=pairs.reduce((s,p)=>s+p[1],0),r=Math.random()*t;for(const p of pairs){if((r-=p[1])<=0)return p[0]}return pairs[0][0]};
+const coprimes=d=>{const r=[];for(let i=1;i<d;i++)if(gcd(i,d)===1)r.push(i);return r};
+const fr=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const mx=(w,n,d)=>`<span class="mx"><span class="wn">${w}</span>${fr(n,d)}</span>`;
+const showVal=(n,d)=>(n>d&&n%d)?mx(Math.floor(n/d),n%d,d):fr(n,d);
+const tx=(n,d)=>`${n}/${d}`;
+const txm=(n,d)=>(n>d&&n%d)?`${Math.floor(n/d)} ${n%d}/${d}`:`${n}/${d}`;
+
+/* ===== skills ===== */
+const SK={
+ s1:{n:'1',name:'Equivalent fractions & simplifying',desc:'Find the biggest number that divides both. Always reduce!'},
+ s2:{n:'2',name:'Add & subtract (same bottoms), then simplify',desc:'Tops change, bottoms stay. Then simplify.'},
+ s3:{n:'3',name:'Picture to improper fraction',desc:'Pieces counted over pieces in ONE shape.'},
+ s4:{n:'4',name:'Picture to mixed number',desc:'[whole] [top/bottom]: wholes on the left.'},
+ s5:{n:'5',name:'Convert mixed and improper both ways',desc:'Switch between the two forms.'},
+ s6:{n:'6',name:'Compare & order on a number line',desc:'Which is bigger? Put them in order.'},
+ s7:{n:'7',name:'Boss path chain',desc:'Follow the path: add and subtract all the way around.'}
+};
+const SKIDS=['s1','s2','s3','s4','s5','s6','s7'];
+
+/* ===== storage ===== */
+const KEY='sliceQuest_v1';
+function defState(){return{gold:0,owned:[0],best:{quest:0,pizza:0,boss:0},skills:{},tags:{},sessions:[],misses:[],settings:{mute:false,speed:false,big:0}}}
+function load(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+ const d=defState();if(!s||typeof s!=='object')return d;
+ const o=Object.assign(d,s);o.best=Object.assign(defState().best,s.best||{});o.settings=Object.assign(defState().settings,s.settings||{});return o}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function rec(id){return S.skills[id]||(S.skills[id]={att:0,full:0,partial:0,retry:0,shown:0,tier:1,streak:0,bad:0})}
+SKIDS.forEach(rec);
+
+/* ===== creatures (original SVG, drawn in code) ===== */
+const CREATURES=[
+ {n:'Wedgie',c:'#ffc83a',b:'#fff1b0',ear:'none',eyes:2,x:'cheeks',body:'blob'},
+ {n:'Numi',c:'#4f9cff',b:'#d6e8ff',ear:'cat',eyes:2,x:'tongue',body:'blob'},
+ {n:'Denny',c:'#a07be0',b:'#eadfff',ear:'bunny',eyes:2,x:'cheeks',body:'tall'},
+ {n:'Slicer',c:'#ff8a3d',b:'#ffe0c7',ear:'cat',eyes:2,x:'fang',body:'wide'},
+ {n:'Halvsie',c:'#3cc3a5',b:'#d3f6ee',ear:'round',eyes:2,x:'cheeks',body:'blob'},
+ {n:'Trio Tom',c:'#ef6fa4',b:'#ffd9e8',ear:'horn',eyes:3,x:'none',body:'blob'},
+ {n:'Quartz',c:'#7a8cf5',b:'#dde2ff',ear:'ant',eyes:2,x:'tongue',body:'tall'},
+ {n:'Fifi Fifth',c:'#f5b83b',b:'#fff0c4',ear:'leaf',eyes:2,x:'cheeks',body:'wide'},
+ {n:'Sixpence',c:'#58b86b',b:'#d9f4de',ear:'fin',eyes:1,x:'fang',body:'blob'},
+ {n:'Sevy',c:'#e45b5b',b:'#ffd8d8',ear:'horn',eyes:2,x:'none',body:'tall'},
+ {n:'Octavia',c:'#8e5bd1',b:'#e7d7fb',ear:'ant',eyes:3,x:'cheeks',body:'wide'},
+ {n:'Nonny',c:'#2fb7d6',b:'#d0f1f9',ear:'bunny',eyes:2,x:'tongue',body:'blob'},
+ {n:'Decibelle',c:'#f58f4a',b:'#ffe3cf',ear:'round',eyes:1,x:'cheeks',body:'tall'},
+ {n:'Mixie',c:'#a4d63f',b:'#eaf8c8',ear:'leaf',eyes:2,x:'fang',body:'blob'},
+ {n:'Improper Pete',c:'#5d6fe0',b:'#d9defc',ear:'cat',eyes:3,x:'tongue',body:'tall'},
+ {n:'Grand Wedge',c:'#ffb000',b:'#fff0b8',ear:'horn',eyes:2,x:'cheeks',body:'wide'}
+];
+const UNLOCK=[0,40,100,180,280,400,550,720,920,1150,1400,1700,2050,2450,2900,3400];
+function creatureSVG(i,sz,locked){
+ const c=CREATURES[i],rx=c.body==='tall'?28:c.body==='wide'?39:34,ry=c.body==='tall'?36:c.body==='wide'?26:31,cy=58;
+ let s=`<svg viewBox="0 0 100 100" width="${sz}" height="${sz}" class="crt${locked?' locked':''}" role="img" aria-label="${locked?'Locked creature':esc(c.n)}">`;
+ const top=cy-ry;
+ if(c.ear==='cat')s+=`<polygon points="${50-rx*.8},${top+8} ${50-rx*.75},${top-12} ${50-rx*.2},${top+2}" fill="${c.c}"/><polygon points="${50+rx*.8},${top+8} ${50+rx*.75},${top-12} ${50+rx*.2},${top+2}" fill="${c.c}"/>`;
+ if(c.ear==='bunny')s+=`<ellipse cx="38" cy="${top-6}" rx="7" ry="16" fill="${c.c}"/><ellipse cx="62" cy="${top-6}" rx="7" ry="16" fill="${c.c}"/><ellipse cx="38" cy="${top-4}" rx="3.5" ry="10" fill="${c.b}"/><ellipse cx="62" cy="${top-4}" rx="3.5" ry="10" fill="${c.b}"/>`;
+ if(c.ear==='horn')s+=`<polygon points="34,${top+4} 40,${top-14} 46,${top+2}" fill="#fff6d6" stroke="#caa84a" stroke-width="1.5"/><polygon points="54,${top+2} 60,${top-14} 66,${top+4}" fill="#fff6d6" stroke="#caa84a" stroke-width="1.5"/>`;
+ if(c.ear==='ant')s+=`<line x1="50" y1="${top+2}" x2="50" y2="${top-14}" stroke="${c.c}" stroke-width="4"/><circle cx="50" cy="${top-16}" r="6" fill="#ffd84a" stroke="${c.c}" stroke-width="2"/>`;
+ if(c.ear==='round')s+=`<circle cx="${50-rx*.7}" cy="${top+4}" r="9" fill="${c.c}"/><circle cx="${50+rx*.7}" cy="${top+4}" r="9" fill="${c.c}"/>`;
+ if(c.ear==='leaf')s+=`<ellipse cx="50" cy="${top-6}" rx="6" ry="13" fill="#4cb85a" transform="rotate(-20 50 ${top})"/><ellipse cx="56" cy="${top-4}" rx="5" ry="11" fill="#6fd06f" transform="rotate(25 50 ${top})"/>`;
+ if(c.ear==='fin')s+=`<path d="M50 ${top+2} Q50 ${top-18} 66 ${top-6} Q56 ${top-4} 58 ${top+4}Z" fill="${c.c}"/>`;
+ s+=`<ellipse cx="38" cy="${cy+ry-1}" rx="9" ry="6" fill="${c.c}"/><ellipse cx="62" cy="${cy+ry-1}" rx="9" ry="6" fill="${c.c}"/>`;
+ s+=`<ellipse cx="50" cy="${cy}" rx="${rx}" ry="${ry}" fill="${c.c}"/><ellipse cx="50" cy="${cy+ry*.28}" rx="${rx*.62}" ry="${ry*.58}" fill="${c.b}"/>`;
+ const ey=cy-ry*.28,eyes=c.eyes===1?[50]:c.eyes===2?[39,61]:[35,50,65];
+ eyes.forEach(x=>{const r=c.eyes===1?10:c.eyes===3?6.2:8;s+=`<circle cx="${x}" cy="${ey}" r="${r}" fill="#fff"/><circle cx="${x+1}" cy="${ey+1}" r="${r*.5}" fill="#2b2350"/><circle cx="${x+2.5}" cy="${ey-1.5}" r="${r*.2}" fill="#fff"/>`});
+ const my=cy+ry*.05;
+ s+=`<path d="M42 ${my} Q50 ${my+9} 58 ${my}" stroke="#2b2350" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+ if(c.x==='cheeks')s+=`<circle cx="${50-rx*.62}" cy="${my-1}" r="5" fill="#ff9aa9" opacity=".7"/><circle cx="${50+rx*.62}" cy="${my-1}" r="5" fill="#ff9aa9" opacity=".7"/>`;
+ if(c.x==='tongue')s+=`<ellipse cx="50" cy="${my+7}" rx="4" ry="5" fill="#ff7a93"/>`;
+ if(c.x==='fang')s+=`<polygon points="44,${my+3} 47,${my+3} 45.5,${my+9}" fill="#fff"/><polygon points="53,${my+3} 56,${my+3} 54.5,${my+9}" fill="#fff"/>`;
+ return s+'</svg>';
+}
+
+/* ===== sound (WebAudio beeps) ===== */
+let AC=null;
+function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function beep(f,d,type,vol,when){if(S.settings.mute)return;const a=audio();if(!a)return;try{const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(when||0);o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.12,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+const SFX={
+ tap:()=>beep(440,.05,'square',.04),
+ ok:()=>[523,659,784].forEach((f,i)=>beep(f,.16,'triangle',.13,i*.09)),
+ part:()=>[523,622].forEach((f,i)=>beep(f,.16,'triangle',.11,i*.1)),
+ oops:()=>{beep(330,.18,'sine',.09);beep(294,.22,'sine',.08,.14)},
+ chest:()=>[392,523,659,784,1047].forEach((f,i)=>beep(f,.14,'triangle',.12,i*.07)),
+ win:()=>[523,659,784,1047,784,1047,1319].forEach((f,i)=>beep(f,.2,'triangle',.13,i*.1)),
+ coin:()=>{beep(988,.07,'square',.06);beep(1319,.15,'square',.06,.07)},
+ hit:()=>{beep(200,.12,'sawtooth',.08);beep(140,.15,'sawtooth',.07,.08)}
+};
+function sfx(n){try{SFX[n]()}catch(e){}}
+
+/* ===== confetti ===== */
+let confId=0;
+function confetti(count){
+ const c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+ const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const N=reduce?30:(count||140);
+ const ps=Array.from({length:N},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.35,vx:(Math.random()-.5)*4,vy:2+Math.random()*4,r:6+Math.random()*8,col:`hsl(${Math.random()*360},90%,60%)`,rot:Math.random()*6,vr:(Math.random()-.5)*.3}));
+ const id=++confId;let t=0;
+ (function step(){if(id!==confId)return;x.clearRect(0,0,c.width,c.height);
+  ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.rot+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.rot);x.fillStyle=p.col;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);x.restore()});
+  if(++t<170)requestAnimationFrame(step);else x.clearRect(0,0,c.width,c.height)})();
+}
+let toastT=0;
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),ms||2200)}
+
+/* ===== SVG fraction models ===== */
+const PAL={pie:['#3f8cff','#ffffff'],octo:['#ff9a2e','#ffffff'],bar:['#ffc83a','#ffffff'],rows:['#9b6bd6','#ffffff'],grid:['#4f86c6','#ffffff']};
+const GRID={4:[2,2],6:[3,2],8:[4,2],9:[3,3],10:[5,2],12:[4,3]};
+function kindsFor(d){const k=['pie','bar'];if(d===8)k.push('octo','octo');if(d>=2&&d<=6)k.push('rows');if(GRID[d])k.push('grid','grid');return k}
+function cellsOf(kind,d){ // returns {vb:[w,h], cells:[svgPathAttrsString]}
+ const out=[];
+ if(kind==='pie'){
+  if(d===1)return{vb:[100,100],cells:['<circle cx="50" cy="50" r="46"/>']};
+  for(let i=0;i<d;i++){const a0=(-90+360*i/d)*Math.PI/180,a1=(-90+360*(i+1)/d)*Math.PI/180;
+   const x0=50+46*Math.cos(a0),y0=50+46*Math.sin(a0),x1=50+46*Math.cos(a1),y1=50+46*Math.sin(a1);
+   out.push(`<path d="M50 50 L${x0.toFixed(2)} ${y0.toFixed(2)} A46 46 0 ${360/d>180?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z"/>`)}
+  return{vb:[100,100],cells:out}}
+ if(kind==='octo'){
+  const v=i=>{const a=(-112.5+45*i)*Math.PI/180;return[(50+47*Math.cos(a)).toFixed(2),(50+47*Math.sin(a)).toFixed(2)]};
+  for(let i=0;i<8;i++){const p=v(i),q=v(i+1);out.push(`<polygon points="50,50 ${p[0]},${p[1]} ${q[0]},${q[1]}"/>`)}
+  return{vb:[100,100],cells:out}}
+ if(kind==='bar'||(kind==='grid'&&!GRID[d])){const w=120/d;for(let i=0;i<d;i++)out.push(`<rect x="${2+i*w}" y="2" width="${w}" height="40"/>`);return{vb:[124,44],cells:out}}
+ if(kind==='rows'){const h=72/d;for(let i=0;i<d;i++)out.push(`<rect x="2" y="${2+i*h}" width="76" height="${h}"/>`);return{vb:[80,76],cells:out}}
+ const [c,r]=GRID[d],w=84/c,h=60/r;
+ for(let j=0;j<r;j++)for(let i=0;i<c;i++)out.push(`<rect x="${2+i*w}" y="${2+j*h}" width="${w}" height="${h}"/>`);
+ return{vb:[88,64],cells:out}
+}
+function shapeSVG(kind,d,on,o){
+ o=o||{};const sz=o.size||104,g=cellsOf(kind,d),pal=PAL[kind]||PAL.bar;
+ const sc=sz/Math.max(g.vb[0],g.vb[1]);
+ let s=`<svg class="shape" viewBox="0 0 ${g.vb[0]} ${g.vb[1]}" width="${(g.vb[0]*sc).toFixed(0)}" height="${(g.vb[1]*sc).toFixed(0)}" aria-hidden="true">`;
+ g.cells.forEach((c,i)=>{const sh=on(i);
+  s+=c.replace(/^<(\w+)/,`<$1 class="cell" data-i="${(o.base||0)+i}" fill="${sh?pal[0]:pal[1]}" stroke="#2b2350" stroke-width="${kind==='pie'||kind==='octo'?2:1.8}" stroke-linejoin="round"`)});
+ return s+'</svg>';
+}
+// shapes row: `whole` full shapes + one with `rem` shaded
+function shapesRow(kind,d,whole,rem,o){
+ o=o||{};let list=[];
+ for(let i=0;i<whole;i++)list.push(d);
+ if(rem>0||o.extraEmpty)list.push(rem);
+ if(o.shuffle)list=shuffle(list);
+ const sz=o.size||(list.length>4?88:104);
+ return `<div class="shapes">`+list.map(k=>shapeSVG(kind,d,i=>i<k,{size:sz})).join('')+`</div>`;
+}
+function tapShapes(kind,d,count){
+ let h='<div class="shapes tap" id="tapshapes">';
+ for(let s=0;s<count;s++)h+=shapeSVG(kind,d,()=>false,{size:count>4?88:104,base:s*d});
+ return h+'</div>';
+}
+// fraction wall: horizontal bars of the same width (values <= 1)
+function wall(items){
+ const W=420,H=34,gap=10,lab=70;
+ let s=`<svg viewBox="0 0 ${W+lab+10} ${items.length*(H+gap)+4}" width="${Math.min(520,W+lab+10)}" role="img" aria-label="fraction bars">`;
+ items.forEach((it,r)=>{const y=r*(H+gap)+2;const w=W/it.d;
+  s+=`<text x="${lab-8}" y="${y+H/2+6}" text-anchor="end" font-size="20" font-weight="800" fill="#2b2350">${it.n}/${it.d}</text>`;
+  for(let i=0;i<it.d;i++)s+=`<rect x="${lab+i*w}" y="${y}" width="${w}" height="${H}" fill="${i<it.n?(it.col||'#ffc83a'):'#fff'}" stroke="#2b2350" stroke-width="2"/>`});
+ return s+'</svg>';
+}
+// operation bar for add/subtract: d pieces, n1 first group, n2 second group
+function opBar(d,n1,n2,op){
+ const W=420,H=34,w=W/d;let s=`<svg viewBox="0 0 440 60" width="480" role="img" aria-label="bar of ${d} equal pieces">`;
+ for(let i=0;i<d;i++){let f='#fff';
+  if(op==='+'){if(i<n1)f='#6fb1ff';else if(i<n1+n2)f='#ffb347'}
+  else{if(i<n1-n2)f='#6fb1ff';else if(i<n1)f='#ffc2c2'}
+  s+=`<rect x="${10+i*w}" y="4" width="${w}" height="${H}" fill="${f}" stroke="#2b2350" stroke-width="2"/>`;
+  if(op==='-'&&i>=n1-n2&&i<n1)s+=`<line x1="${10+i*w+4}" y1="8" x2="${10+(i+1)*w-4}" y2="${H}" stroke="#d9534f" stroke-width="3"/>`}
+ s+=`<text x="220" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#2b2350">${d} equal pieces in the whole bar</text>`;
+ return s+'</svg>';
+}
+// number line from 0..max with minor ticks every 1/tickD
+function numberLine(max,tickD,marks,showLabels){
+ const X0=30,X1=610,U=(X1-X0)/max;
+ let s=`<svg viewBox="0 0 640 128" width="640" style="max-width:100%" role="img" aria-label="number line">`;
+ s+=`<line x1="${X0}" y1="70" x2="${X1}" y2="70" stroke="#2b2350" stroke-width="4" stroke-linecap="round"/>`;
+ for(let i=0;i<=max*tickD;i++){const x=X0+U*i/tickD,whole=i%tickD===0;
+  s+=`<line x1="${x}" y1="${whole?56:62}" x2="${x}" y2="${whole?84:78}" stroke="#2b2350" stroke-width="${whole?4:2}"/>`;
+  if(whole)s+=`<text x="${x}" y="108" text-anchor="middle" font-size="20" font-weight="800" fill="#2b2350">${i/tickD}</text>`}
+ marks.forEach(m=>{const x=X0+U*m.n/m.d;
+  s+=`<circle cx="${x}" cy="70" r="13" fill="${m.col||'#ff7a00'}" stroke="#2b2350" stroke-width="3"/>`;
+  s+=`<text x="${x}" y="${showLabels?32:46}" text-anchor="middle" font-size="22" font-weight="900" fill="#2b2350">${m.label}</text>`;
+  if(showLabels&&m.sub)s+=`<text x="${x}" y="52" text-anchor="middle" font-size="15" font-weight="700" fill="#2b2350">${m.sub}</text>`});
+ return s+'</svg>';
+}
+function chestSVG(open,sz,col){
+ col=col||'#c77a2b';
+ return `<svg viewBox="0 0 100 90" width="${sz||110}" height="${(sz||110)*.9}" aria-hidden="true">`+
+ (open?`<path d="M14 40 L20 8 Q50 -2 80 8 L86 40Z" fill="${col}" stroke="#5a3210" stroke-width="3" transform="rotate(-12 14 40)"/><ellipse cx="50" cy="42" rx="34" ry="8" fill="#ffd54a"/>`:
+ `<path d="M12 42 Q12 12 50 12 Q88 12 88 42Z" fill="${col}" stroke="#5a3210" stroke-width="3"/>`)+
+ `<rect x="12" y="40" width="76" height="40" rx="6" fill="${col}" stroke="#5a3210" stroke-width="3"/><rect x="12" y="46" width="76" height="8" fill="#e8a64a"/>`+
+ `<rect x="43" y="40" width="14" height="18" rx="3" fill="#ffd54a" stroke="#5a3210" stroke-width="2.5"/></svg>`;
+}
+function bossSVG(mood,sz){
+ const e=mood==='hit'?`<path d="M32 40 l12 8 m0-8 l-12 8 M56 40 l12 8 m0-8 l-12 8" stroke="#2b2350" stroke-width="4" stroke-linecap="round"/>`:
+  `<circle cx="38" cy="44" r="10" fill="#fff"/><circle cx="62" cy="44" r="10" fill="#fff"/><circle cx="40" cy="46" r="5" fill="#2b2350"/><circle cx="60" cy="46" r="5" fill="#2b2350"/>`;
+ const m=mood==='lose'?`<path d="M36 72 Q50 82 64 72" stroke="#2b2350" stroke-width="4" fill="none" stroke-linecap="round"/>`:
+  `<path d="M34 70 Q50 86 66 70 Z" fill="#7a1f3d" stroke="#2b2350" stroke-width="3"/><polygon points="40,71 44,71 42,77" fill="#fff"/><polygon points="56,71 60,71 58,77" fill="#fff"/>`;
+ return `<svg viewBox="0 0 100 100" width="${sz||90}" height="${sz||90}" aria-label="Grumblor the Sum-Muncher" role="img"><polygon points="22,30 28,6 40,24" fill="#6a3fb0"/><polygon points="78,30 72,6 60,24" fill="#6a3fb0"/><ellipse cx="50" cy="58" rx="42" ry="36" fill="#8a5be0" stroke="#2b2350" stroke-width="3"/>${e}${m}<circle cx="24" cy="62" r="5" fill="#c9a6ff"/><circle cx="76" cy="62" r="5" fill="#c9a6ff"/></svg>`;
+}
+function pizzaSVG(sl,done,tops,sz){ // sl slices, done filled
+ let s=`<svg viewBox="0 0 100 100" width="${sz||70}" height="${sz||70}" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#e9a951" stroke="#a35a1c" stroke-width="3"/>`;
+ for(let i=0;i<sl;i++){const a0=(-90+360*i/sl)*Math.PI/180,a1=(-90+360*(i+1)/sl)*Math.PI/180;
+  const x0=50+43*Math.cos(a0),y0=50+43*Math.sin(a0),x1=50+43*Math.cos(a1),y1=50+43*Math.sin(a1);
+  s+=`<path d="M50 50 L${x0.toFixed(1)} ${y0.toFixed(1)} A43 43 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}Z" fill="${i<done?'#ffd86b':'#f6efe0'}" stroke="#a35a1c" stroke-width="1.6"/>`;
+  if(i<done){const am=(a0+a1)/2;for(let t=0;t<Math.min(1+tops,3);t++){const rr=18+t*10,cx=50+rr*Math.cos(am+(t-1)*.06),cy=50+rr*Math.sin(am+(t-1)*.06);s+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="3.4" fill="${['#d9453a','#3f8f3f','#6b3f2a'][t]}"/>`}}}
+ return s+'</svg>';
+}
+/* ===== answer checking (pure maths) ===== */
+function evalSlot(slot,e){
+ if(slot.kind==='num'){
+  if(e.n==='')return{st:'incomplete',msg:'Type a number first.'};
+  return +e.n===slot.ans?{st:'ok'}:{st:'wrong'};
+ }
+ const wg=e.w!=='',ng=e.n!=='',dg=e.d!=='';
+ if(slot.form==='mixed'){if(!wg||!ng||!dg)return{st:'incomplete',msg:'Fill in all three boxes: the whole number, the top, and the bottom.'}}
+ else if(slot.form==='simple'){if(!((wg&&!ng&&!dg)||(ng&&dg)))return{st:'incomplete',msg:'Fill in the top and bottom boxes (and the whole box if there is one).'}}
+ else if(!ng||!dg)return{st:'incomplete',msg:'Fill in both the top and the bottom box.'};
+ if(dg&&+e.d===0)return{st:'incomplete',msg:'The bottom number can\u2019t be 0. How many equal pieces make one whole?'};
+ const W=wg?+e.w:0,hasFrac=ng&&dg;
+ const num=hasFrac?W*(+e.d)+ +e.n:W,den=hasFrac?+e.d:1;
+ if(num*slot.td!==slot.tn*den)return{st:'wrong'};
+ if(wg&&W>0&&hasFrac&&+e.n>=+e.d)return{st:'form',msg:'In a mixed number the fraction part is less than one whole: its top is smaller than its bottom.'};
+ if(slot.form==='mixed'&&hasFrac&&+e.n===0)return{st:'form',msg:'A mixed number needs a fraction part. Check the picture again.'};
+ if(slot.src&&e.w===slot.src.w&&e.n===slot.src.n&&e.d===slot.src.d)return{st:'unchanged',msg:'That is the same fraction we started with. Find a number that divides both the top and the bottom.'};
+ if(hasFrac&&gcd(+e.n,+e.d)>1)return{st:'unsimp'};
+ return{st:'ok'};
+}
+const E0=()=>({w:'',n:'',d:''});
+function opStr(op){return op==='+'?'+':'\u2212'}
+
+/* ===== question generators ===== */
+const gens={};
+const kindFor=d=>pick(kindsFor(d));
+
+/* ---- s1: equivalent fractions & simplifying ---- */
+gens.s1=function(t){return ({simp:gSimp,eq:gEquiv,gcf:gGcf,eqmc:gEqMC})[wpick([['simp',5],['eq',2],['gcf',1.5],['eqmc',1.5]])](t)};
+function gSimp(t){
+ let a,b,k;const bs=t===1?[2,3,4,5]:t===2?[3,4,5,6,7]:[3,4,5,7,8,9],ks=t===1?[2,3]:t===2?[2,3,4,5]:[3,4,5,6,7,8],lim=t===1?12:t===2?20:36;
+ do{b=pick(bs);a=rnd(1,b-1);if(t===3&&b>2&&Math.random()<.25)a=rnd(b+1,2*b-1);k=pick(ks)}while(gcd(a,b)!==1||b*k>lim);
+ const n=a*k,d=b*k,show=n<=d;
+ return{skill:'s1',kind:'entry',label:`simplify ${n}/${d}`,
+  prompt:`Write ${fr(n,d)} in <b>simplest form</b>.`,
+  model:(show&&t===1)?wall([{n,d}]):'',hintModel:show?wall([{n,d},{n:a,d:b,col:'#6fd08a'}]):'',
+  slots:[{kind:'frac',fields:['n','d'],form:'frac',tn:a,td:b,src:{w:'',n:String(n),d:String(d)}}],
+  gcfAlways:[n,d],
+  hintFn:({wrong})=>wrong<1?`Find a number that goes into <b>both</b> ${n} and ${d}. Divide the top <b>and</b> the bottom by it.`:`Try dividing both by <b>${k}</b>: ${n} \u00F7 ${k} and ${d} \u00F7 ${k}.`,
+  explain:`Divide the top and bottom by the <b>biggest number that goes into both</b>: ${n} \u00F7 ${k} = ${a} and ${d} \u00F7 ${k} = ${b}. So ${tx(n,d)} = <b>${tx(a,b)}</b>.`};
+}
+function gEquiv(t){
+ let a,b,k;const bs=t===1?[2,3,4,5]:t===2?[3,4,5,6,7]:[3,4,5,6,7,8,9];
+ do{b=pick(bs);a=rnd(1,b-1);k=rnd(2,t===1?4:t===2?6:9)}while(gcd(a,b)!==1);
+ const fwd=t===1||Math.random()<.6;
+ const left=fwd?fr(a,b):fr(a*k,b*k),ans=fwd?a*k:a,fixd=fwd?b*k:b;
+ return{skill:'s1',kind:'entry',label:fwd?`${a}/${b} = ?/${b*k}`:`${a*k}/${b*k} = ?/${b}`,
+  prompt:'Make the fractions <b>equal</b>. What number goes in the box?',
+  slots:[{kind:'num',fields:['n'],ans,fixed:{d:fixd},pre:left+'<span>=</span>'}],
+  hintModel:wall([{n:a,d:b},{n:a*k,d:b*k,col:'#6fd08a'}]),
+  hintFn:({wrong})=>fwd?(wrong<1?`The bottom changed from ${b} to ${b*k}. What did we <b>multiply</b> ${b} by? Do the same to the top.`:`${b} \u00D7 ${k} = ${b*k}, so the top is ${a} \u00D7 ${k}.`):(wrong<1?`The bottom changed from ${b*k} to ${b}. What did we <b>divide</b> by? Do the same to the top.`:`${b*k} \u00F7 ${k} = ${b}, so the top is ${a*k} \u00F7 ${k}.`),
+  explain:fwd?`${b} \u00D7 ${k} = ${b*k}, so multiply the top by ${k} too: ${a} \u00D7 ${k} = <b>${ans}</b>.`:`${b*k} \u00F7 ${k} = ${b}, so divide the top by ${k} too: ${a*k} \u00F7 ${k} = <b>${ans}</b>.`};
+}
+function gGcf(t){
+ let g,x,y;const gs=t===1?[2,3,4,5]:t===2?[4,6,7,8,9]:[6,8,9,12,14,15];
+ do{g=pick(gs);x=rnd(2,t===1?6:8);y=rnd(2,t===1?6:8)}while(x===y||gcd(x,y)!==1||g*Math.max(x,y)>72);
+ const m=g*x,n=g*y;
+ return{skill:'s1',kind:'entry',label:`biggest divider of ${m} and ${n}`,
+  prompt:`<b>Power-up puzzle:</b> what is the <b>biggest</b> number that divides evenly into both <b>${m}</b> and <b>${n}</b>?`,
+  slots:[{kind:'num',fields:['n'],ans:g}],gcfAlways:[m,n],
+  hintFn:({wrong,e})=>{const v=+e[0].n;if(v>1&&m%v===0&&n%v===0&&v<g)return`Yes, <b>${v}</b> divides both! But is there an <b>even bigger</b> number that does too?`;
+   return wrong<1?`List the numbers that go into ${m}. Then see which of them also go into ${n}. Pick the biggest.`:`Tap the Biggest Divider power-up to see the lists side by side.`},
+  explain:`${m} = ${g} \u00D7 ${x} and ${n} = ${g} \u00D7 ${y}, so the biggest number that divides both is <b>${g}</b>.`};
+}
+function gEqMC(t){
+ let a,b,k;do{b=rnd(2,t===1?5:7);a=rnd(1,b-1);k=rnd(2,t===1?3:5)}while(gcd(a,b)!==1);
+ const eq=(n1,d1)=>n1*b===a*d1;
+ const cands=[[a+k,b+k,'Adding the same number to the top and bottom changes the fraction. Equivalent fractions <b>multiply</b> (or divide) both by the same number.'],[a*k,b,'The bottom must change too! Whatever you multiply the top by, multiply the bottom by the same number.'],[a,b*k,'The bottom changed but the top did not. Do the same thing to both.'],[a+1,b+1,'Adding 1 to both numbers does not keep the fraction equal. Try multiplying.'],[a*k+1,b*k,'Close, but the top is off by one. Multiply both by the same number and check.']].filter(c=>!eq(c[0],c[1]));
+ const seen=new Set([fr(a*k,b*k)]);const ds=shuffle(cands).filter(c=>{const h=fr(c[0],c[1]);if(seen.has(h))return false;seen.add(h);return true}).slice(0,3);
+ const opts=shuffle([{html:fr(a*k,b*k),ok:true},...ds.map(c=>({html:fr(c[0],c[1]),hint:c[2]}))]);
+ return{skill:'s1',kind:'mc',label:`which equals ${a}/${b}`,prompt:`Which fraction is <b>equal</b> to ${fr(a,b)}?`,options:opts,
+  hintModel:wall([{n:a,d:b},{n:a*k,d:b*k,col:'#6fd08a'}]),
+  hintFn:()=>`Equal fractions come from <b>multiplying (or dividing) the top and bottom by the same number</b>.`,
+  explain:`${a}/${b} \u00D7 ${k}/${k} = ${a*k}/${b*k}. Same amount, just cut into smaller pieces.`};
+}
+
+/* ---- s2: add / subtract like denominators, then simplify ---- */
+const GAPS=[[9,3,10,'-'],[13,1,14,'-'],[11,7,12,'-'],[14,11,15,'-'],[7,1,12,'-'],[3,3,16,'+'],[4,6,11,'+'],[5,1,6,'-'],[7,3,8,'-'],[9,5,12,'-']];
+gens.s2=function(t){
+ let d,n1,n2,op,res,tries=0,needS;
+ const ds=t===1?[5,6,8,9,10,12]:t===2?[7,8,10,11,12,14,15,16]:[8,9,10,11,12,14,15,16];
+ if(Math.random()<.25){const g=pick(GAPS);[n1,n2,d,op]=g;res=op==='+'?n1+n2:n1-n2}
+ else do{
+  d=pick(ds);op=Math.random()<.5?'+':'-';
+  if(op==='-'){n1=rnd(3,d-1);n2=rnd(1,n1-1)}
+  else{n1=rnd(1,d-2);n2=t===3?rnd(2,d-1):rnd(1,d-1-n1)}
+  res=op==='+'?n1+n2:n1-n2;needS=gcd(res,d)>1;tries++;
+ }while((res%d===0||res===0||(!needS&&Math.random()<.6&&tries<20)||(op==='+'&&t<3&&res>=d)));
+ const g=gcd(res,d),rn=res/g,rd=d/g,improper=res>d;
+ const slot=improper?{kind:'frac',fields:['w','n','d'],form:'mixed',tn:rn,td:rd,caption:{w:'whole',n:'top',d:'bottom'}}:{kind:'frac',fields:['n','d'],form:'frac',tn:rn,td:rd};
+ const fin=improper?mx(Math.floor(rn/rd),rn%rd,rd):fr(rn,rd);
+ return{skill:'s2',kind:'entry',label:`${n1}/${d} ${op} ${n2}/${d}`,
+  prompt:`${fr(n1,d)} <b>${opStr(op)}</b> ${fr(n2,d)} = ?<br><small>${improper?'Write the answer as a mixed number in <b>simplest form</b>.':'Write the answer in <b>simplest form</b>.'}</small>`,
+  slots:[slot],hintModel:opBar(d,n1,n2,op),
+  needsSimp:g>1,
+  hintFn:({wrong,e})=>{const x=e[0],ed=+x.d,en=+x.n;
+   if(x.d!==''&&ed>d){bumpTag('den_changed');return`The bottom number <b>stays ${d}</b>. The pieces are still ${d}ths, so we only ${op==='+'?'add':'subtract'} the <b>tops</b>.`}
+   if(x.n!==''&&en===(op==='+'?Math.abs(n1-n2):n1+n2)){bumpTag('wrong_op');return`Look at the sign again: it is a <b>${op==='+'?'plus':'minus'}</b>. ${op==='+'?'Put the pieces together.':'Take pieces away.'}`}
+   return wrong<1?`Same-size pieces! Just count pieces: ${n1} ${opStr(op)} ${n2} = ?. The bottom stays ${d}.`:`${n1} ${opStr(op)} ${n2} = <b>${res}</b>, so you have ${res}/${d}. ${g>1?'Can it be simplified? ':''}Check your boxes.`},
+  explain:`${n1}/${d} ${opStr(op)} ${n2}/${d} = ${res}/${d}`+(g>1||improper?` = ${txm(rn,rd)}`:'')+(g>1?` (divide top and bottom by ${g})`:'')+`. The bottom stays ${d}.`,
+  gcfDyn:true};
+};
+
+/* ---- s3 / s4: models ---- */
+function modelParams(t){
+ const dd=t===1?[2,3,4,5,6]:t===2?[3,4,5,6,8,10]:[4,5,6,7,8,9,10,12];
+ const d=pick(dd),w=t===1?rnd(1,2):t===2?rnd(1,3):rnd(2,4),rem=pick(coprimes(d));
+ return{d,w,rem,n:w*d+rem,kind:kindFor(d)};
+}
+gens.s3=function(t){
+ const m=modelParams(t),{d,w,rem,n,kind}=m;
+ if(Math.random()<.3){ // shade it
+  const mixed=t>=2&&Math.random()<.4;
+  return{skill:'s3',kind:'shade',label:`shade ${n}/${d}`,
+   prompt:mixed?`Tap pieces to shade <b>${mixed?mx(w,rem,d):''}</b>.`:`Tap pieces to shade ${fr(n,d)}.`,
+   shapeKind:kind,d,shapes:w+1,target:n,
+   hintFn:({wrong})=>wrong<1?`The <b>bottom</b> number says how many pieces are in <b>one</b> shape (${d}). The <b>top</b> number says how many pieces to shade in all.`:`${mixed?`${w} whole shape${w>1?'s':''} \u2192 ${w} \u00D7 ${d} = ${w*d} pieces, plus ${rem} more`:`Shade ${w} full shape${w>1?'s':''} (${w*d} pieces) and then ${rem} more`} = <b>${n}</b> pieces in all.`,
+   explain:`${mixed?txm(n,d):tx(n,d)} means ${n} shaded pieces when each shape has ${d} pieces. That is ${w} full shape${w>1?'s':''} and ${rem} extra piece${rem>1?'s':''}.`};
+ }
+ return{skill:'s3',kind:'entry',label:`model \u2192 ${n}/${d}`,
+  prompt:`Write the shaded amount as an <b>improper fraction</b>.`,
+  model:shapesRow(kind,d,w,rem,{shuffle:t===3}),
+  slots:[{kind:'frac',fields:['n','d'],form:'frac',tn:n,td:d,caption:t<3?{n:'ALL shaded pieces',d:'pieces in ONE shape'}:null}],
+  hintFn:({e,wrong})=>{
+   if(e[0].n!==''&&+e[0].n===d&&+e[0].d===n){bumpTag('flip');return`The top and bottom traded places. The <b>bottom</b> is how many pieces make <b>one</b> shape. The top is all the shaded pieces.`}
+   if(e[0].d!==''&&+e[0].d!==d)return`The bottom number is how many equal pieces make <b>ONE</b> whole shape. Count the slices in a single shape.${wrong>=1?` (There are ${d}.)`:''}`;
+   return`The top number counts <b>every</b> shaded piece in <b>all</b> the shapes. Count them one by one.${wrong>=1?` Each full shape has ${d}: ${w} \u00D7 ${d} = ${w*d}, then add the ${rem} in the last shape.`:''}`},
+  explain:`Count all the shaded pieces: ${w} full shape${w>1?'s':''} \u00D7 ${d} pieces = ${w*d}, plus ${rem} more = ${n}. Each shape has ${d} pieces. So it is <b>${tx(n,d)}</b>.`};
+};
+gens.s4=function(t){
+ const m=modelParams(t),{d,w,rem,n,kind}=m;
+ if(w>=2&&Math.random()<.28){ // spot the mix-up (octagon-style trap)
+  const wrongs=[[d,rem,w,`This one traded the <b>whole number</b> and the <b>bottom number</b>. The wholes count full shapes (${w}); the bottom number is how many pieces in ONE shape (${d}).`,'swap'],
+   [w+1,rem,d,`Count the <b>full</b> shapes only for the whole number. The partly shaded shape is the fraction part.`],
+   [w,d-rem,d,`The fraction part counts the <b>shaded</b> pieces, not the empty ones.`]];
+  const okh=mx(w,rem,d);const opts=shuffle([{html:okh,ok:true},...wrongs.map(x=>({html:mx(x[0],x[1],x[2]),hint:x[3],tag:x[4]})).filter((o,i,arr)=>o.html!==okh&&arr.findIndex(z=>z.html===o.html)===i)]);
+  return{skill:'s4',kind:'mc',label:`pick mixed number for model`,prompt:`Which mixed number matches the picture?`,model:shapesRow(kind,d,w,rem),options:opts,
+   hintFn:()=>`The wholes count full shapes; the bottom number is how many pieces in ONE shape.`,
+   explain:`${w} full shape${w>1?'s':''}, plus ${rem} of ${d} pieces shaded in the last one: <b>${w} ${rem}/${d}</b>.`};
+ }
+ return{skill:'s4',kind:'entry',label:`model \u2192 ${w} ${rem}/${d}`,
+  prompt:`Write the picture as a <b>mixed number</b>: [whole] [top/bottom].`,
+  model:shapesRow(kind,d,w,rem,{shuffle:t===3}),
+  slots:[{kind:'frac',fields:['w','n','d'],form:'mixed',tn:n,td:d,meta:{w,d},caption:t<3?{w:'FULL shapes',n:'shaded pieces left over',d:'pieces in ONE shape'}:null}],
+  hintFn:({e,wrong})=>{const x=e[0];
+   if(x.w!==''&&+x.w===d&&+x.d===w&&w!==d){bumpTag('swap');return`The whole number and the bottom number traded places. <b>The wholes count full shapes; the bottom number is how many pieces in ONE shape.</b>`}
+   if(x.d!==''&&+x.d!==d)return`The bottom number is how many pieces are in <b>ONE</b> shape. Count the slices in just one shape.${wrong>=1?` (${d})`:''}`;
+   if(x.w!==''&&+x.w!==w)return`The whole number counts the shapes that are completely shaded.${wrong>=1?` There are ${w}.`:''}`;
+   return`The top number is how many pieces are shaded in the <b>partly</b> shaded shape.${wrong>=1?` (${rem})`:''}`},
+  explain:`${w} full shape${w>1?'s':''} \u2192 whole number <b>${w}</b>. The last shape has ${rem} of ${d} pieces shaded \u2192 <b>${rem}/${d}</b>. Together: <b>${w} ${rem}/${d}</b>.`};
+};
+
+/* ---- s5: convert both ways ---- */
+gens.s5=function(t){
+ const toImp=Math.random()<.5;
+ const dd=t===1?[2,3,4,5,6]:t===2?[3,4,5,6,8,10]:[4,5,6,7,8,9,10,12];
+ if(toImp){
+  const d=pick(dd),w=rnd(1,t===1?4:t===2?6:9),rem=pick(coprimes(d)),n=w*d+rem;
+  return{skill:'s5',kind:'entry',label:`${w} ${rem}/${d} \u2192 improper`,prompt:`Change ${mx(w,rem,d)} into an <b>improper fraction</b>.`,
+   slots:[{kind:'frac',fields:['n','d'],form:'frac',tn:n,td:d}],
+   hintModel:shapesRow(pick(kindsFor(d)),d,w,rem,{size:70}),
+   hintFn:({wrong})=>wrong<1?`<b>Whole \u00D7 bottom, then add the top.</b> The bottom stays the same.`:`${w} \u00D7 ${d} = ${w*d}. Then ${w*d} + ${rem} = ${n}. Keep ${d} on the bottom.`,
+   explain:`${w} \u00D7 ${d} = ${w*d} pieces in the wholes, plus ${rem} = ${n}. Keep the bottom: <b>${tx(n,d)}</b>.`};
+ }
+ let d0=pick(dd),w=rnd(1,t===1?3:t===2?5:8),k=1,rem0=pick(coprimes(d0));
+ if(t>=2&&d0<=6&&Math.random()<.5){k=2}
+ const d=d0*k,rem=rem0*k,n=w*d+rem;
+ return{skill:'s5',kind:'entry',label:`${n}/${d} \u2192 mixed`,prompt:`Change ${fr(n,d)} into a <b>mixed number</b>${k>1?' in simplest form':''}.`,
+  slots:[{kind:'frac',fields:['w','n','d'],form:'mixed',tn:n,td:d,caption:{w:'whole',n:'top',d:'bottom'}}],
+  hintModel:'',
+  hintFn:({wrong})=>wrong<1?`How many <b>full wholes</b> fit? ${d} pieces make 1 whole. Divide ${n} \u00F7 ${d}. The leftover pieces are the new top.`:`${n} \u00F7 ${d} = ${w} with ${rem} left over. So ${w} whole${w>1?'s':''} and ${rem}/${d}${k>1?' (then simplify!)':''}.`,
+  explain:`${n} \u00F7 ${d} = ${w} remainder ${rem}. So ${tx(n,d)} = ${w} ${rem}/${d}${k>1?` = <b>${w} ${rem0}/${d0}</b> (divide top and bottom by ${k})`:`, written <b>${w} ${rem}/${d}</b>`}.`};
+};
+
+/* ---- s6: compare & order ---- */
+const val=(n,d)=>n/d;
+gens.s6=function(t){return ({cmp:gCmp,ord:gOrd,nl:gNL})[wpick([['cmp',4],['ord',3],['nl',3]])](t)};
+function gCmp(t){
+ let A,B,why;
+ if(t===1){const d=rnd(5,12);let a=rnd(1,d-1),b=rnd(1,d-1);if(a===b)b=a%(d-1)+1;A={n:a,d};B={n:b,d};why='same'}
+ else if(t===2){const r=pick(['num','half','eq']);
+  if(r==='num'){const n=rnd(1,5);let d1=rnd(n+1,10),d2=rnd(n+1,10);if(d1===d2)d2=d1===10?9:d1+1;A={n,d:d1};B={n,d:d2};why='num'}
+  else if(r==='half'){const d1=pick([3,5,7,9]),d2=pick([4,6,8,10]);A={n:Math.ceil(d1/2),d:d1};B={n:Math.floor(d2/2)+ (Math.random()<.5?1:0),d:d2};if(B.n>=d2)B.n=d2-1;why='half'}
+  else{const a=rnd(1,4),b=a+rnd(1,3),k=rnd(2,3);A={n:a*k,d:b*k};B={n:a*(k+1),d:b*(k+1)};if(Math.random()<.5){B={n:a,d:b}}else if(Math.random()<.5&&B.n+1<B.d)B.n+=1;why='eq'}}
+ else{const r=pick(['mi','mm']);
+  if(r==='mi'){const d=pick([3,4,5,6,8]),w=rnd(1,3),rem=rnd(1,d-1);A={n:w*d+rem,d,mixed:true};B={n:(w*d+rem)+pick([-2,-1,0,1,2]),d};if(B.n<=0)B.n=d+1;why='mi'}
+  else{const w=rnd(1,4);const d1=pick([2,3,4,5,6,8]),d2=pick([2,3,4,5,6,8]);A={n:w*d1+rnd(1,d1-1),d:d1,mixed:true};B={n:w*d2+rnd(1,d2-1),d:d2,mixed:true};why='mm'}}
+ const cmp=A.n*B.d-B.n*A.d,ans=cmp<0?'<':cmp>0?'>':'=';
+ const sh=f=>f.mixed?mx(Math.floor(f.n/f.d),f.n%f.d,f.d):fr(f.n,f.d);
+ const small=A.n<=A.d&&B.n<=B.d;
+ const hm=small?wall([{n:A.n,d:A.d,col:'#6fb1ff'},{n:B.n,d:B.d,col:'#ffb347'}]):null;
+ const L=lcm(A.d,B.d);
+ const tick=L<=24?L:Math.max(A.d,B.d);
+ const nlmax=Math.ceil(Math.max(A.n/A.d,B.n/B.d))||1;
+ const names={'<':'is less than','>':'is greater than','=':'is equal to'};
+ const hints={same:'Same size pieces (same bottom), so the bigger <b>top</b> means more pieces. Picture the bars.',num:'Same number of pieces, but look at the sizes: a <b>bigger bottom number means smaller pieces</b>.',half:'Is each fraction smaller or bigger than <b>one half</b>? Compare them to 1/2.',eq:'Try making the bottoms match, or check the bars: do they reach the same spot?',mi:'Turn the mixed number into an improper fraction (or the other way), then compare.',mm:'Compare the <b>whole numbers</b> first. If they tie, compare the fractions.'};
+ return{skill:'s6',kind:'mc',sym:true,label:`compare ${txm(A.n,A.d)} and ${txm(B.n,B.d)}`,prompt:`Which sign makes this true?<br><span style="font-size:1.6em">${sh(A)} <b>?</b> ${sh(B)}</span>`,
+  options:['<','=','>'].map(s=>({html:s,ok:s===ans,hint:'Look again at the picture below. '+hints[why]})),
+  hintModel:hm||numberLine(nlmax,tick,[{n:A.n,d:A.d,label:'A',col:'#6fb1ff',sub:txm(A.n,A.d)},{n:B.n,d:B.d,label:'B',col:'#ffb347',sub:txm(B.n,B.d)}],true),
+  hintFn:()=>hints[why],
+  explain:`${txm(A.n,A.d)} ${names[ans]} ${txm(B.n,B.d)}. Picture the bars or the number line: the one farther right is bigger.`};
+}
+function gOrd(t){
+ let items;
+ for(let tries=0;tries<60;tries++){
+  if(t===1){const d=rnd(5,12);items=shuffle([1,2,3,4,5,6,7,8,9,10,11].filter(x=>x<d)).slice(0,3).map(n=>({n,d}))}
+  else if(t===2){const base=pick([[2,4,8],[3,6,12],[2,4,6],[5,10,10]]);items=[0,1,2].map(i=>{const d=base[i];return{n:rnd(1,d-1),d}})}
+  else{const base=pick([[2,4,8],[3,6,12],[2,4,6,12]]);items=[0,1,2].map(i=>{const d=pick(base);const w=rnd(0,2);return{n:w*d+rnd(1,d-1),d}})}
+  const vs=items.map(i=>i.n/i.d);if(new Set(vs.map(v=>v.toFixed(5))).size===3)break;
+ }
+ const sorted=items.slice().sort((a,b)=>a.n*b.d-b.n*a.d);
+ const max=Math.max(1,Math.ceil(Math.max(...items.map(i=>i.n/i.d))));
+ const L=items.reduce((l,i)=>lcm(l,i.d),1);
+ const marks=sorted.map((it,k)=>({n:it.n,d:it.d,label:'ABC'[items.indexOf(it)],col:['#6fb1ff','#ffb347','#6fd08a'][items.indexOf(it)],sub:txm(it.n,it.d)}));
+ return{skill:'s6',kind:'order',label:`order ${items.map(i=>txm(i.n,i.d)).join(', ')}`,prompt:`Tap the numbers in order from <b>least</b> to <b>greatest</b>.`,
+  items:items.map((it,i)=>({html:showVal(it.n,it.d)})),order:sorted.map(s=>items.indexOf(s)),
+  hintModel:numberLine(max,L<=24?L:items[0].d,marks,true),
+  hintFn:()=>`Picture each number on the number line. The one farthest <b>left</b> is the least. Look at the line below!`,
+  explain:`From least to greatest: ${sorted.map(i=>txm(i.n,i.d)).join(' < ')}.`};
+}
+function gNL(t){
+ const d=pick(t===1?[2,3,4,5]:[3,4,5,6,8]),max=t===1?1:t===2?2:3;
+ const ks=shuffle(Array.from({length:max*d-1},(_,i)=>i+1)).slice(0,3);
+ const marks=ks.map((k,i)=>({n:k,d,label:'ABC'[i],col:['#6fb1ff','#ffb347','#6fd08a'][i]}));
+ const ti=rnd(0,2),tk=ks[ti];
+ const asMixed=tk>d&&Math.random()<.5;
+ const lab=asMixed?mx(Math.floor(tk/d),tk%d,d):fr(tk,d);
+ const g=gcd(tk,d);
+ const opts=['A','B','C'].map((L,i)=>({html:L,ok:i===ti,hint:`Each little step is ${fr(1,d)}. Count steps from 0 to find where it lands.`}));
+ return{skill:'s6',kind:'mc',label:`find ${txm(tk,d)} on the line`,prompt:`Which point shows ${lab} ?`,model:numberLine(max,d,marks,false),options:opts,
+  hintFn:()=>`The line is cut into ${d} equal steps between each whole number. Count the steps from 0.`,
+  explain:`${txm(tk,d)} is ${tk} steps of ${tx(1,d)} from 0. That lands on point <b>${'ABC'[ti]}</b>.`};
+}
+
+/* ---- s7: path chain (like a challenge path) ---- */
+gens.s7=function(t){
+ const d=pick(t===1?[8,6]:t===2?[10,12,8]:[12,12,9,10]);
+ let k;for(let tries=0;tries<200;tries++){k=[0,1,2,3].map(()=>rnd(1,d-1));if(k.every((x,i)=>x!==k[(i+1)%4]))break}
+ const fx=(a,dd)=>{const g=gcd(a,dd);return[a/g,dd/g]};
+ const nodes=k.map(x=>fx(x,d));
+ const steps=k.map((x,i)=>{const delta=k[(i+1)%4]-x;const [a,b]=fx(Math.abs(delta),d);return{sign:delta>0?'+':'-',n:a,d:b,raw:Math.abs(delta)}});
+ const slots=[1,2,3].map(j=>({kind:'frac',fields:['n','d'],form:'frac',tn:nodes[j][0],td:nodes[j][1],nodeIdx:j}));
+ return{skill:'s7',kind:'entry',layout:'chain',label:'path chain',prompt:'Follow the path! Add or subtract along each arrow. Write each fraction in <b>simplest form</b>.',
+  chain:{nodes,steps,d},slots,
+  hintFn:({i,wrong})=>{const j=slots[i].nodeIdx,p=j-1,st=steps[p];
+   return wrong<1?`Start from the previous box (${tx(nodes[p][0],nodes[p][1])}) and do <b>${opStr(st.sign)} ${tx(st.n,st.d)}</b>. Make the bottoms match first (use ${d}ths).`:
+   `${k[p]}/${d} ${opStr(st.sign)} ${st.raw}/${d} = ${k[j]}/${d}. Now simplify it.`},
+  explain:'Going around: '+k.map((x,i)=>`${tx(nodes[i][0],nodes[i][1])} ${opStr(steps[i].sign)} ${tx(steps[i].n,steps[i].d)}`).join(' \u2192 ')+` \u2192 back to ${tx(nodes[0][0],nodes[0][1])}. Each answer is in simplest form.`};
+};
+function bumpTag(t){S.tags[t]=(S.tags[t]||0)+1;if(typeof G!=='undefined'&&G&&G.qs)G.qs.tags.push(t)}
+/* ===== game session & engine ===== */
+let G=null;           // current run
+let ES=null;          // entry state for current question
+const MODES={
+ quest:{name:'Chest Cove',tag:'Answer to open treasure chests: gold, doubles, and friendly steals from the bots!',total:12},
+ pizza:{name:'Pizza Palace',tag:'Serve fraction orders, earn coins, and upgrade your pizza shop.',total:10},
+ boss:{name:'Grumblor\u2019s Lair',tag:'Zap the Sum-Muncher with correct answers, then finish him with a path chain!',total:99}
+};
+const RIVALS=[{n:'Biscuit',ci:1},{n:'Zippy',ci:5},{n:'Captain Crumb',ci:3}];
+const CUST=['Mr. Crumble','Ms. Olive','Chef Pepper','Little Lola','Captain Cheddar','Mrs. Basil','Dr. Dough','Farmer Finn','Pip the Plumber','Gran Gina'];
+const TAGNAME={unsimplified:'Answered correctly but needed a nudge to simplify',swap:'Swapped the whole number and the bottom number',den_changed:'Changed the bottom number when adding/subtracting',wrong_op:'Mixed up + and \u2212',flip:'Flipped top and bottom'};
+const REW={full:10,partial:9,retry:5,shown:0};
+
+function applyFS(){document.documentElement.style.setProperty('--fs',[20,23,26][S.settings.big||0]+'px')}
+applyFS();
+
+function addLifetime(x){
+ if(x<=0)return;S.gold+=x;
+ for(let i=0;i<CREATURES.length;i++){
+  if(S.gold>=UNLOCK[i]&&!S.owned.includes(i)){S.owned.push(i);if(G)G.newC.push(i);
+   setTimeout(()=>{toast('New friend unlocked: '+CREATURES[i].n+'!',3200);confetti(90);sfx('win')},400)}}
+ save();
+}
+function award(x){
+ if(x<=0)return;G.score+=x;
+ if(G.mode==='quest')G.gold+=x;else if(G.mode==='pizza')G.coins+=x;
+ addLifetime(x);sfx('coin');updateHud();
+}
+
+/* ----- run start / end ----- */
+function startRun(mode,level){
+ G={mode,level,t0:Date.now(),qn:0,total:MODES[mode].total,answered:0,full:0,partial:0,retry:0,shown:0,score:0,power:3,revisit:[],last:[],q:null,qs:null,newC:[],streak:0,skillsSeen:{},stage:'q',hintsUsed:0};
+ if(mode==='quest'){G.gold=0;G.hoard=40;G.rivals=RIVALS.map(r=>({n:r.n,ci:r.ci,gold:0}))}
+ if(mode==='pizza'){G.coins=0;G.up={oven:0,sign:0,helper:0,tops:0};G.cust=null}
+ if(mode==='boss'){G.hp=20;G.maxhp=20;G.finale=false;G.mood='idle'}
+ audio();
+ renderShell();nextQuestion();
+}
+function renderShell(){
+ $('#screen').innerHTML=`<div class="hud" id="hud"></div><div class="strip" id="strip"></div>
+ <div class="main"><section class="card" id="qcard" aria-live="polite"></section><section class="card" id="padcard"></section></div>`;
+ updateHud();
+}
+function updateHud(){
+ if(!G||!$('#hud'))return;
+ const m=MODES[G.mode];
+ let h=`<button class="btn small ghost" data-act="quit">\u2190 Home</button><span class="pill">${m.name}</span>`;
+ if(G.mode==='quest')h+=`<span class="pill g">Gold: ${G.gold}</span><span class="pill">Question ${Math.min(G.qn,G.total)} of ${G.total}</span>`;
+ if(G.mode==='pizza')h+=`<span class="pill g">Coins: ${G.coins}</span><span class="pill">Order ${Math.min(G.qn,G.total)} of ${G.total}</span>`;
+ if(G.mode==='boss')h+=`<span class="pill g">Gold: ${G.score}</span><span class="pill">${G.finale?'Final path!':'Zap '+Math.max(G.qn,1)}</span>`;
+ h+=`<span class="pill" title="Correct in a row">Streak: ${G.streak}</span><span class="pill" title="Power-ups left">Biggest Divider: ${G.power}</span><span class="sp"></span>`;
+ if(G.mode==='pizza')h+=`<button class="btn small gold" data-act="shop">Shop</button>`;
+ h+=`<button class="btn small ghost" data-act="mute" aria-label="Toggle sound">${S.settings.mute?'Sound: off':'Sound: on'}</button>`;
+ $('#hud').innerHTML=h;
+ const st=$('#strip');if(!st)return;
+ if(G.mode==='quest'){
+  const all=[{n:'You',gold:G.gold,ci:S.owned[S.owned.length-1],me:true},...G.rivals].sort((a,b)=>b.gold-a.gold);
+  st.innerHTML=`<div class="riv">`+all.map((r,i)=>`<div class="rv${r.me?' me':''}">${creatureSVG(r.ci,34)}<div>${i+1}. ${r.n}<small>${r.gold} gold</small></div></div>`).join('')+`<div class="rv">${chestSVG(false,34,'#b86bd6')}<div>Rainbow Hoard<small>${G.hoard} gold</small></div></div></div>`;
+ }
+ if(G.mode==='pizza'){
+  const c=G.cust||{n:'\u2014',hue:30};
+  st.innerHTML=`<div class="cust"><div>${pizzaSVG(10,Math.min(G.qn-(G.qs&&G.qs.done?0:1),10),G.up.tops,64)}</div><div class="sp"><b>${esc(c.n)}</b> is waiting<br><small>${Math.max(0,Math.min(G.qn-(G.qs&&G.qs.done?0:1),10))}/10 of today\u2019s pizza is done</small></div>${custSVG(c.hue,58)}</div>`;
+ }
+ if(G.mode==='boss'){
+  const pct=Math.max(0,G.hp/G.maxhp*100);
+  st.innerHTML=`<div class="boss"><div id="bossart">${bossSVG(G.mood==='hit'?'hit':G.mood==='lose'?'lose':'idle',84)}</div><div class="hp"><b>Grumblor the Sum-Muncher</b><div class="hpbar" role="progressbar" aria-valuenow="${Math.max(0,G.hp)}" aria-valuemax="${G.maxhp}"><i style="width:${pct}%"></i></div><small>${Math.max(0,G.hp)}/${G.maxhp} HP \u00B7 Correct answers zap him. He can\u2019t hurt you!</small></div></div>`;
+ }
+}
+function custSVG(hue,sz){return `<svg viewBox="0 0 100 100" width="${sz}" height="${sz}" aria-hidden="true"><circle cx="50" cy="55" r="34" fill="hsl(${(hue+20)%360},70%,80%)" stroke="#2b2350" stroke-width="3"/><path d="M18 46 Q50 -6 82 46 Q50 28 18 46Z" fill="hsl(${hue},55%,35%)"/><circle cx="38" cy="56" r="5" fill="#2b2350"/><circle cx="62" cy="56" r="5" fill="#2b2350"/><path d="M38 72 Q50 82 62 72" stroke="#2b2350" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>`}
+
+/* ----- skill choice & question flow ----- */
+function pickSkill(){
+ if(G.level!=='mix')return 's'+G.level;
+ const di=G.revisit.findIndex(r=>r.due<=G.qn);
+ if(di>=0)return G.revisit.splice(di,1)[0].skill;
+ const base={s1:3,s2:3,s3:2,s4:3,s5:2,s6:2,s7:.6};
+ const ids=(G.mode==='boss'?SKIDS.filter(x=>x!=='s7'):SKIDS).filter(id=>!(G.skillsSeen.__last2&&G.skillsSeen.__last2[0]===id&&G.skillsSeen.__last2[1]===id));
+ const pairs=ids.map(id=>{const r=rec(id);const miss=r.att>=3?1-(r.full+.5*r.partial)/r.att:.35;return[id,base[id]*(1+2*miss)]});
+ return wpick(pairs);
+}
+function nextQuestion(){
+ if(G.mode==='boss'&&!G.finale&&(G.hp<=6||G.qn>=12)){G.finale=true}
+ if(G.mode!=='boss'&&G.qn>=G.total)return endRun(true);
+ G.qn++;
+ let sk=G.mode==='boss'&&G.finale?'s7':pickSkill();
+ const l2=G.skillsSeen.__last2||[];G.skillsSeen.__last2=[l2[1],sk];
+ const tier=rec(sk).tier;let q;
+ for(let i=0;i<8;i++){q=gens[sk](tier);if(!G.last.includes(q.label))break}
+ G.last.push(q.label);if(G.last.length>6)G.last.shift();
+ G.q=q;G.stage='q';
+ if(G.mode==='quest')G.rivals.forEach(r=>{r.gold+=rnd(8,22);if(Math.random()<.12)r.gold+=rnd(25,50)});
+ if(G.mode==='quest')G.hoard+=rnd(4,12);
+ if(G.mode==='pizza')G.cust={n:pick(CUST),hue:rnd(0,340)};
+ showQuestion();
+}
+const FIELDS=['w','n','d'];
+function firstFieldPos(){
+ for(let s=0;s<G.q.slots.length;s++){if(ES.lock[s])continue;const f=G.q.slots[s].fields[0];return{s,f}}
+ return{s:0,f:'n'}
+}
+function showQuestion(){
+ const q=G.q;
+ G.qs={wrong:0,hint:0,shown:false,partial:false,done:false,granted:0,tags:[],t0:Date.now(),simp:{}};
+ ES={entries:(q.slots||[]).map(E0),lock:(q.slots||[]).map(()=>false),active:{s:0,f:'n'},seq:[],gone:{}};
+ if(q.kind==='entry')ES.active=firstFieldPos();
+ const sk=SK[q.skill];
+ let h=`<div class="row"><span class="skillbadge">Level ${sk.n}: ${esc(sk.name)}</span><span class="sp"></span>${rec(q.skill).tier>1?`<small class="star" title="Difficulty grows when you build streaks">${'\u2605'.repeat(rec(q.skill).tier-1)} power</small>`:''}</div>`;
+ h+=`<div class="prompt">${q.prompt}</div>`;
+ if(q.model)h+=`<div class="model" id="qmodel">${q.model}</div>`;
+ if(q.kind==='entry'){
+  h+=`<div class="entry" id="qentry">`;
+  if(q.layout==='chain')h+=chainHTML(q);else q.slots.forEach((s,i)=>h+=slotHTML(s,i));
+  h+=`</div>`;
+ }
+ if(q.kind==='mc')h+=`<div class="mc${q.sym?' sym':''}">`+q.options.map((o,i)=>`<button class="opt" data-act="opt" data-i="${i}">${o.html}</button>`).join('')+`</div>`;
+ if(q.kind==='order')h+=`<div class="ordcards">`+q.items.map((it,i)=>`<button class="ordc" data-act="ord" data-i="${i}"><small class="ltr">${String.fromCharCode(65+i)}</small> ${it.html}<span class="badge"></span></button>`).join('')+`</div><div class="seqrow" id="seqrow">Tap them in order\u2026</div>`;
+ if(q.kind==='shade')h+=`<div class="model">${tapShapes(q.shapeKind,q.d,q.shapes)}</div><div class="seqrow" id="seqrow">Shaded pieces: 0</div>`;
+ h+=`<div id="fb" class="fb" role="status"></div><div id="hintmodel" class="model"></div><div class="tools" id="tools"></div>`;
+ $('#qcard').innerHTML=h;
+ buildPad();refreshFields();buildTools();updateHud();
+ try{$('#qcard').scrollIntoView({block:'nearest'})}catch(e){}
+}
+function slotHTML(s,i){
+ const F=s.fields;
+ const fld=(f,cls)=>`<div class="fld ${cls||''}" role="button" tabindex="0" aria-label="${f==='w'?'whole number':f==='n'?'top number':'bottom number'}" data-act="fld" data-s="${i}" data-f="${f}"></div>`;
+ const cap=f=>s.caption&&s.caption[f]?`<div class="cap">${s.caption[f]}</div>`:'';
+ let h=`<div class="slot" data-slot="${i}"><span class="snote" id="sn${i}"></span>`;
+ if(s.pre)h+=`<span class="pre">${s.pre}</span>`;
+ if(s.kind==='num'&&!s.fixed)return h+fld('n','big')+`</div>`;
+ if(F.includes('w'))h+=`<div class="colcap">${fld('w','w')}${cap('w')}</div>`;
+ h+=`<div class="fracbox"><div class="frow">${fld('n')}${cap('n')}</div><div class="bar"></div>${s.fixed&&s.fixed.d?`<div class="fstatic">${s.fixed.d}</div>`:`<div class="frow">${fld('d')}${cap('d')}</div>`}</div></div>`;
+ return h;
+}
+function chainHTML(q){
+ const c=q.chain,op=i=>`<span class="op">${opStr(c.steps[i].sign)} ${fr(c.steps[i].n,c.steps[i].d)}</span>`;
+ const node=j=>j===0?`<div class="node given"><span class="cap" style="position:static;transform:none;width:auto;margin-right:6px">START</span>${fr(c.nodes[0][0],c.nodes[0][1])}</div>`:`<div class="node nodeslot">${slotHTML(q.slots[j-1],j-1)}</div>`;
+ return `<div class="chain">${node(0)}<div>${op(0)} \u2192</div>${node(1)}<div>${op(3)} \u2191</div><div></div><div>${op(1)} \u2193</div>${node(3)}<div>\u2190 ${op(2)}</div>${node(2)}</div>`;
+}
+function buildPad(){
+ const q=G.q,p=$('#padcard');
+ if(q.kind==='entry'){
+  p.innerHTML=`<div class="pad">`+[1,2,3,4,5,6,7,8,9].map(n=>`<button class="btn k" data-act="key" data-k="${n}">${n}</button>`).join('')+
+  `<button class="btn k" data-act="back" aria-label="Backspace">\u232B</button><button class="btn k" data-act="key" data-k="0">0</button><button class="btn k" data-act="nextf" style="font-size:1rem">Next box \u25B8</button>`+
+  `<button class="btn green wide" data-act="check">Check \u2713</button></div>`;
+ }else if(q.kind==='order'){
+  p.innerHTML=`<div class="center"><p class="prompt" style="font-size:1.05rem">Pick them from smallest to biggest.</p><div class="row" style="justify-content:center"><button class="btn ghost" data-act="ordundo">Undo</button><button class="btn green" data-act="check">Check \u2713</button></div></div>`;
+ }else if(q.kind==='shade'){
+  p.innerHTML=`<div class="center"><p class="prompt" style="font-size:1.05rem">Tap a piece to shade it. Tap again to un-shade.</p><button class="btn green" data-act="check">Check \u2713</button></div>`;
+ }else p.innerHTML=`<div class="center"><p class="prompt" style="font-size:1.05rem">Tap your answer. There is no timer. Take your time!</p></div>`;
+}
+function buildTools(){
+ const q=G.q,qs=G.qs;let h='';
+ if(!qs.done){
+  h+=`<button class="btn small gold" data-act="hint">Hint</button>`;
+  const gp=gcfPair();
+  if(gp)h+=`<button class="btn small ghost" data-act="gem">Biggest Divider (${G.power})</button>`;
+  if(qs.wrong>=2||qs.hint>=2)h+=`<button class="btn small ghost" data-act="showme">Show me how</button>`;
+ }
+ $('#tools').innerHTML=h;
+}
+function gcfPair(){
+ const q=G.q,qs=G.qs;if(!q||qs.done)return null;
+ if(q.gcfAlways)return q.gcfAlways;
+ if(q.gcfDyn&&qs.partial){const s=Object.values(qs.simp)[0];if(s)return[+s.n,+s.d]}
+ return null;
+}
+function refreshFields(){
+ if(!G||!G.q||G.q.kind!=='entry')return;
+ document.querySelectorAll('#qcard .fld').forEach(el=>{
+  const s=+el.dataset.s,f=el.dataset.f,e=ES.entries[s];
+  el.textContent=e?e[f]:'';
+  el.classList.toggle('active',!G.qs.done&&ES.active.s===s&&ES.active.f===f&&!ES.lock[s]);
+  el.classList.toggle('good',!!ES.lock[s]);
+ });
+}
+function fb(msg,cls){const f=$('#fb');if(!f)return;f.className='fb show '+(cls||'info');f.innerHTML=msg}
+function clearBad(){document.querySelectorAll('#qcard .fld.bad').forEach(e=>e.classList.remove('bad'))}
+
+/* ----- keypad / entry ----- */
+function pressKey(k){
+ if(!G||!G.q||G.q.kind!=='entry'||G.qs.done)return;
+ const a=ES.active;if(ES.lock[a.s])return;
+ const e=ES.entries[a.s];let v=e[a.f];
+ if(v==='0')v='';
+ e[a.f]=(v+k).slice(0,3);clearBad();sfx('tap');refreshFields();
+}
+function backKey(){if(!G||!G.q||G.q.kind!=='entry'||G.qs.done)return;const a=ES.active,e=ES.entries[a.s];e[a.f]=e[a.f].slice(0,-1);clearBad();refreshFields()}
+function nextField(dir){
+ const list=[];G.q.slots.forEach((s,i)=>{if(!ES.lock[i]&&!(s.kind==='num'&&false))s.fields.forEach(f=>list.push({s:i,f}))});
+ if(!list.length)return;
+ let idx=list.findIndex(x=>x.s===ES.active.s&&x.f===ES.active.f);
+ idx=(idx+(dir||1)+list.length)%list.length;ES.active=list[idx];refreshFields();
+}
+
+/* ----- answer checking flow ----- */
+function checkAnswer(){
+ const q=G.q,qs=G.qs;if(!q||qs.done)return;
+ if(q.kind==='entry')return checkEntry();
+ if(q.kind==='order'){
+  if(ES.seq.length<q.items.length)return fb('Tap all of the numbers first, from least to greatest.','info');
+  if(ES.seq.every((v,i)=>v===q.order[i]))return resolve();
+  return wrongAnswer(q.hintFn({e:ES.entries,i:0,wrong:qs.wrong}),()=>{ES.seq=[];refreshOrder()});
+ }
+ if(q.kind==='shade'){
+  const n=document.querySelectorAll('#tapshapes .cell[data-on="1"]').length;
+  if(n===0)return fb('Tap some pieces to shade them first.','info');
+  if(n===q.target)return resolve();
+  const more=n<q.target;
+  return wrongAnswer(`You shaded <b>${n}</b> piece${n===1?'':'s'}. ${more?'We need a few more.':'That is a few too many.'} `+q.hintFn({e:ES.entries,i:0,wrong:qs.wrong}));
+ }
+}
+function checkEntry(){
+ const q=G.q,qs=G.qs;
+ const res=q.slots.map((s,i)=>ES.lock[i]?{st:'ok'}:evalSlot(s,ES.entries[i]));
+ let r=res.find(x=>x.st==='incomplete');if(r)return fb(r.msg,'info');
+ r=res.find(x=>x.st==='form');if(r)return fb(r.msg,'hint');
+ r=res.find(x=>x.st==='unchanged');if(r){sfx('oops');return fb(r.msg,'hint')}
+ const wrongIdx=res.map((x,i)=>x.st==='wrong'?i:-1).filter(i=>i>=0);
+ if(wrongIdx.length){
+  res.forEach((x,i)=>{if(x.st==='ok'&&q.slots.length>1&&!ES.lock[i]){ES.lock[i]=true}});
+  wrongIdx.forEach(i=>document.querySelectorAll(`#qcard .fld[data-s="${i}"]`).forEach(el=>el.classList.add('bad')));
+  const hint=q.hintFn({e:ES.entries,i:wrongIdx[0],wrong:qs.wrong,slot:q.slots[wrongIdx[0]]});
+  ES.active={s:wrongIdx[0],f:q.slots[wrongIdx[0]].fields[0]};
+  wrongAnswer((q.slots.length>1?(wrongIdx.length===1?'One box needs another look. ':'A couple of boxes need another look. '):'')+hint);
+  refreshFields();return;
+ }
+ const unsimp=res.map((x,i)=>x.st==='unsimp'?i:-1).filter(i=>i>=0);
+ if(unsimp.length){
+  if(!qs.partial){qs.partial=true;qs.granted+=5;award(5);S.tags.unsimplified=(S.tags.unsimplified||0)+1;qs.tags.push('unsimplified')}
+  res.forEach((x,i)=>{if(x.st==='ok')ES.lock[i]=true});
+  const shownTxt=[];
+  unsimp.forEach(i=>{const e=ES.entries[i];qs.simp[i]=Object.assign({},e);
+   q.slots[i].src=Object.assign({},e);
+   shownTxt.push(e.w?`${e.w} ${e.n}/${e.d}`:`${e.n}/${e.d}`);
+   const note=$('#sn'+i);if(note)note.textContent=`you wrote ${shownTxt[shownTxt.length-1]}`;
+   ES.entries[i]=E0()});
+  ES.active={s:unsimp[0],f:q.slots[unsimp[0]].fields[0]};
+  sfx('part');
+  fb(`<b>That is correct!</b> (+5 partial credit) ${shownTxt.join(', ')} is the right amount. <b>Can you simplify?</b> Find the biggest number that divides both the top and the bottom, then type the simplest form for full credit.`,'part');
+  refreshFields();buildTools();updateHud();
+  return;
+ }
+ resolve();
+}
+function wrongAnswer(hint,after){
+ const qs=G.qs;qs.wrong++;sfx('oops');
+ fb(`<b>Not quite yet. That is okay!</b> ${hint}<br>Look at the picture, then try again.`,'hint');
+ const hm=$('#hintmodel');if(hm&&G.q.hintModel)hm.innerHTML=G.q.hintModel;
+ if(after)after();
+ buildTools();
+}
+function clickOption(i){
+ const q=G.q,qs=G.qs;if(qs.done||ES.gone[i])return;
+ const o=q.options[i],btn=document.querySelector(`.opt[data-i="${i}"]`);
+ if(o.ok){btn.classList.add('right');return resolve()}
+ ES.gone[i]=true;btn.classList.add('gone');
+ if(o.tag)bumpTag(o.tag);
+ wrongAnswer(o.hint||q.hintFn({e:[],i:0,wrong:qs.wrong}));
+}
+function refreshOrder(){
+ const q=G.q;
+ document.querySelectorAll('.ordc').forEach(b=>{const i=+b.dataset.i,pos=ES.seq.indexOf(i);b.classList.toggle('sel',pos>=0);b.querySelector('.badge').textContent=pos>=0?pos+1:''});
+ const sr=$('#seqrow');if(sr)sr.textContent=ES.seq.length?`Your order: ${ES.seq.map((i,k)=>String.fromCharCode(65+i)).join(' \u2192 ')}`:'Tap them in order\u2026';
+}
+function toggleCell(el){
+ if(!G||G.q.kind!=='shade'||G.qs.done)return;
+ const on=el.getAttribute('data-on')==='1';
+ el.setAttribute('data-on',on?'0':'1');el.setAttribute('fill',on?'#ffffff':PAL[G.q.shapeKind][0]);sfx('tap');
+ const n=document.querySelectorAll('#tapshapes .cell[data-on="1"]').length;$('#seqrow').textContent='Shaded pieces: '+n;
+}
+
+/* ----- hints / power-up / show me ----- */
+function giveHint(){
+ const q=G.q,qs=G.qs;if(qs.done)return;
+ qs.hint++;G.hintsUsed++;
+ const h=q.hintFn({e:ES.entries,i:ES.active?ES.active.s:0,wrong:Math.max(0,qs.hint-1)+0*qs.wrong,proactive:true,slot:q.slots&&q.slots[0]});
+ fb('<b>Hint:</b> '+h,'hint');
+ const hm=$('#hintmodel');if(hm&&q.hintModel)hm.innerHTML=q.hintModel;
+ buildTools();
+}
+function useGem(){
+ const gp=gcfPair();if(!gp||G.power<1)return toast('No Biggest Divider power-ups left right now. Answer in a row to earn more!');
+ G.power--;G.qs.hint++;G.hintsUsed++;
+ const [a,b]=gp,fa=[],fbb=[];for(let i=1;i<=a;i++)if(a%i===0)fa.push(i);for(let i=1;i<=b;i++)if(b%i===0)fbb.push(i);
+ const com=fa.filter(x=>fbb.includes(x)),g=Math.max(...com);
+ fb(`<div class="gem"><b>Biggest Divider power-up!</b><br>Numbers that divide ${a}: ${fa.map(x=>com.includes(x)?`<b>${x}</b>`:x).join(', ')}<br>Numbers that divide ${b}: ${fbb.map(x=>com.includes(x)?`<b>${x}</b>`:x).join(', ')}<br>Shared by both: ${com.join(', ')}. The biggest one is <b class="big">${g}</b>.<br>${a} \u00F7 ${g} = ${a/g} and ${b} \u00F7 ${g} = ${b/g}.</div>`,'info');
+ sfx('chest');updateHud();buildTools();
+}
+function showMe(){
+ const q=G.q,qs=G.qs;if(qs.done)return;
+ qs.shown=true;qs.done=true;
+ const hm=$('#hintmodel');if(hm&&q.hintModel)hm.innerHTML=q.hintModel;
+ fb(`<b>Let\u2019s learn from this one. You will see it again soon!</b><br>${q.explain}`,'info');
+ finishQuestion('shown');
+}
+
+/* ----- resolving a question ----- */
+function resolve(){
+ const q=G.q,qs=G.qs;qs.done=true;
+ const outcome=(qs.partial&&!qs.wrong&&!qs.hint)?'partial':(qs.wrong||qs.hint)?'retry':'full';
+ let extra='';
+ if(outcome==='full'&&S.settings.speed){const sec=(Date.now()-qs.t0)/1000;if(sec<20){award(3);extra=' Quick bonus +3!'}}
+ sfx('ok');
+ const msgs={full:'Perfect! First try.',partial:'Fully simplified. Full credit!',retry:'You got it! Great persistence.'};
+ fb(`<b>${msgs[outcome]}</b>${extra}<br>${q.explain}`,'ok');
+ if(q.kind==='entry'){refreshFields();document.querySelectorAll('#qcard .fld').forEach(e=>{e.classList.remove('bad','active');e.classList.add('good')})}
+ const hm=$('#hintmodel');if(hm)hm.innerHTML='';
+ finishQuestion(outcome);
+}
+function finishQuestion(outcome){
+ const q=G.q,qs=G.qs;qs.done=true;
+ const r=rec(q.skill);r.att++;r[outcome]++;
+ G.answered++;G[outcome]++;
+ let levelMsg='';
+ if(outcome==='full'){r.streak++;r.bad=0;G.streak++;if(G.streak>0&&G.streak%3===0){G.power=Math.min(5,G.power+1);toast('Streak of '+G.streak+'! +1 Biggest Divider power-up',2200)}
+  if(r.streak>=3&&r.tier<3){r.tier++;r.streak=0;levelMsg=`Skill power up! Level ${SK[q.skill].n} is now a bit trickier.`}}
+ else if(outcome==='partial'){/* streak unchanged */}
+ else{r.streak=0;G.streak=0;r.bad++;if(r.bad>=2&&r.tier>1){r.tier--;r.bad=0;levelMsg='Let\u2019s practice this a little more gently for a bit.'}}
+ if(outcome!=='full'){S.misses.unshift({l:q.label,s:q.skill,o:outcome,t:Date.now()});S.misses=S.misses.slice(0,15);
+  G.revisit.push({skill:q.skill,due:G.qn+3})}
+ save();
+ const rw=Math.max(0,REW[outcome]-qs.granted);
+ if(rw>0)award(rw);
+ if(outcome==='full'&&G.streak>1){const b=Math.min(G.streak,6)-1;award(b);}
+ updateHud();buildTools();
+ if(levelMsg)setTimeout(()=>toast(levelMsg,3000),600);
+ if(outcome==='full'&&G.streak>=5&&G.streak%5===0)confetti(60);
+ afterResolve(outcome);
+}
+function afterResolve(outcome){
+ const p=$('#padcard');
+ if(G.mode==='quest'){
+  if(outcome==='shown'){G.stage='next';return nextButton()}
+  G.stage='chest';
+  p.innerHTML=`<div class="center"><h3>Treasure time!</h3><p>You earned a chest pick.</p><button class="btn gold" style="font-size:1.4rem" data-act="chest">Open the chests! \u2192</button></div>`;
+ }
+ else if(G.mode==='pizza'){
+  const u=G.up,bonus=u.oven*3+u.sign*2+u.helper*3+u.tops*2;
+  if(outcome!=='shown'&&bonus>0){award(bonus);fb($('#fb').innerHTML+`<br><b>Shop bonus: +${bonus} coins</b> from your upgrades!`,'ok')}
+  updateHud();nextButton();
+ }
+ else if(G.mode==='boss'){
+  if(G.q.skill==='s7'){G.mood='lose';updateHud();$('#padcard').innerHTML=`<div class="center"><button class="btn gold" style="font-size:1.4rem" data-act="endrun">Defeat Grumblor! \u2192</button></div>`;return}
+  const dmg=outcome==='full'||outcome==='partial'?2:outcome==='retry'?1:0;
+  G.hp-=dmg;G.mood=dmg?'hit':'idle';sfx('hit');
+  if(dmg)fb($('#fb').innerHTML+`<br><b>ZAP! Grumblor takes ${dmg} damage.</b>`,'ok');
+  updateHud();const ba=$('#bossart');if(ba&&dmg)ba.classList.add('shake');
+  setTimeout(()=>{G.mood='idle';updateHud()},900);
+  nextButton();
+ }
+}
+function nextButton(){
+ const last=(G.mode!=='boss'&&G.qn>=G.total);
+ const lab=G.mode==='boss'?(G.hp<=6||G.qn>=12?'Final Path! \u25B8':'Next zap \u25B8'):last?'Finish \u2713':G.mode==='pizza'?'Next customer \u25B8':'Next question \u25B8';
+ $('#padcard').innerHTML=`<div class="center"><button class="btn green" style="font-size:1.4rem;min-width:70%" data-act="next">${lab}</button><p class="note">No rush: take a breath whenever you like.</p></div>`;
+ G.stage='next';
+}
+
+/* ----- quest chests ----- */
+function rollChest(){
+ const r=Math.random()*100;
+ if(r<30)return{t:'gold',a:rnd(10,25)};
+ if(r<48)return{t:'gold',a:rnd(30,60)};
+ if(r<56)return{t:'double'};
+ if(r<59)return{t:'triple'};
+ if(r<69)return{t:'take',p:.1};
+ if(r<75)return{t:'take',p:.25};
+ if(r<81)return{t:'swap'};
+ if(r<85&&G.hoard>0)return{t:'hoard'};
+ return{t:'gold',a:5,giggle:true};
+}
+function openChests(){
+ const res=[rollChest(),rollChest(),rollChest()];
+ let h=`<div class="card"><h2 class="center">Pick a treasure chest!</h2><p class="center note">Gold, doubles, steals, swaps and a rare Rainbow Hoard. Nothing here can take your gold away.</p><div class="chests">`;
+ res.forEach((x,i)=>h+=`<button class="chest" data-act="pickchest" data-i="${i}" aria-label="Chest ${i+1}">${chestSVG(false,110,['#c77a2b','#2f8fd1','#b86bd6'][i])}</button>`);
+ h+=`</div><div class="chestmsg" id="chestmsg">Tap a chest.</div><div class="center" id="chestbtn"></div></div>`;
+ $('#modal').innerHTML=`<div class="modal">${h}</div>`;
+ G.chestRes=res;sfx('chest');
+}
+function pickChest(i){
+ const x=G.chestRes[i];G.chestRes=null;
+ document.querySelectorAll('.chest').forEach((c,j)=>{c.classList.add(j===i?'open':'dim');if(j===i)c.innerHTML=chestSVG(true,110,['#c77a2b','#2f8fd1','#b86bd6'][i])});
+ sfx('chest');
+ const msg=$('#chestmsg'),btn=$('#chestbtn'),done=txt=>{msg.innerHTML=txt;btn.innerHTML=`<button class="btn green" data-act="chestdone">Keep going \u2192</button>`;updateHud();confetti(50)};
+ if(x.t==='gold'){const a=x.a;G.gold+=a;addLifetime(a);G.score+=a;done(x.giggle?`Giggle chest! +${a} gold`:`+${a} gold!`)}
+ else if(x.t==='double'||x.t==='triple'){const m=x.t==='double'?2:3,add=Math.min(Math.max(G.gold*(m-1),m===2?10:20),m===2?150:250);G.gold+=add;addLifetime(add);G.score+=add;done(`${m===2?'Double':'Triple'} gold! +${add}`)}
+ else if(x.t==='hoard'){const a=G.hoard;G.hoard=0;G.gold+=a;addLifetime(a);G.score+=a;done(`RAINBOW HOARD! +${a} gold!`);confetti(160);sfx('win')}
+ else{
+  msg.innerHTML=x.t==='take'?`Take ${Math.round(x.p*100)}%! Choose a bot to borrow from (they won\u2019t mind, they are good sports):`:`Swap! Trade gold totals with a bot (only if it helps you):`;
+  btn.innerHTML=G.rivals.map((r,k)=>`<button class="btn ghost" style="margin:4px" data-act="rival" data-k="${k}" data-t="${x.t}" data-p="${x.p||0}">${esc(r.n)} (${r.gold})</button>`).join('');
+ }
+}
+function pickRival(k,t,p){
+ const r=G.rivals[k],msg=$('#chestmsg'),btn=$('#chestbtn');
+ let txt;
+ if(t==='take'){let a=Math.round(r.gold*p);a=Math.min(r.gold,Math.max(5,a));if(a<=0)a=10;r.gold=Math.max(0,r.gold-a);G.gold+=a;G.score+=a;addLifetime(a);txt=`You took ${a} gold from ${esc(r.n)}!`}
+ else{if(r.gold>G.gold){const d=r.gold-G.gold;const old=G.gold;G.gold=r.gold;r.gold=old;G.score+=d;addLifetime(d);txt=`SWAP! You and ${esc(r.n)} traded totals. You jumped up by ${d}!`}
+  else{G.gold+=30;G.score+=30;addLifetime(30);txt=`${esc(r.n)} has less gold, so the swap fizzled into a +30 gold gift!`}}
+ msg.innerHTML=txt;btn.innerHTML=`<button class="btn green" data-act="chestdone">Keep going \u2192</button>`;updateHud();confetti(60);sfx('win');
+}
+function chestDone(){$('#modal').innerHTML='';nextButton()}
+
+/* ----- pizza shop ----- */
+const UPS={oven:{n:'Brick oven',d:'+3 coins on every order',base:30},sign:{n:'Shiny sign',d:'+2 coins on every order',base:25},helper:{n:'Robot helper',d:'+3 coins on every order',base:45},tops:{n:'Fancy toppings',d:'+2 coins and a tastier pizza',base:35}};
+const upCost=(k,l)=>UPS[k].base+l*UPS[k].base;
+function openShop(){
+ let h=`<div class="card"><h2>Pizza Palace shop</h2><p>You have <b>${G.coins}</b> coins. Upgrades make every order pay more.</p><div class="shop">`;
+ Object.keys(UPS).forEach(k=>{const l=G.up[k],max=l>=5,c=upCost(k,l);
+  h+=`<div class="shopi"><div class="t"><b>${UPS[k].n}</b> (level ${l}/5)<small>${UPS[k].d}</small></div>${max?'<b>MAX</b>':`<button class="btn small ${G.coins>=c?'gold':'ghost'}" data-act="buy" data-k="${k}" ${G.coins<c?'disabled':''}>${c} coins</button>`}</div>`});
+ h+=`</div><div class="center"><button class="btn green" data-act="closemodal">Back to the shop floor</button></div></div>`;
+ $('#modal').innerHTML=`<div class="modal">${h}</div>`;
+}
+function buyUp(k){const c=upCost(k,G.up[k]);if(G.coins<c||G.up[k]>=5)return;G.coins-=c;G.up[k]++;sfx('chest');updateHud();openShop();toast(UPS[k].n+' upgraded!')}
+
+/* ----- end of run ----- */
+function endRun(finished){
+ if(!G)return;
+ const total=G.answered;
+ let title,msg;
+ if(G.mode==='quest'){
+  const all=[{n:'You',gold:G.gold},...G.rivals].sort((a,b)=>b.gold-a.gold),rank=all.findIndex(x=>x.n==='You')+1;
+  const bonus=20+(rank===1?30:0);if(finished){G.score+=bonus;addLifetime(bonus)}
+  title=rank===1?'You found the most gold!':'What a quest!';
+  msg=`You finished <b>${['','1st','2nd','3rd','4th'][rank]}</b> with <b>${G.gold}</b> gold. ${rank===1?'':'The bots had a lucky day. Great questing!'} Finish bonus: +${bonus} gold.`;
+  G.finalScore=G.gold;
+ }else if(G.mode==='pizza'){
+  const bonus=finished?20:0;if(bonus){G.score+=bonus;addLifetime(bonus)}
+  title='Day complete!';msg=`You served <b>${Math.min(G.qn,G.total)}</b> orders and earned <b>${G.score}</b> coins. Shop bonus: +${bonus}.`;G.finalScore=G.score;
+ }else{
+  const won=G.mood==='lose'||G.hp<=0||G.finale&&finished;
+  const bonus=won?100:0;if(bonus){G.score+=bonus;addLifetime(bonus)}
+  title=won?'Grumblor is defeated!':'Nice battle!';
+  msg=won?`The path chain sent Grumblor packing! Victory bonus: <b>+100</b> gold. Total: <b>${G.score}</b>.`:`You zapped Grumblor down to ${Math.max(0,G.hp)} HP. He will be back tomorrow!`;G.finalScore=G.score;
+ }
+ if(finished&&(G.mode!=='boss'||G.mood==='lose')){confetti(200);sfx('win')}
+ if((G.finalScore||0)>(S.best[G.mode]||0))S.best[G.mode]=G.finalScore;
+ if(total>0){S.sessions.unshift({d:Date.now(),m:G.mode,n:total,f:G.full,p:G.partial,r:G.retry,s:G.shown,sc:G.finalScore||0,mins:Math.max(1,Math.round((Date.now()-G.t0)/60000))});S.sessions=S.sessions.slice(0,30)}
+ save();
+ const first=total?Math.round(100*(G.full+.5*G.partial)/total):0;
+ const nc=G.newC.map(i=>`<div class="cc">${creatureSVG(i,70)}${CREATURES[i].n}<small>New friend!</small></div>`).join('');
+ $('#screen').innerHTML=`<div class="card center"><h1>${title}</h1><p style="font-size:1.2rem">${msg}</p>
+ <p>Questions: <b>${total}</b> \u00B7 Perfect first tries: <b>${G.full}</b> \u00B7 Got there with help: <b>${G.partial+G.retry}</b>${G.shown?` \u00B7 Learned from: <b>${G.shown}</b>`:''}</p>
+ <p class="note">Every question here is practice. Mistakes are how the brain grows!</p>
+ ${nc?`<h3>New creature friends!</h3><div class="collect" style="max-width:420px;margin:auto">${nc}</div>`:''}
+ <div class="row" style="justify-content:center;margin-top:14px"><button class="btn gold" data-act="again" data-m="${G.mode}" data-l="${G.level}">Play again</button><button class="btn" data-act="home">Home</button></div></div>`;
+ G=null;
+}
+/* ===== screens ===== */
+let SEL='mix';
+function modal(h){$('#modal').innerHTML=h?`<div class="modal"><div class="card">${h}</div></div>`:''}
+function pct(r){return r.att?Math.round(100*(r.full+.5*r.partial)/r.att):null}
+function home(){
+ G=null;modal('');
+ let ni=CREATURES.findIndex((c,i)=>!S.owned.includes(i));
+ const prev=ni>0?UNLOCK[ni-1]:0,pr=ni<0?100:Math.min(100,Math.round(100*(S.gold-prev)/(UNLOCK[ni]-prev)));
+ const last=S.owned[S.owned.length-1];
+ const card=(m,cls,art)=>`<button class="mode ${cls}" data-act="mode" data-m="${m}"><div class="art">${art}</div><h2>${MODES[m].name}</h2><p>${MODES[m].tag}</p><span class="best">Best score: ${S.best[m]||0}</span></button>`;
+ $('#screen').innerHTML=`<div class="top"><span class="pill">Gold: ${S.gold}</span><span class="pill">Friends: ${S.owned.length}/${CREATURES.length}</span><span class="sp"></span><button class="btn small ghost" data-act="mute">${S.settings.mute?'Sound: off':'Sound: on'}</button><button class="btn small ghost" data-act="textsize" aria-label="Change text size">Text size: ${['A','A+','A++'][S.settings.big||0]}</button></div>
+ <div class="hero"><div class="row" style="justify-content:center">${creatureSVG(last,92)}${creatureSVG(1,70)}${creatureSVG(2,70)}</div><h1>Slice Quest</h1><p>Welcome, Kenny! Pick an adventure. No timers, no lives: just fractions, treasure and friends.</p></div>
+ <div class="modes">${card('quest','q',chestSVG(false,84))}${card('pizza','p',pizzaSVG(8,5,2,84))}${card('boss','b',bossSVG('idle',84))}</div>
+ <div class="card"><div class="row"><b>Next friend to unlock:</b><span>${ni<0?'You have them all!':`${esc(CREATURES[ni].n)} at ${UNLOCK[ni]} gold`}</span></div><div class="progress" style="margin-top:8px"><i style="width:${pr}%"></i></div></div>
+ <div class="footrow"><button class="btn" data-act="collection">My creature friends</button><button class="btn small ghost" data-act="parent" style="align-self:center">Parent</button></div>`;
+}
+function setup(m){
+ const lv=[['mix','Smart Mix','Recommended: picks what you need most']].concat(SKIDS.map(id=>[SK[id].n,SK[id].name,SK[id].desc]));
+ const stars=id=>{const r=rec(id),p=pct(r);return p===null?'':`<span class="star">${'\u2605'.repeat(p>=90?3:p>=70?2:p>=40?1:0)||'\u2606'}</span>`};
+ $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">${MODES[m].name}</span></div>
+ <div class="card"><h2>Choose your practice</h2><p>${MODES[m].tag}</p>
+ <div class="lv">${lv.map(([k,n,d])=>`<button class="lvb${String(SEL)===String(k)?' on':''}" data-act="lvl" data-l="${k}"><b class="n">${k==='mix'?'\u2605':k}</b><span><b>${esc(n)}</b> ${k==='mix'?'':stars('s'+k)}<small>${esc(d)}</small></span></button>`).join('')}</div>
+ <div class="row"><label style="display:flex;gap:10px;align-items:center;font-weight:700;min-height:48px"><input type="checkbox" id="speedchk" ${S.settings.speed?'checked':''} data-act="speed" style="width:28px;height:28px"> Optional quick-answer bonus (no countdown shown)</label></div>
+ <p class="note">A round takes about 10 to 15 minutes. You can stop any time with the Home button.</p>
+ <div class="center"><button class="btn gold" style="font-size:1.5rem;min-width:60%" data-act="start" data-m="${m}">Start!</button></div></div>`;
+}
+function collection(){
+ $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">Gold: ${S.gold}</span></div>
+ <div class="card"><h2>My creature friends (${S.owned.length}/${CREATURES.length})</h2><p>Earn gold in any game mode to meet new friends.</p>
+ <div class="collect">${CREATURES.map((c,i)=>{const own=S.owned.includes(i);return `<div class="cc">${creatureSVG(i,86,!own)}${own?esc(c.n):'???'}<small>${own?'Collected':'Unlocks at '+UNLOCK[i]+' gold'}</small></div>`}).join('')}</div></div>`;
+}
+function summaryText(){
+ const d=new Date(),ds=d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+ const tot=SKIDS.reduce((s,id)=>s+rec(id).att,0);
+ let t=`Slice Quest practice summary for Kenny \u2013 ${ds}\nRounds played: ${S.sessions.length} (most recent 30) | Questions answered: ${tot}\n\nScore by skill (full credit = perfect first try; partial credit = right but needed a nudge, e.g. to simplify):\n`;
+ SKIDS.forEach(id=>{const r=rec(id),p=pct(r);t+=` ${SK[id].n}. ${SK[id].name}: ${p===null?'not tried yet':p+'% over '+r.att+' questions (perfect '+r.full+', partial '+r.partial+', retried '+r.retry+', needed the walk-through '+r.shown+')'}; difficulty level ${r.tier} of 3\n`});
+ const worst=missed();t+=`\nMost-missed skills: ${worst.length?worst.map(w=>SK[w.id].name+' ('+w.p+'%)').join('; '):'not enough data yet'}\n`;
+ const tg=Object.keys(S.tags).filter(k=>S.tags[k]>0).map(k=>`${TAGNAME[k]||k}: ${S.tags[k]}`);
+ t+=`Habits to watch: ${tg.length?tg.join('; '):'none noticed yet'}\n`;
+ if(S.misses.length)t+=`Recent stumbles: ${S.misses.slice(0,8).map(m=>m.l).join('; ')}\n`;
+ t+=`Best scores: Chest Cove ${S.best.quest}, Pizza Palace ${S.best.pizza}, Grumblor's Lair ${S.best.boss}\n`;
+ t+=`\n(This summary was made on this device only. The game never sends data anywhere.)`;
+ return t;
+}
+function missed(){return SKIDS.map(id=>({id,p:pct(rec(id)),att:rec(id).att})).filter(x=>x.att>=3&&x.p!==null&&x.p<85).sort((a,b)=>a.p-b.p).slice(0,3)}
+function parent(){
+ const worst=missed();
+ const col=p=>p===null?'#ccc':p>=85?'#1fa863':p>=60?'#ffb400':'#e0654f';
+ $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">Parent corner</span></div>
+ <div class="card"><h2>Accuracy by skill</h2><p class="note">Stored only in this browser on this device. Nothing is sent anywhere. Partial credit means the answer was right but needed a nudge (for example, to simplify).</p>
+ <table><tr><th>Skill</th><th>Tried</th><th>Score</th><th></th><th>Level</th></tr>${SKIDS.map(id=>{const r=rec(id),p=pct(r);return `<tr><td><b>${SK[id].n}.</b> ${esc(SK[id].name)}</td><td>${r.att}</td><td>${p===null?'\u2014':p+'%'}</td><td><div class="bar2"><i style="width:${p||0}%;background:${col(p)}"></i></div></td><td>${r.tier}/3</td></tr>`}).join('')}</table>
+ <h3>Most-missed skills</h3><p>${worst.length?worst.map(w=>`<b>${esc(SK[w.id].name)}</b> (${w.p}%)`).join('<br>'):'Not enough practice yet to tell. Play a few rounds!'}</p>
+ <h3>Habits to watch</h3><p>${Object.keys(S.tags).filter(k=>S.tags[k]>0).map(k=>`${esc(TAGNAME[k]||k)}: <b>${S.tags[k]}</b>`).join('<br>')||'None noticed yet.'}</p>
+ <h3>Recent stumbles</h3><p>${S.misses.length?S.misses.slice(0,8).map(m=>esc(m.l)).join(' \u00B7 '):'None yet.'}</p>
+ <h3>Copyable summary</h3><textarea class="sum" id="sumtxt" readonly>${esc(summaryText())}</textarea>
+ <div class="row" style="margin-top:8px"><button class="btn green" data-act="copy">Copy summary</button><span class="note">Paste it wherever you like. The game itself never sends anything.</span></div>
+ <p class="note">Workbook sets printed as FXW, PBF and UX6 make good companion practice.</p>
+ <hr><button class="btn small ghost" data-act="resetask">Erase all progress on this device</button></div>`;
+}
+function copySummary(){
+ const t=summaryText(),ta=$('#sumtxt');
+ const fallback=()=>{try{ta.removeAttribute('readonly');ta.focus();ta.select();const ok=document.execCommand('copy');ta.setAttribute('readonly','');toast(ok?'Summary copied!':'Press and hold the text to copy it')}catch(e){toast('Press and hold the text to copy it')}};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('Summary copied!'),fallback);else fallback();
+}
+
+/* ===== events ===== */
+const ACT={
+ home,collection,parent,
+ mode:d=>{SEL='mix';setup(d.m)},
+ lvl:d=>{SEL=d.l;const m=document.querySelector('[data-act="start"]').dataset.m;setup(m)},
+ speed:()=>{S.settings.speed=!S.settings.speed;save()},
+ start:d=>startRun(d.m,SEL),
+ again:d=>startRun(d.m,d.l),
+ mute:()=>{S.settings.mute=!S.settings.mute;save();G?updateHud():home()},
+ textsize:()=>{S.settings.big=((S.settings.big||0)+1)%3;save();applyFS();home()},
+ quit:()=>modal(`<h2>Take a break?</h2><p>Your gold and friends are saved.</p><div class="row" style="justify-content:center"><button class="btn green" data-act="closemodal">Keep playing</button><button class="btn" data-act="quityes">Finish this round</button></div>`),
+ quityes:()=>{modal('');if(G&&G.answered>0)endRun(false);else home()},
+ closemodal:()=>modal(''),
+ endrun:()=>endRun(true),
+ key:d=>pressKey(d.k),back:backKey,nextf:()=>nextField(1),check:checkAnswer,
+ fld:d=>{if(!G||G.qs.done||ES.lock[+d.s])return;ES.active={s:+d.s,f:d.f};refreshFields()},
+ opt:d=>clickOption(+d.i),
+ ord:d=>{const i=+d.i;if(G.qs.done||ES.seq.includes(i))return;ES.seq.push(i);sfx('tap');refreshOrder()},
+ ordundo:()=>{ES.seq.pop();refreshOrder()},
+ hint:giveHint,gem:useGem,showme:showMe,
+ next:()=>{if(G&&G.stage==='next')nextQuestion()},
+ chest:openChests,pickchest:d=>pickChest(+d.i),rival:d=>pickRival(+d.k,d.t,+d.p),chestdone:chestDone,
+ shop:openShop,buy:d=>buyUp(d.k),
+ copy:copySummary,
+ resetask:()=>modal(`<h2>Erase everything?</h2><p>This clears gold, friends and scores on this device. It cannot be undone.</p><div class="row" style="justify-content:center"><button class="btn green" data-act="closemodal">No, keep it</button><button class="btn ghost" data-act="resetyes">Yes, erase</button></div>`),
+ resetyes:()=>{try{localStorage.removeItem(KEY)}catch(e){}S=defState();SKIDS.forEach(rec);save();modal('');applyFS();home();toast('Progress erased')}
+};
+document.addEventListener('click',e=>{
+ const cell=e.target.closest&&e.target.closest('#tapshapes .cell');
+ if(cell){audio();toggleCell(cell);return}
+ const t=e.target.closest&&e.target.closest('[data-act]');if(!t)return;
+ audio();const f=ACT[t.dataset.act];if(f)f(t.dataset,e);
+});
+document.addEventListener('keydown',e=>{
+ if(!G||!G.q||document.querySelector('#modal .modal'))return;
+ if(/^[0-9]$/.test(e.key)&&G.q.kind==='entry'){pressKey(e.key);return}
+ if(e.key==='Backspace'&&G.q.kind==='entry'){e.preventDefault();backKey();return}
+ if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(G.q.kind==='entry'){e.preventDefault();nextField(1)}return}
+ if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(G.q.kind==='entry'){e.preventDefault();nextField(-1)}return}
+ if(e.key==='Enter'){if(e.target&&e.target.tagName==='BUTTON')return;if(G.qs.done){if(G.stage==='next')nextQuestion()}else checkAnswer()}
+});
+window.addEventListener('error',e=>{window.__errs=(window.__errs||[]).concat(String(e.message))});
+window.FQ={gens,evalSlot,gcd,SK,SKIDS,get S(){return S},get G(){return G},startRun,home,checkAnswer,pressKey,summaryText,nextQuestion,ES:()=>ES,clickOption,resolve,rollChest,ACT};
+home();
+</script>
+</body>
+</html>
