@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Batter Blocks – the fraction bakery</title>
+<style>
+:root{--fs:20px;--ink:#2b2350;--purple:#6b4fd8;--purple2:#8a73f0;--gold:#ffbf1f;--green:#1fa863;--red:#d9534f;--card:#ffffff;--bg1:#5b3fd1;--bg2:#2a8ee0;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:var(--fs)}
+body{margin:0;min-height:100vh;font-family:"Avenir Next","Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer}
+#app{max-width:1180px;margin:0 auto;padding:12px 14px 40px}
+.card{background:var(--card);border-radius:22px;padding:16px 18px;box-shadow:0 6px 0 rgba(0,0,0,.12),0 10px 24px rgba(0,0,0,.18)}
+h1,h2,h3{margin:.2em 0}
+.btn{border:0;border-radius:16px;padding:.7em 1.2em;font-weight:800;font-size:1.05rem;min-height:56px;background:var(--purple);color:#fff;box-shadow:0 5px 0 #4330a3;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #4330a3}
+.btn.gold{background:var(--gold);color:#4a3200;box-shadow:0 5px 0 #c68e00}
+.btn.green{background:var(--green);box-shadow:0 5px 0 #0f7a45}
+.btn.ghost{background:#efeaff;color:var(--purple);box-shadow:0 4px 0 #cfc6f5}
+.btn.small{min-height:44px;padding:.4em .9em;font-size:.9rem}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#fff}
+.top .pill{background:rgba(255,255,255,.2);padding:.25em .8em;border-radius:999px;font-weight:800}
+/* home */
+.hero{text-align:center;color:#fff;padding:10px 0 4px}
+.hero h1{font-size:2.6rem;text-shadow:0 4px 0 rgba(0,0,0,.25);letter-spacing:.5px}
+.hero p{font-size:1.1rem;margin:.2em 0 .6em;opacity:.95}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:14px 0}
+.mode{text-align:left;border:0;background:#fff;border-radius:24px;padding:16px;box-shadow:0 7px 0 rgba(0,0,0,.18);display:flex;flex-direction:column;gap:6px}
+.mode:active{transform:translateY(3px)}
+.mode h2{font-size:1.4rem;margin:0}
+.mode p{margin:0;font-size:.95rem;line-height:1.35}
+.mode .art{height:90px;display:flex;align-items:center;justify-content:center;border-radius:16px}
+.mode .best{font-size:.85rem;font-weight:800;color:var(--purple)}
+.mode.q .art{background:linear-gradient(135deg,#ffe58a,#ffb347)}
+.mode.p .art{background:linear-gradient(135deg,#ffd0c0,#ff8f7a)}
+.mode.b .art{background:linear-gradient(135deg,#d8c9ff,#8e72ee)}
+.footrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.progress{height:16px;background:#e7e1fb;border-radius:99px;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,#ffb400,#ff7a00);border-radius:99px;transition:width .4s}
+/* setup */
+.lv{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin:12px 0}
+.lvb{border:3px solid #d8d0fa;background:#fff;border-radius:16px;padding:10px 12px;text-align:left;display:flex;gap:10px;align-items:center;min-height:64px}
+.lvb.on{border-color:var(--purple);background:#f1edff;box-shadow:0 0 0 3px #cfc3ff}
+.lvb b.n{background:var(--purple);color:#fff;border-radius:50%;width:2em;height:2em;display:flex;align-items:center;justify-content:center;flex:none}
+.lvb small{display:block;opacity:.75}
+.star{color:#ffb400;font-size:.85rem}
+/* play */
+.hud{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.hud .pill{background:#fff;border-radius:999px;padding:.3em .9em;font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.15);font-size:.95rem}
+.hud .pill.g{background:#fff4c9}
+.strip{margin-bottom:10px}
+.main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,1fr);gap:14px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.skillbadge{display:inline-block;background:#efeaff;color:var(--purple);border-radius:99px;padding:.15em .8em;font-weight:800;font-size:.8rem}
+.prompt{font-size:1.35rem;font-weight:700;margin:.5em 0;line-height:1.35}
+.model{display:flex;justify-content:center;margin:6px 0 10px;overflow-x:auto}
+.shapes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
+.shape{display:block}
+.shape .cell{cursor:default}
+.shapes.tap .cell{cursor:pointer}
+.shapes.tap .cell:hover{filter:brightness(.92)}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-weight:800}
+.fr>span:first-child{border-bottom:.11em solid currentColor;padding:0 .22em .04em}
+.fr>span:last-child{padding:.04em .22em 0}
+.mx{display:inline-flex;align-items:center;gap:.08em;vertical-align:middle}
+.mx .wn{font-weight:800;font-size:1.25em;margin-right:.05em}
+.entry{display:flex;flex-direction:column;gap:10px;align-items:center;margin:8px 0}
+.slot{display:inline-flex;align-items:center;gap:8px;font-size:1.5rem;font-weight:800;position:relative;padding:4px 8px;border-radius:14px}
+.slot .pre{display:inline-flex;align-items:center;gap:6px}
+.fld,.fstatic{min-width:3.1rem;height:3.1rem;border:3px solid var(--purple2);border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:800;padding:0 .3rem}
+.fstatic{border-color:transparent;background:none}
+.fld{cursor:pointer}
+.fld.active{outline:5px solid #ffc83a;outline-offset:1px;background:#fffbe9}
+.fld.good{background:#d8f6e3;border-color:var(--green)}
+.fld.bad{background:#ffe4e1;border-color:var(--red)}
+.fld.big{min-width:5rem}
+.fld.w{min-width:3.6rem}
+.fracbox{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
+.fracbox .bar{width:100%;height:5px;background:var(--ink);border-radius:3px}
+.cap{font-size:.7rem;font-weight:700;opacity:.75;text-align:left;width:9rem;line-height:1.15;position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
+.colcap{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+.colcap>.cap{position:static;transform:none;text-align:center;width:6rem}
+.frow{position:relative;display:flex}
+.fracbox .bar{width:3.6rem}
+.slot small{font-size:.7rem}
+.snote{position:absolute;left:0;right:0;top:-1.3em;text-align:center;font-size:.72rem;font-weight:800;color:#3f6fc6;white-space:nowrap}
+.gem{background:#e9fbff;border:3px solid #52c6e8;border-radius:14px;padding:.5em .8em;font-size:.95rem;margin:6px 0;line-height:1.5}
+.gem b.big{color:#0a7fa0;font-size:1.15em}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pad .btn{font-size:1.7rem;min-height:68px;padding:.2em}
+.pad .btn.k{background:#fff;color:var(--ink);border:3px solid #cfc6f5;box-shadow:0 5px 0 #cfc6f5}
+.pad .btn.k:active{box-shadow:0 2px 0 #cfc6f5}
+.pad .wide{grid-column:1/-1}
+.fb{min-height:3.2em;border-radius:16px;padding:.6em .9em;margin:8px 0;font-size:1.02rem;line-height:1.4;display:none}
+.fb.show{display:block}
+.fb.ok{background:#dcf7e7;border:3px solid var(--green)}
+.fb.hint{background:#fff3d6;border:3px solid #ffb400}
+.fb.part{background:#e4f0ff;border:3px solid #3f8cff}
+.fb.info{background:#f1edff;border:3px solid var(--purple2)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.mc{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:10px 0}
+.mc.sym{grid-template-columns:repeat(3,1fr)}
+.opt{border:3px solid #cfc6f5;background:#fff;border-radius:16px;min-height:76px;font-size:1.5rem;font-weight:800;padding:8px;display:flex;align-items:center;justify-content:center}
+.opt:active{transform:translateY(2px)}
+.opt.gone{opacity:.35;pointer-events:none;background:#eee}
+.opt.right{background:#d8f6e3;border-color:var(--green)}
+.ordcards{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:8px 0}
+.ordc{border:3px solid #cfc6f5;background:#fff;border-radius:16px;min-width:96px;min-height:90px;font-size:1.6rem;padding:8px 12px;position:relative}
+.ordc.sel{background:#f1edff;border-color:var(--purple);opacity:.6}
+.ordc .badge{position:absolute;top:-10px;right:-8px;background:var(--gold);border-radius:50%;width:1.6em;height:1.6em;font-size:.9rem;font-weight:900;display:none;align-items:center;justify-content:center}
+.ordc.sel .badge{display:flex}
+.ltr{font-weight:900;color:var(--purple);margin-right:.3em}
+.seqrow{text-align:center;font-size:1rem;min-height:1.6em;font-weight:700}
+.chain{display:grid;grid-template-columns:1fr auto 1fr;gap:6px 6px;align-items:center;justify-items:center;margin:6px auto;max-width:560px}
+.chain .op{font-weight:900;font-size:1.15rem;background:#fff4c9;border-radius:12px;padding:.2em .6em;display:inline-flex;gap:.3em;align-items:center;border:2px solid #ffd45c}
+.chain .node{background:#eef4ff;border:3px solid #7ba7ff;border-radius:18px;padding:8px 10px;min-width:100px;display:flex;justify-content:center;font-size:1.5rem}
+.chain .node.given{background:#e1f7e8;border-color:#3cb371}
+.chain .node.pick{background:#fffbe9}
+.nodeslot .slot{padding:0}
+/* overlays */
+.modal{position:fixed;inset:0;background:rgba(30,15,80,.6);display:flex;align-items:center;justify-content:center;padding:14px;z-index:50}
+.modal .card{max-width:640px;width:100%;max-height:92vh;overflow:auto}
+.chests{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.chest{background:none;border:0;padding:6px;border-radius:18px;min-width:120px}
+.chest svg{display:block;margin:auto}
+.chest:hover{background:#fff3c4}
+.chest.dim{opacity:.35;pointer-events:none}
+.chest.open{background:#fff3c4;animation:pop .4s}
+@keyframes pop{from{transform:scale(.85)}to{transform:scale(1)}}
+.chestmsg{font-size:1.25rem;font-weight:800;text-align:center;min-height:2.6em}
+.riv{display:flex;gap:8px;flex-wrap:wrap}
+.rv{background:#fff;border-radius:16px;padding:6px 12px 6px 6px;display:flex;align-items:center;gap:6px;font-weight:800;font-size:.9rem;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.rv.me{background:#fff4c9}
+.rv small{display:block;font-weight:600;opacity:.7;font-size:.75rem;line-height:1}
+.boss{display:flex;align-items:center;gap:14px;background:#fff;border-radius:20px;padding:8px 14px;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.boss .hp{flex:1}
+.hpbar{height:22px;background:#e9e2fb;border-radius:99px;overflow:hidden;border:3px solid #fff;box-shadow:inset 0 0 0 2px #cfc6f5}
+.hpbar>i{display:block;height:100%;background:linear-gradient(90deg,#ff5d73,#ff9c5a);transition:width .5s}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px) rotate(-3deg)}75%{transform:translateX(6px) rotate(3deg)}}
+.shop{display:grid;gap:10px;margin:10px 0}
+.shopi{display:flex;gap:10px;align-items:center;border:3px solid #e1daf9;border-radius:16px;padding:8px 12px}
+.shopi .t{flex:1}
+.shopi small{display:block;opacity:.75}
+.cust{display:flex;gap:10px;align-items:center;background:#fff;border-radius:20px;padding:6px 14px;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.collect{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:10px}
+.cc{background:#f7f4ff;border-radius:18px;padding:8px;text-align:center;font-weight:800;font-size:.9rem}
+.cc small{display:block;font-weight:600;opacity:.7}
+.crt.locked{filter:brightness(0) opacity(.22)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:.45em .5em;border-bottom:2px solid #eee;text-align:left;vertical-align:middle}
+.bar2{height:14px;border-radius:99px;background:#eee;overflow:hidden;min-width:90px}
+.bar2>i{display:block;height:100%}
+textarea.sum{width:100%;min-height:210px;font:15px/1.4 ui-monospace,Menlo,Consolas,monospace;border:3px solid #d8d0fa;border-radius:12px;padding:10px;-webkit-user-select:text;user-select:text}
+.note{font-size:.85rem;opacity:.8}
+
+/* ===== Creature Lab ===== */
+.mode.l .art{background:linear-gradient(135deg,#c9f2d8,#58c98a)}
+.labgrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:12px;align-items:start;margin-top:8px}
+@media (max-width:700px){.labgrid{grid-template-columns:1fr}}
+.stagebox{background:linear-gradient(#e6f5ff,#fff);border-radius:18px;padding:6px;border:3px solid #cfe6fa;position:sticky;top:6px}
+.stagebox svg{display:block;width:100%;height:auto}
+.bp{background:#fff7dc;border:3px dashed #f2b83a;border-radius:16px;padding:8px 12px;font-size:1rem;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin-top:6px}
+.bp .bpi{font-weight:800;font-size:1.1rem;display:inline-flex;align-items:center;gap:.35em}
+.bp small{font-weight:600;opacity:.75}
+.pcard{border:3px solid #d8d0fa;border-radius:16px;padding:8px 10px;margin-bottom:8px;background:#fcfbff;transition:background .15s}
+.pcard.hot{background:#fff9e0;border-color:#ffc83a}
+.pcard.over{background:#e3f8ea;border-color:var(--green)}
+.pcard.bad{border-color:var(--red);background:#fff2f0}
+.pcard.okc{border-color:var(--green);background:#effaf2}
+.phead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.pname{font-weight:900;font-size:1.1rem}
+.need{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:.3em;flex-wrap:wrap}
+.need small{font-weight:600;opacity:.75}
+.chips{display:flex;flex-wrap:wrap;gap:8px;min-height:68px;align-items:flex-end;padding:6px;border-radius:12px;background:#f1eeff;margin:6px 0}
+.chips .empty{opacity:.55;font-size:.85rem;padding:14px 6px;align-self:center}
+.chip,.tile{touch-action:none;cursor:grab;background:#fff;border:3px solid #cfc6f5;border-radius:12px;padding:4px 7px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:58px;font-weight:800;font-size:.85rem;-webkit-touch-callout:none}
+.tile{font-size:.95rem;padding:6px 9px}
+.chip.sel{outline:4px solid #ffc83a;background:#fffbe9}
+.tile.hold{outline:4px solid #ffc83a;background:#fffbe9}
+.chip.over{outline:4px solid var(--green)}
+.drag-src{opacity:.35}
+.dghost{position:fixed;z-index:200;pointer-events:none;opacity:.92;transform:translate(-50%,-60%) scale(1.12);box-shadow:0 8px 18px rgba(0,0,0,.3)}
+.tray{margin-top:8px;background:#f7f4ff;border-radius:16px;padding:8px 10px}
+.tiles{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tbtn{border:3px solid #cfc6f5;background:#fff;border-radius:14px;min-height:50px;padding:.3em .8em;font-weight:800;font-size:.95rem}
+.tbtn:active{transform:translateY(2px)}
+.tbtn.over{outline:4px solid var(--green);background:#e3f8ea}
+.live{font-size:1.15rem;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.live small{font-weight:600;opacity:.8;font-size:.8rem}
+.live .pv{color:#0a8a4f}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:10px}
+.gc{background:#f7f4ff;border-radius:18px;padding:8px;text-align:center;font-weight:800}
+.gc small{display:block;font-weight:600;opacity:.8;line-height:1.3}
+
+/* ===== Batter Blocks additions ===== */
+:root{--bg1:#e0707a;--bg2:#f6a85b}
+body{background:linear-gradient(160deg,#d9627e,#f29b5a);background-attachment:fixed}
+.mode.bk .art{background:linear-gradient(135deg,#ffe3b5,#ffb067)}
+.mode.cl .art{background:linear-gradient(135deg,#c9f2d8,#58c98a)}
+.hart{display:flex;justify-content:center;align-items:flex-end;min-height:112px;background:linear-gradient(#fff7ea,#fff);border-radius:12px;margin:6px 0;padding:4px;border:2px solid #f0e2c8}
+.hart svg{height:112px;width:auto;max-width:100%}
+.scene{border-radius:18px;overflow:hidden;border:3px solid #f0d6b0;background:#fff7ea}
+.scene svg{display:block;width:100%;height:auto}
+.bubble{background:#fff;border:3px solid #f2b83a;border-radius:16px;padding:8px 12px;margin-top:8px;font-size:1rem;line-height:1.4;position:relative}
+.bubble b.cn{color:#c4511f}
+.trayg{margin-top:6px}
+.trayg h4{margin:.2em 0;font-size:.85rem;opacity:.8;text-transform:uppercase;letter-spacing:.5px}
+.tile svg.ti{width:46px;height:46px}
+.bigbake{background:linear-gradient(90deg,#ffe29a,#ffc2d4);border-radius:14px;padding:6px 12px;font-weight:900;text-align:center;margin-top:6px}
+.stagebox.scenebox{padding:0;background:none;border:0}
+.decor{display:flex;gap:6px;flex-wrap:wrap}
+.shopi{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #eee}.shopi small{display:block;opacity:.75;font-size:.8rem}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b2350;color:#fff;padding:.7em 1.2em;border-radius:99px;font-weight:800;z-index:120;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}
+#toast.on{opacity:1}
+.center{text-align:center}
+:focus-visible{outline:4px solid #ffc83a;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><div id="screen"></div></div>
+<div id="modal"></div>
+<canvas id="confetti"></canvas>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* ===== tiny helpers ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t}return a};
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const wpick=pairs=>{let t=pairs.reduce((s,p)=>s+p[1],0),r=Math.random()*t;for(const p of pairs){if((r-=p[1])<=0)return p[0]}return pairs[0][0]};
+const coprimes=d=>{const r=[];for(let i=1;i<d;i++)if(gcd(i,d)===1)r.push(i);return r};
+const fr=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const mx=(w,n,d)=>`<span class="mx"><span class="wn">${w}</span>${fr(n,d)}</span>`;
+const showVal=(n,d)=>(n>d&&n%d)?mx(Math.floor(n/d),n%d,d):fr(n,d);
+const tx=(n,d)=>`${n}/${d}`;
+const txm=(n,d)=>(n>d&&n%d)?`${Math.floor(n/d)} ${n%d}/${d}`:`${n}/${d}`;
+const redu=(n,d)=>{const g=gcd(n,d)||1;return{n:n/g,d:d/g}};
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+
+/* ===== skills ===== */
+const SK={
+ b1:{n:'Bake 1',name:'Bakery: scoop & build amounts',desc:'Fill cups, spoons, sticks and eggs to match the order. Combine same-size scoops.'},
+ b2:{n:'Bake 2',name:'Bakery: halve & double a recipe',desc:'Cut a recipe in half or double it. Overflow spills into a new whole cup.'},
+ b3:{n:'Bake 3',name:'Bakery: take away (same-size pieces)',desc:'Spills and snacks: subtract, then pour into bigger cups to simplify.'},
+ b4:{n:'Bake 4',name:'Bakery: cut cakes into slices',desc:'Slice a cake and serve exactly the fraction on the order.'},
+ b5:{n:'Big Bake',name:'Bakery: the Big Bake (a mix of everything)',desc:'A grand order with several ingredients at once.'},
+ l1:{n:'Lab 1',name:'Creature Lab: build & combine blocks',desc:'Drag blocks onto parts and combine them into the amount on the blueprint.'},
+ l2:{n:'Lab 2',name:'Creature Lab: simplify blocks',desc:'Match the blueprint exactly in simplest form. Combine, slice and squish.'},
+ l3:{n:'Lab 3',name:'Creature Lab: regroup wholes & mixed numbers',desc:'Turn improper blocks into wholes plus a fraction, and back.'}
+};
+const BAKEIDS=['b1','b2','b3','b4'],LABIDS=['l1','l2','l3'],ALLSK=['b1','b2','b3','b4','b5','l1','l2','l3'];
+const TAGNAME={unsimplified:'Answered correctly but needed a nudge to simplify',bk_merge:'Needed a nudge to combine same-size pieces',bk_regroup:'Needed a nudge to regroup into wholes or mixed numbers',bk_slice:'Tried to combine different-size pieces',
+ lab_merge:'Needed a nudge to combine blocks (Creature Lab)',lab_regroup:'Needed a nudge to regroup into wholes or mixed numbers (Creature Lab)',lab_slice:'Tried to combine different-size pieces (Creature Lab)'};
+const MODES={
+ bakery:{name:'Fraction Bakery',tag:'Run the bakery: fill measuring cups, halve and double recipes, slice cakes. Earn coins and decorate your shop.',total:7},
+ lab:{name:'Creature Lab',tag:'Follow blueprints and build creatures from fraction blocks: head, wings, tail and feet.',total:7}
+};
+
+/* ===== storage (localStorage only, this device) ===== */
+const KEY='batterBlocks_v1';
+function defState(){return{coins:0,best:{bakery:0,lab:0},gallery:[],bakery:{up:{oven:0,mixer:0,display:0},decor:[],served:0,trophies:0},skills:{},tags:{},sessions:[],misses:[],settings:{mute:false,big:0}}}
+function load(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+ const d=defState();if(!s||typeof s!=='object')return d;
+ const o=Object.assign(d,s),df=defState();o.best=Object.assign(df.best,s.best||{});o.settings=Object.assign(df.settings,s.settings||{});
+ o.bakery=Object.assign(df.bakery,s.bakery||{});o.bakery.up=Object.assign(df.bakery.up,(s.bakery||{}).up||{});if(!Array.isArray(o.bakery.decor))o.bakery.decor=[];
+ return o}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function rec(id){return S.skills[id]||(S.skills[id]={att:0,full:0,partial:0,retry:0,shown:0,tier:1,streak:0,bad:0})}
+ALLSK.forEach(rec);
+function applyFS(){document.documentElement.style.setProperty('--fs',[20,23,26][S.settings.big||0]+'px')}
+applyFS();
+
+/* ===== sound (WebAudio beeps) ===== */
+let AC=null;
+function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function beep(f,d,type,vol,when){if(S.settings.mute)return;const a=audio();if(!a)return;try{const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(when||0);o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.12,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+const SFX={
+ tap:()=>beep(440,.05,'square',.04),
+ ok:()=>[523,659,784].forEach((f,i)=>beep(f,.16,'triangle',.13,i*.09)),
+ part:()=>[523,622].forEach((f,i)=>beep(f,.16,'triangle',.11,i*.1)),
+ oops:()=>{beep(330,.18,'sine',.09);beep(294,.22,'sine',.08,.14)},
+ chest:()=>[392,523,659,784,1047].forEach((f,i)=>beep(f,.14,'triangle',.12,i*.07)),
+ win:()=>[523,659,784,1047,784,1047,1319].forEach((f,i)=>beep(f,.2,'triangle',.13,i*.1)),
+ coin:()=>{beep(988,.07,'square',.06);beep(1319,.15,'square',.06,.07)},
+ hit:()=>{beep(200,.12,'sawtooth',.08);beep(140,.15,'sawtooth',.07,.08)}
+};
+function sfx(n){try{SFX[n]()}catch(e){}}
+
+/* ===== confetti ===== */
+let confId=0;
+function confetti(count){
+ const c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+ const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const N=reduce?30:(count||140);
+ const ps=Array.from({length:N},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.35,vx:(Math.random()-.5)*4,vy:2+Math.random()*4,r:6+Math.random()*8,col:`hsl(${Math.random()*360},90%,60%)`,rot:Math.random()*6,vr:(Math.random()-.5)*.3}));
+ const id=++confId;let t=0;
+ (function step(){if(id!==confId)return;x.clearRect(0,0,c.width,c.height);
+  ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.rot+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.rot);x.fillStyle=p.col;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);x.restore()});
+  if(++t<170)requestAnimationFrame(step);else x.clearRect(0,0,c.width,c.height)})();
+}
+let toastT=0;
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),ms||2200)}
+
+/* ===== Block board: ONE engine shared by Bakery and Creature Lab ===== */
+let G=null,B=null,DR=null,SUPPRESS=0,ART=0;
+const DCOL={1:'#2fb36d',2:'#ff7a59',3:'#a06be0',4:'#3f8cff',5:'#ffb400',6:'#e0509a',8:'#20b2aa',10:'#8aa100',12:'#d0642b',16:'#7a5cc8'};
+const dcol=d=>DCOL[d]||'#7a7a9a';
+const TOOLS=[['slice2','Slice \u00D72','Slicer: cut every piece of the block into 2 smaller equal pieces'],['slice3','Slice \u00D73','Slicer: cut every piece into 3 equal pieces'],['slice5','Slice \u00D75','Slicer: cut every piece into 5 equal pieces'],['apart','Break apart','Split a block into single pieces'],['merge','Combine','Combine (merge) same-size blocks into one block'],['simplify','Simplify','Squish pieces into fewer, bigger equal pieces (pour into a bigger cup)'],['regroup','Regroup','Turn a full whole into a whole block: 5/4 becomes 1 and 1/4'],['remove','Take out','Take the block away']];
+const bbSum=bl=>{let D=1;bl.forEach(b=>D=lcm(D,b.d));let N=0;bl.forEach(b=>N+=b.n*(D/b.d));return{N,D}};
+const H=id=>B.holders.find(h=>h.id===id);
+
+/* ----- canonical form, analysis, tidy steps ----- */
+function bbCanonBlocks(t){
+ if(t.form==='mixed'){const q=Math.floor(t.n/t.d),r=t.n%t.d,o=[];if(q>0)o.push({n:q,d:1});if(r>0)o.push({n:r,d:t.d});return o}
+ return[{n:t.n,d:t.d}];
+}
+function bbCanon(h){
+ const bl=h.blocks,t=h.target;
+ if(t.form!=='mixed')return bl.length===1&&bl[0].n===t.n&&bl[0].d===t.d;
+ const q=Math.floor(t.n/t.d),r=t.n%t.d,whole=bl.filter(b=>b.d===1),frs=bl.filter(b=>b.d!==1);
+ if(whole.reduce((s,b)=>s+b.n,0)!==q)return false;
+ if(r===0)return frs.length===0;
+ return frs.length===1&&frs[0].n===r&&frs[0].d===t.d;
+}
+function bbAnalyze(h){
+ const {N,D}=bbSum(h.blocks),t=h.target,c=N*t.d-t.n*D;
+ if(c!==0){const g=gcd(Math.abs(c),D*t.d);return{st:c<0?'less':'more',diff:{n:Math.abs(c)/g,d:D*t.d/g},N,D}}
+ if(bbCanon(h))return{st:'ok',N,D};
+ return Object.assign({st:'tidy',N,D},bbTidy(h));
+}
+function bbTidy(h){
+ const bl=h.blocks,t=h.target,whole=bl.filter(b=>b.d===1),frs=bl.filter(b=>b.d!==1),nm=h.noun,P=h.art==='lab'?'lab':'bk';
+ if(frs.length>1){
+  const seen={};let dup=0;frs.forEach(b=>{if(seen[b.d])dup=b.d;seen[b.d]=1});
+  if(dup)return{step:'merge',tag:P+'_merge',msg:`The ${nm} has several ${dup}ths blocks. <b>Combine</b> them into one block.`};
+  return{step:'slice',tag:P+'_slice',msg:`The ${nm} blocks are different sizes. <b>Slice</b> the bigger pieces so the sizes match, then <b>Combine</b>.`};
+ }
+ if(frs.length===1){
+  const b=frs[0];
+  if(gcd(b.n,b.d)>1)return{step:'simplify',tag:'unsimplified',msg:`The ${nm} is ${b.n}/${b.d}: the right amount, but it can use bigger pieces. Tap <b>Simplify</b> (${h.bigger}).`};
+  if(t.form==='mixed'&&b.n>b.d)return{step:'regroup',tag:P+'_regroup',msg:`The ${nm} is ${b.n}/${b.d}, which is more than a whole. Use <b>Regroup</b> to pull out the whole parts for a mixed number.`};
+  if(t.form==='improper'&&whole.length)return{step:'unregroup',tag:P+'_regroup',msg:`This order wants ONE improper block for the ${nm}. <b>Slice</b> the whole into ${b.d}ths, then <b>Combine</b> it with the ${b.n}/${b.d} block.`};
+ }
+ if(t.form==='mixed'&&frs.length===0&&whole.length)return{step:'regroup',tag:P+'_regroup',msg:`Use <b>Regroup</b> so the ${nm} is wholes plus a fraction block.`};
+ return{step:'merge',tag:P+'_merge',msg:`The ${nm} has the right amount. Tidy the blocks so they match the order exactly.`};
+}
+function amtHTML(n,d,form){return form==='mixed'&&n>d&&n%d?mx(Math.floor(n/d),n%d,d):fr(n,d)}
+function unitOf(h,N,D){return h.unit?(N>D?h.unitPl:h.unit):''}
+function needHTML(h){const t=h.target,u=unitOf(h,t.n,t.d);return `${amtHTML(t.n,t.d,t.form)}${u?' '+u:''}`}
+function needText(h){const t=h.target,u=unitOf(h,t.n,t.d);return txm(t.n,t.d)+(u?' '+u:'')}
+const bareNoun=h=>h.art==='bake'&&(h.type==='eggs'||h.type==='cake');
+function itemHTML(h){return needHTML(h)+(bareNoun(h)?'':' '+esc(h.noun))}
+function itemText(h){return needText(h)+(bareNoun(h)?'':' '+h.noun)}
+function nowText(h,N,D){const u=unitOf(h,N,D);return(D===1?`${N}`:txm(N,D))+(u?' '+u:'')}
+const formNote={proper:'one block, simplest form',improper:'one improper-fraction block, simplest form',mixed:'whole blocks + one fraction block, simplest form'};
+function totalHTML(N,D){
+ if(N===0)return `<span>Nothing yet: 0</span>`;
+ let h=D===1?`<b>${N}</b> whole${N>1?'s':''}`:fr(N,D);
+ if(D>1&&N>D)h+=` = ${N%D?mx(Math.floor(N/D),N%D,D):`<b>${N/D}</b>`}`;
+ const g=gcd(N,D);
+ if(D>1&&g>1)h+=` <small>simplest form: ${showVal(N/g,D/g)}</small>`;
+ return h;
+}
+
+/* ----- art: every picture shows exactly the fraction it names ----- */
+const INK='#2b2350',GHOST=`fill="none" stroke="${INK}" stroke-opacity=".35" stroke-dasharray="4 3" stroke-width="1.6"`;
+function wedgePath(i,D,cx,cy,r,start,span){
+ if(D===1&&span>=360)return null;
+ const a0=(start+span*i/D)*Math.PI/180,a1=(start+span*(i+1)/D)*Math.PI/180;
+ const x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+ return `M${cx} ${cy} L${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${span/D>180?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z`;
+}
+function pieArt(n,D,inner,cx,cy,r){ // n of D wedges visible, wedges clip the inner picture
+ cx=cx||50;cy=cy||52;r=r||44;const id='pa'+(++ART);let s='';
+ const wp=i=>wedgePath(i,D,cx,cy,r,-90,360);
+ for(let i=0;i<D;i++){const p=wp(i);s+=p?`<path d="${p}" ${GHOST}/>`:`<circle cx="${cx}" cy="${cy}" r="${r}" ${GHOST}/>`}
+ if(n>0){
+  const vis=[];for(let i=0;i<Math.min(n,D);i++)vis.push(wp(i));
+  const clip=n>=D?'':`<clipPath id="${id}">${vis.map(p=>p?`<path d="${p}"/>`:`<circle cx="${cx}" cy="${cy}" r="${r}"/>`).join('')}</clipPath>`;
+  s+=`${clip}<g ${n>=D?'':`clip-path="url(#${id})"`}>${inner}</g>`;
+  if(D>1)for(let i=0;i<D;i++){const a=(-90+360*i/D)*Math.PI/180;s+=`<line x1="${cx}" y1="${cy}" x2="${(cx+r*Math.cos(a)).toFixed(1)}" y2="${(cy+r*Math.sin(a)).toFixed(1)}" stroke="${INK}" stroke-width="1.6" stroke-opacity=".55"/>`}
+ }
+ return s;
+}
+function cupArt(n,D,col,pat){ // standard measuring cup: fill level n/D of a full cup
+ const id='cu'+(++ART),body='M24 16 L76 16 L70 90 L30 90Z',H=74;let s='';
+ s+=`<path d="M76 28 Q95 30 92 50 Q90 62 72 64" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><clipPath id="${id}"><path d="${body}"/></clipPath><path d="${body}" fill="#f4fbff"/>`;
+ const hh=H*Math.min(n,D)/D;
+ if(n>0)s+=`<g clip-path="url(#${id})"><rect x="0" y="${90-hh}" width="100" height="${hh}" fill="${col}"/><circle cx="40" cy="${88-hh*.4}" r="2" fill="${pat}"/><circle cx="56" cy="${88-hh*.7}" r="2.2" fill="${pat}"/><circle cx="48" cy="${88-hh*.2}" r="1.8" fill="${pat}"/></g>`+(n<D?`<line x1="20" y1="${90-hh}" x2="80" y2="${90-hh}" stroke="${INK}" stroke-width="1.6" stroke-opacity=".6"/>`:'');
+ s+=`<path d="${body}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linejoin="round"/>`;
+ if(D>1&&D<=16)for(let k=1;k<D;k++){const y=90-H*k/D,x0=24+6*(y-16)/74;s+=`<line x1="${x0.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x0+(k%(D>8?2:1)?5:9)).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${INK}" stroke-width="1.6" stroke-opacity=".7"/>`}
+ return s;
+}
+function stickArt(n,D,W){ // butter stick, D segments, n filled (W = box width)
+ W=W||100;let s='';const x0=4,w=W-8,y=W>100?22:30,h=W>100?56:40;
+ for(let i=0;i<D;i++){const vis=i<n,x=x0+w*i/D,ww=w/D;
+  s+=`<rect x="${x.toFixed(2)}" y="${y}" width="${ww.toFixed(2)}" height="${h}" ${vis?`fill="${i%2?'#ffe27a':'#ffd24a'}" stroke="${INK}" stroke-width="2"`:GHOST}/>`}
+ if(n>0)s+=`<path d="M${x0} ${y+6} L${x0+w} ${y+6}" stroke="#fff" stroke-opacity=".5" stroke-width="3" clip-path="none"/>`;
+ return s;
+}
+function eggInner(){return `<circle cx="50" cy="52" r="44" fill="#fffdf6" stroke="${INK}" stroke-width="3"/><circle cx="50" cy="52" r="19" fill="#ffb300" stroke="#e08b00" stroke-width="2"/><circle cx="44" cy="46" r="5" fill="#ffe28a"/>`}
+function cakeInner(D){let s=`<circle cx="50" cy="52" r="44" fill="#f7c6d9" stroke="${INK}" stroke-width="3"/><circle cx="50" cy="52" r="34" fill="#fff0f6" stroke="#f0a2c0" stroke-width="2"/>`;
+ for(let i=0;i<D;i++){const a=(-90+360*(i+.5)/D)*Math.PI/180,rr=D===1?0:26;s+=`<circle cx="${(50+rr*Math.cos(a)).toFixed(1)}" cy="${(52+rr*Math.sin(a)).toFixed(1)}" r="${D>8?3:5}" fill="#d9304f"/>`}
+ return s}
+function spoonArt(col){return `<ellipse cx="50" cy="30" rx="22" ry="17" fill="${col}" stroke="${INK}" stroke-width="3"/><path d="M50 46 L50 94" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M50 46 L50 94" stroke="#c9ccd6" stroke-width="3.5" stroke-linecap="round"/>`}
+const ING={
+ flour:{name:'Flour',kind:'cup',unit:'cup',pl:'cups',col:'#f3e4c1',pat:'#d2bd8a',bigger:'pour it into a bigger cup',accept:['cup','spoon']},
+ sugar:{name:'Sugar',kind:'cup',unit:'cup',pl:'cups',col:'#ffd9e8',pat:'#f08db4',bigger:'pour it into a bigger cup',accept:['cup','spoon']},
+ milk:{name:'Milk',kind:'cup',unit:'cup',pl:'cups',col:'#cfe6ff',pat:'#8fbcf0',bigger:'pour it into a bigger cup',accept:['cup','spoon']},
+ butter:{name:'Butter',kind:'stick',unit:'stick',pl:'sticks',col:'#ffe27a',pat:'#e8b923',bigger:'press it into fewer, bigger pieces',accept:['stick']},
+ eggs:{name:'Eggs',kind:'egg',unit:'egg',pl:'eggs',col:'#fff',pat:'#ffb300',bigger:'make fewer, bigger pieces',accept:['egg'],noun:'eggs'},
+ cake:{name:'Cake',kind:'slice',unit:'cake',pl:'cakes',col:'#f7c6d9',pat:'#d9304f',bigger:'make fewer, bigger slices',accept:['slice'],noun:'cake'}
+};
+function copyArt(h,n,D){
+ const ty=h.type;
+ if(ty==='flour'||ty==='sugar'||ty==='milk'){const I=ING[ty];return cupArt(n,D,I.col,I.pat)}
+ if(ty==='butter')return stickArt(n,D,200);
+ if(ty==='eggs')return pieArt(n,D,eggInner());
+ return pieArt(n,D,cakeInner(D));
+}
+function partCopies(N,D){const wh=Math.floor(N/D),rem=N%D,c=[];for(let i=0;i<wh;i++)c.push(D);if(rem>0)c.push(rem);return c}
+function holderArt(h,N,D){
+ let cps=N>0?partCopies(N,D):[0],DD=Math.min(D,24);
+ if(!(N>0))DD=Math.max(1,Math.min(D,24));
+ const c=cps.length,cw=h.type==='butter'?200:100;
+ let s=`<svg viewBox="0 0 ${cw*c} 100" style="width:${Math.min(c*cw/100,4)*(h.type==='eggs'||h.type==='cake'?110:84)}px" role="img" aria-label="${esc(h.name+': '+(N>0?nowText(h,N,D):'empty'))}">`;
+ cps.forEach((n,i)=>{s+=`<g transform="translate(${cw*i} 0)">${copyArt(h,n,DD)}</g>`});
+ return s+'</svg>';
+}
+/* creature parts (Creature Lab) */
+function partArt(type,n,D,col){
+ const id='cl'+(++ART),dark=INK;let s='';
+ if(type==='head'){
+  const inner=`<circle cx="50" cy="52" r="44" fill="${col}" stroke="${dark}" stroke-width="3"/><circle cx="34" cy="44" r="8" fill="#fff"/><circle cx="66" cy="44" r="8" fill="#fff"/><circle cx="36" cy="46" r="4" fill="${dark}"/><circle cx="64" cy="46" r="4" fill="${dark}"/><path d="M36 66 Q50 80 64 66" stroke="${dark}" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="24" cy="60" r="5" fill="#ff9aa9" opacity=".7"/><circle cx="76" cy="60" r="5" fill="#ff9aa9" opacity=".7"/>`;
+  return pieArt(n,D,inner);
+ }
+ if(type==='wing'){
+  const cx=50,cy=94,r=46,wp=i=>wedgePath(i,D,cx,cy,r,-180,180);
+  for(let i=0;i<D;i++){const vis=i<n;s+=`<path d="${wp(i)}" ${vis?`fill="${i%2?col:'#ffffff'}" fill-opacity="${i%2?1:.55}" stroke="${dark}" stroke-width="2"`:GHOST}/>`;
+   if(vis)s+=`<path d="${wp(i)}" fill="${col}" fill-opacity="${i%2?0:.7}"/>`}
+  return s;
+ }
+ if(type==='tail'){
+  const x0=2,w=96,y=36,h=28;
+  for(let i=0;i<D;i++){const vis=i<n,x=x0+w*i/D,ww=w/D;
+   s+=`<rect x="${x.toFixed(2)}" y="${y}" width="${ww.toFixed(2)}" height="${h}" ${vis?`fill="${i%2?col:'#ffffff'}" stroke="${dark}" stroke-width="2"`:GHOST}/>`;
+   if(vis&&!(i%2))s+=`<rect x="${x.toFixed(2)}" y="${y}" width="${ww.toFixed(2)}" height="${h}" fill="${col}" fill-opacity=".6"/>`}
+  if(n>=D)s+=`<circle cx="98" cy="50" r="12" fill="#ffd966" stroke="${dark}" stroke-width="2.5"/>`;
+  return s;
+ }
+ const w=96/D;
+ for(let i=0;i<D;i++){const vis=i<n,cx=2+w*(i+.5),rx=Math.min(w*.42,12),ry=Math.min(rx*.7,9);
+  if(vis)s+=`<line x1="${cx.toFixed(1)}" y1="40" x2="${cx.toFixed(1)}" y2="${(70-ry).toFixed(1)}" stroke="${dark}" stroke-width="${Math.max(1.5,Math.min(5,w*.2)).toFixed(1)}" stroke-linecap="round"/><ellipse cx="${cx.toFixed(1)}" cy="72" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" fill="${col}" stroke="${dark}" stroke-width="2"/>`;
+  else s+=`<ellipse cx="${cx.toFixed(1)}" cy="72" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" ${GHOST}/>`}
+ return s;
+}
+const AREAS={head:{x:235,y:14,w:290,max:156},wing:{x:0,y:140,w:290,max:160},tail:{x:470,y:166,w:290,max:160},feet:{x:245,y:292,w:270,max:112}};
+function stageSVG(spec,o){
+ o=o||{};const col=spec.col||'#7bd389';
+ let s=`<svg viewBox="0 0 760 400" ${o.w?`width="${o.w}"`:''} role="img" aria-label="${esc(o.alt||'creature')}">`;
+ s+=`<ellipse cx="380" cy="236" rx="104" ry="82" fill="${col}" stroke="${INK}" stroke-width="4"/><ellipse cx="380" cy="258" rx="66" ry="50" fill="#ffffff" fill-opacity=".55"/>`;
+ if(!spec.parts.some(p=>p.id==='head'&&p.N>0))s+=`<circle cx="345" cy="214" r="11" fill="#fff"/><circle cx="415" cy="214" r="11" fill="#fff"/><circle cx="347" cy="216" r="5.5" fill="${INK}"/><circle cx="413" cy="216" r="5.5" fill="${INK}"/><path d="M360 240 Q380 256 400 240" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+ spec.parts.forEach(p=>{
+  if(!(p.N>0))return;const a=AREAS[p.id],D=Math.min(p.D,24),cps=partCopies(p.N,p.D);
+  const size=Math.min(a.max,a.w/cps.length),total=size*cps.length;let x=a.x+(a.w-total)/2;
+  cps.forEach(n=>{s+=`<g transform="translate(${x.toFixed(1)} ${a.y}) scale(${(size/100).toFixed(3)})">${partArt(p.id,n,D,col)}</g>`;x+=size});
+ });
+ return s+'</svg>';
+}
+
+/* ----- tiles (the tray) and chips (blocks on a holder) ----- */
+function tileLabel(k,d){
+ if(k==='cup')return d===1?'1 cup':`1/${d} cup`;
+ if(k==='spoon')return `1/${d} cup spoon`;
+ if(k==='stick')return d===1?'1 stick':`1/${d} stick`;
+ if(k==='egg')return d===1?'1 egg':`1/${d} egg`;
+ if(k==='slice')return '1 whole cake';
+ return d===1?'1 whole':`1/${d}`;
+}
+function tileSVG(k,d){
+ if(k==='blk'){
+  const col=dcol(d),W=d===1?60:Math.min(84,d*14+20),u=W/d;
+  let s=`<svg width="${W+4}" height="26" viewBox="0 0 ${W+4} 26" aria-hidden="true">`;
+  for(let i=0;i<d;i++)s+=`<rect x="${2+i*u}" y="2" width="${u}" height="22" fill="${i===0?col:'#ffffff'}" stroke="${INK}" stroke-width="1.6"/>`;
+  return s+'</svg>';
+ }
+ let inner;
+ if(k==='cup')inner=cupArt(1,d,'#f3e4c1','#d2bd8a');
+ else if(k==='spoon')inner=spoonArt('#f3e4c1');
+ else if(k==='stick')inner=stickArt(1,d);
+ else if(k==='egg')inner=pieArt(1,d,eggInner());
+ else inner=pieArt(1,1,cakeInner(1));
+ return `<svg class="ti" viewBox="0 0 100 100" aria-hidden="true">${inner}</svg>`;
+}
+function tileHTML(k,d){
+ const lb=tileLabel(k,d);
+ return `<div class="tile" data-act="tilesel" data-k="${k}" data-d="${d}" role="button" tabindex="0" aria-label="${esc(lb)}">${tileSVG(k,d)}<span>${esc(lb)}</span></div>`;
+}
+function chipHTML(b,hid,i,sel){
+ let u=64/b.d;const wt=b.n*u;if(wt>190)u*=190/wt;const w=Math.max(10,b.n*u),col=dcol(b.d);
+ let s=`<svg width="${(w+4).toFixed(0)}" height="26" viewBox="0 0 ${(w+4).toFixed(1)} 26" aria-hidden="true">`;
+ for(let k=0;k<b.n;k++)s+=`<rect x="${(2+k*u).toFixed(1)}" y="2" width="${u.toFixed(2)}" height="22" fill="${col}" stroke="${INK}" stroke-width="1.6"/>`;
+ s+='</svg>';
+ const lab=b.d===1?(b.n===1?'1 whole':`${b.n} wholes`):`${b.n}/${b.d}`;
+ return `<div class="chip${sel?' sel':''}" data-act="chipsel" data-p="${hid}" data-i="${i}" role="button" tabindex="0" aria-label="block ${lab}">${s}<span>${lab}</span></div>`;
+}
+const TGROUP={cup:'Measuring cups',spoon:'Measuring spoons',stick:'Butter sticks',egg:'Eggs',slice:'The cake',blk:'Fraction blocks'};
+function trayHTML(pz){
+ const groups=[];pz.tiles.forEach(t=>{let g=groups.find(x=>x.k===t.k);if(!g)groups.push(g={k:t.k,l:[]});g.l.push(t.d)});
+ return `<div class="tray"><b>${pz.mode==='bakery'?'Kitchen shelf':'Block tray'}</b> <span class="note">Drag onto a ${pz.mode==='bakery'?'bowl':'part'}. Or tap one, then tap where it goes.</span>`+groups.map(g=>`<div class="trayg"><h4>${TGROUP[g.k]}</h4><div class="tiles">${g.l.map(d=>tileHTML(g.k,d)).join('')}</div></div>`).join('')+`<div class="note" id="holdmsg" style="min-height:1.3em"></div></div>`;
+}
+function holdersHTML(pz){
+ return B.holders.map(h=>`<div class="pcard" id="pc_${h.id}" data-act="placehere" data-p="${h.id}"><div class="phead"><span class="pname">${esc(h.name)}</span><span class="need">Needs: ${needHTML(h)}</span></div>${h.note?`<div class="note"><b>${h.note}</b></div>`:''}${h.art==='bake'?`<div class="hart" id="art_${h.id}"></div>`:''}<div class="chips" id="chips_${h.id}"></div><div class="live" id="live_${h.id}"></div></div>`).join('');
+}
+function toolsHTML(){
+ return `<div class="tray"><b>Tools</b> <span class="note">Tap blocks to pick them, then tap a tool. Or drag a block onto a tool. Drag one block onto another to combine.</span><div class="toolbar" id="toolbar">`+TOOLS.map(t=>`<button class="tbtn" data-act="tool" data-tool="${t[0]}" title="${esc(t[2])}">${t[1]}</button>`).join('')+`<button class="tbtn" data-act="bbundo">Undo</button></div></div>`;
+}
+function blueprintHTML(){
+ const lab=B.pz.mode==='lab';
+ return `<div class="bp"><b>${lab?'Blueprint \u2013 build this creature exactly:':'The order:'}</b>`+B.holders.map(h=>`<span class="bpi">${itemHTML(h)} <small>(${formNote[h.target.form]})</small></span>`).join('')+`</div>`;
+}
+
+/* ----- live sync: numbers and pictures redraw from the same blocks ----- */
+function viewHolders(){
+ return B.holders.map(h=>{let bl=h.blocks;if(B.preview&&B.preview.p===h.id)bl=bl.concat([B.preview.add]);
+  let {N,D}=bbSum(bl);if(D>24){const r=redu(N,D);N=r.n;D=r.d}return{id:h.id,N,D,h}});
+}
+function bbChanged(){
+ if(!B)return;
+ B.holders.forEach(h=>{
+  const c=$('#chips_'+h.id);if(!c)return;
+  c.innerHTML=h.blocks.length?h.blocks.map((b,i)=>chipHTML(b,h.id,i,B.sel&&B.sel.p===h.id&&B.sel.idx.includes(i))).join(''):`<span class="empty">Drop blocks here</span>`;
+  const pc=$('#pc_'+h.id);if(pc)pc.classList.remove('bad','okc');
+ });
+ bbRenderLive();
+ document.querySelectorAll('.tile').forEach(t=>t.classList.toggle('hold',!!B.hold&&t.dataset.k===B.hold.k&&+t.dataset.d===B.hold.d));
+ const hm=$('#holdmsg');if(hm)hm.textContent=B.hold?`Holding ${tileLabel(B.hold.k,B.hold.d)}. Tap where it goes. Tap it again to stop.`:'';
+}
+function bbRenderLive(){
+ if(!B)return;
+ const vh=viewHolders();
+ vh.forEach(v=>{
+  const el=$('#live_'+v.id),pv=!!(B.preview&&B.preview.p===v.id);
+  if(el)el.innerHTML=`<span${pv?' class="pv"':''}>Now: ${totalHTML(v.N,v.D)}${v.h.unit&&v.N>0?' '+unitOf(v.h,v.N,v.D):''}</span>${pv?'<small class="pv">(preview: drop to add)</small>':''}`;
+  const ar=$('#art_'+v.id);if(ar)ar.innerHTML=holderArt(v.h,v.N,v.D);
+ });
+ const st=$('#stage');
+ if(st&&B.pz.mode==='lab')st.innerHTML=stageSVG({col:B.col,parts:vh.map(v=>({id:v.id,N:v.N,D:v.D}))},{alt:'Your creature so far'});
+}
+
+/* ----- block operations ----- */
+function bbSnap(){return JSON.stringify(B.holders.map(h=>h.blocks))}
+function bbPush(){B.hist.push(bbSnap());if(B.hist.length>40)B.hist.shift()}
+function bbUndo(){
+ if(!B||G.qs.done)return;
+ const s=B.hist.pop();if(!s)return toast('Nothing to undo yet');
+ JSON.parse(s).forEach((bl,i)=>B.holders[i].blocks=bl);B.sel=null;bbChanged();sfx('tap');
+}
+function bbAddBlock(hid,b,kind){
+ if(!B||G.qs.done)return false;
+ const h=H(hid);if(!h)return false;
+ if(kind&&!h.accept.includes(kind)){toast(h.art==='bake'?`${h.name} doesn\u2019t use that. Try ${h.accept.map(k=>TGROUP[k].toLowerCase()).join(' or ')}.`:'That block does not go there.');return false}
+ if(h.blocks.length>=14){toast('Lots of blocks here! Try combining some first.');return false}
+ bbPush();h.blocks.push({n:b.n,d:b.d});B.sel=null;bbChanged();sfx('tap');return true;
+}
+function bbApply(tool,hid,idxs){
+ if(!B||G.qs.done)return false;
+ const h=H(hid);
+ if(!h||!idxs.length){toast('First tap a block to pick it, then tap a tool.');return false}
+ idxs=[...new Set(idxs)].sort((a,b)=>a-b);const bl=h.blocks;let nb=null,snapped=false;
+ if(tool.startsWith('slice')){
+  const k=+tool.slice(5);
+  if(idxs.some(i=>bl[i].d*k>24)){toast('Those pieces would get too tiny! Try a smaller slice.');return false}
+  nb=bl.map((b,i)=>idxs.includes(i)?{n:b.n*k,d:b.d*k}:b);
+ }else if(tool==='apart'){
+  nb=[];bl.forEach((b,i)=>{if(idxs.includes(i)&&b.n>1){for(let j=0;j<b.n;j++)nb.push({n:1,d:b.d})}else nb.push(b)});
+  if(nb.length===bl.length){toast('Pick a block with more than one piece to break it apart.');return false}
+ }else if(tool==='merge'){
+  if(idxs.length<2){toast('Pick two or more blocks to combine. Tap one, then tap another.');return false}
+  const d0=bl[idxs[0]].d;
+  if(idxs.some(i=>bl[i].d!==d0)){toast('Combine needs same-size pieces. Slice the bigger ones so the sizes match!');return false}
+  const sum=idxs.reduce((s,i)=>s+bl[i].n,0);nb=[];
+  bl.forEach((b,i)=>{if(i===idxs[0]){if(sum===d0&&d0>1){nb.push({n:1,d:1});snapped=true}else nb.push({n:sum,d:d0})}else if(!idxs.includes(i))nb.push(b)});
+ }else if(tool==='simplify'){
+  let ch=false;nb=bl.map((b,i)=>{if(!idxs.includes(i))return b;const g=gcd(b.n,b.d);if(g>1&&b.d>1){ch=true;return{n:b.n/g,d:b.d/g}}return b});
+  if(!ch){toast('Already in simplest form: no way to make the pieces bigger.');return false}
+ }else if(tool==='regroup'){
+  let ch=false;nb=[];
+  bl.forEach((b,i)=>{if(idxs.includes(i)&&b.d>1&&b.n>=b.d){ch=true;const q=Math.floor(b.n/b.d),r=b.n%b.d;nb.push({n:q,d:1});if(r>0)nb.push({n:r,d:b.d})}else nb.push(b)});
+  if(!ch){toast('Regroup needs a block that is one whole or more, like 5/4.');return false}
+ }else if(tool==='remove'){nb=bl.filter((b,i)=>!idxs.includes(i))}
+ else return false;
+ bbPush();h.blocks=nb;B.sel=null;bbChanged();sfx(tool==='remove'?'tap':'chest');
+ if(snapped){toast(h.art==='bake'&&h.type!=='cake'?'A full whole! It snaps into one whole block.':'A full whole! It snaps into a whole block.',2400)}
+ return true;
+}
+function bbTool(tool){
+ if(!B||G.qs.done)return;
+ if(!B.sel||!B.sel.idx.length)return toast('First tap a block to pick it, then tap a tool.');
+ bbApply(tool,B.sel.p,B.sel.idx);
+}
+function chipSel(hid,i){
+ if(!B||G.qs.done)return;
+ if(B.hold)return bbAddBlock(hid,{n:1,d:B.hold.d},B.hold.k);
+ if(!B.sel||B.sel.p!==hid)B.sel={p:hid,idx:[]};
+ const k=B.sel.idx.indexOf(i);if(k>=0)B.sel.idx.splice(k,1);else B.sel.idx.push(i);
+ sfx('tap');bbChanged();
+}
+function tileSel(k,d){if(!B||G.qs.done)return;B.hold=(B.hold&&B.hold.k===k&&B.hold.d===d)?null:{k,d};sfx('tap');bbChanged()}
+function placeHere(hid){
+ if(!B||G.qs.done||!B.hold)return;
+ bbAddBlock(hid,{n:1,d:B.hold.d},B.hold.k);
+}
+function bbMove(from,i,to){
+ const a=H(from),b=H(to);if(!a||!b)return;
+ bbPush();b.blocks.push(a.blocks.splice(i,1)[0]);B.sel=null;bbChanged();sfx('tap');
+}
+
+/* ----- real drag & drop (pointer events: mouse, touch and pen) ----- */
+/* Touch and pen taps are handled right here on pointerup (not left to the browser's synthetic click),
+   so tap-to-place works the same on iPad even when a click event is not delivered. */
+let TAPPC=null,TOUCHUP=0;
+function boardTap(el){if(!el||!el.dataset||!el.isConnected&&el.dataset.act!=='tilesel')return;TOUCHUP=Date.now();audio();const f=ACT[el.dataset.act];if(f)f(el.dataset)}
+document.addEventListener('pointerdown',e=>{
+ if(!G||!B||G.qs.done)return;
+ if(e.button>0)return;
+ const el=e.target.closest&&e.target.closest('.tile,.chip');
+ if(!el){const pc=e.target.closest&&e.target.closest('.pcard');TAPPC=(pc&&e.pointerType!=='mouse')?{el:pc,x0:e.clientX,y0:e.clientY}:null;return}
+ DR={el,x0:e.clientX,y0:e.clientY,moved:false,ghost:null,kind:el.classList.contains('tile')?'tile':'chip',over:null};
+});
+document.addEventListener('pointermove',e=>{
+ if(!DR)return;
+ if(!DR.moved&&Math.hypot(e.clientX-DR.x0,e.clientY-DR.y0)>8){
+  DR.moved=true;const g=DR.el.cloneNode(true);g.classList.add('dghost');g.removeAttribute('data-act');
+  g.style.width=DR.el.offsetWidth+'px';document.body.appendChild(g);DR.ghost=g;DR.el.classList.add('drag-src');
+ }
+ if(!DR.moved)return;
+ e.preventDefault&&e.cancelable&&e.preventDefault();
+ DR.ghost.style.left=e.clientX+'px';DR.ghost.style.top=e.clientY+'px';
+ const t=document.elementFromPoint(e.clientX,e.clientY);
+ const zone=t&&(t.closest('[data-tool]')||t.closest('.chip')||t.closest('.pcard'));
+ document.querySelectorAll('.over').forEach(x=>{if(x!==zone)x.classList.remove('over')});
+ if(zone&&zone!==DR.el)zone.classList.add('over');
+ const pc=t&&t.closest&&t.closest('.pcard'),pid=pc&&DR.kind==='tile'?pc.dataset.p:null;
+ if(pid!==(B.preview?B.preview.p:null)){
+  B.preview=pid?{p:pid,add:{n:1,d:+DR.el.dataset.d}}:null;bbRenderLive();
+ }
+},{passive:false});
+function dragEnd(e,cancel){
+ if(TAPPC){const t=TAPPC;TAPPC=null;if(!cancel&&Math.hypot(e.clientX-t.x0,e.clientY-t.y0)<12)boardTap(t.el)}
+ if(!DR)return;
+ const d=DR;DR=null;
+ document.querySelectorAll('.over').forEach(x=>x.classList.remove('over'));
+ if(d.ghost)d.ghost.remove();d.el.classList.remove('drag-src');
+ const hadPrev=!!(B&&B.preview);if(B)B.preview=null;
+ if(!d.moved){if(!cancel&&e.pointerType&&e.pointerType!=='mouse')boardTap(d.el);return}
+ SUPPRESS=Date.now();
+ if(!cancel&&B&&!G.qs.done){
+  const t=document.elementFromPoint(e.clientX,e.clientY);
+  if(t)dropOn(d,t);
+ }
+ if(hadPrev)bbChanged();
+}
+document.addEventListener('pointerup',e=>dragEnd(e,false));
+document.addEventListener('pointercancel',e=>dragEnd(e,true));
+document.addEventListener('click',e=>{
+ if(Date.now()-SUPPRESS<80){e.stopPropagation();e.preventDefault();return}
+ if(Date.now()-TOUCHUP<700){const t=e.target;if(!t.isConnected||(t.closest&&t.closest('.tile,.chip,.pcard'))){e.stopPropagation();e.preventDefault()}}
+},true);
+function dropOn(d,t){
+ if(d.kind==='tile'){
+  const pc=t.closest('.pcard');
+  if(pc)bbAddBlock(pc.dataset.p,{n:1,d:+d.el.dataset.d},d.el.dataset.k);else toast('Drop it on one of the '+(B.pz.mode==='bakery'?'ingredient bowls.':'parts.'));
+  return;
+ }
+ const pid=d.el.dataset.p,i=+d.el.dataset.i;
+ const tool=t.closest('[data-tool]');
+ if(tool){bbApply(tool.dataset.tool,pid,[i]);return}
+ const chip=t.closest('.chip');
+ if(chip&&chip!==d.el){
+  if(chip.dataset.p===pid){
+   const h=H(pid);
+   if(h.blocks[i].d!==h.blocks[+chip.dataset.i].d){toast('Combine needs same-size pieces. Slice the bigger one so the sizes match!');return}
+   bbApply('merge',pid,[i,+chip.dataset.i]);
+  }else bbMove(pid,i,chip.dataset.p);
+  return;
+ }
+ const pc=t.closest('.pcard');
+ if(pc&&pc.dataset.p!==pid){bbMove(pid,i,pc.dataset.p);return}
+ if(!pc&&!tool&&t.closest('.tray'))bbApply('remove',pid,[i]);
+}
+
+/* ----- checking, hints, finishing ----- */
+function hintFor(a,h,more){
+ const t=h.target;
+ if(a.st==='less'||a.st==='more'){
+  const dir=a.st==='less'?'a little too small':'a little too big';
+  return `The ${h.noun} has ${nowText(h,a.N,a.D)} but the order needs ${needText(h)}. That is ${dir}.`+(more?` The difference is <b>${tx(a.diff.n,a.diff.d)}</b>. ${a.st==='less'?'Add a block that size (slice a block if you need one).':'Take out or break apart blocks to remove that much.'}`:' Look at the number display under it.');
+ }
+ return a.msg;
+}
+function fb(msg,cls){const f=$('#fb');if(!f)return;f.className='fb show '+(cls||'info');f.innerHTML=msg}
+function bbCheck(){
+ if(!B||G.qs.done)return;
+ const qs=G.qs,an=B.holders.map(h=>({h,a:bbAnalyze(h)}));
+ const bad=an.filter(x=>x.a.st==='less'||x.a.st==='more'),tidy=an.filter(x=>x.a.st==='tidy');
+ an.forEach(x=>{const pc=$('#pc_'+x.h.id);if(pc){pc.classList.remove('bad','okc');if(x.a.st==='ok')pc.classList.add('okc');else if(x.a.st!=='tidy')pc.classList.add('bad')}});
+ if(bad.length){
+  qs.wrong++;sfx('oops');
+  fb(`<b>Not quite yet. That is okay!</b> `+bad.map(x=>hintFor(x.a,x.h,qs.wrong>=2)).join('<br>')+`<br>Change the blocks and check again.`,'hint');
+  bbTools();return;
+ }
+ if(tidy.length){
+  if(!qs.partial){qs.partial=true;qs.granted+=12;award(12);tidy.forEach(x=>{if(x.a.tag)bumpTag(x.a.tag)})}
+  sfx('part');
+  fb(`<b>That is the right amount!</b> (+12 partial credit) Now tidy up for full credit:<br>`+tidy.map(x=>x.a.msg).join('<br>'),'part');
+  bbTools();return;
+ }
+ bbResolve();
+}
+function bumpTag(t){S.tags[t]=(S.tags[t]||0)+1;if(G&&G.qs)G.qs.tags.push(t)}
+function bbResolve(){
+ const qs=G.qs;qs.done=true;
+ const outcome=(qs.partial&&!qs.wrong&&!qs.hint)?'partial':(qs.wrong||qs.hint)?'retry':'full';
+ sfx('ok');
+ B.holders.forEach(h=>{const pc=$('#pc_'+h.id);if(pc){pc.classList.remove('bad');pc.classList.add('okc')}});
+ confetti(outcome==='full'?150:90);
+ const msgs={full:'Perfect! First try.',partial:'Fully tidy. Full credit!',retry:'You got it! Great persistence.'};
+ B.onDone(outcome,msgs[outcome]);
+ finishPuzzle(outcome);
+}
+function bbHint(){
+ if(!B||G.qs.done)return;
+ const qs=G.qs;qs.hint++;G.hintsUsed++;
+ const an=B.holders.map(h=>({h,a:bbAnalyze(h)})),first=an.find(x=>x.a.st!=='ok');
+ let msg;
+ if(!first)msg='Everything looks right. Press the big green button to check!';
+ else{
+  const {h,a}=first;
+  if(a.st==='tidy')msg=a.msg;
+  else if(h.blocks.length===0)msg=`Start with the ${h.noun}: it needs ${needText(h)}. Drag from the ${B.pz.mode==='bakery'?'shelf':'tray'} onto it.`;
+  else msg=hintFor(a,h,qs.hint>=2);
+  if(qs.hint>=2&&a.st!=='tidy')msg+=`<br>Tools help: <b>Combine</b> joins same-size blocks, <b>Slice</b> cuts pieces smaller, <b>Simplify</b> makes bigger pieces, <b>Regroup</b> pulls out wholes.`;
+ }
+ fb('<b>Hint:</b> '+msg,'hint');bbTools();
+}
+function bbShowMe(){
+ if(!B||G.qs.done)return;
+ const qs=G.qs;qs.shown=true;qs.done=true;
+ B.holders.forEach(h=>{h.blocks=bbCanonBlocks(h.target)});B.sel=null;bbChanged();
+ B.holders.forEach(h=>{const pc=$('#pc_'+h.id);if(pc)pc.classList.add('okc')});
+ B.onShown(B.holders.map(h=>h.explain).join('<br>'));
+ finishPuzzle('shown');
+}
+function bbTools(){
+ const qs=G.qs;let h='';
+ if(!qs.done){h=`<button class="btn small gold" data-act="bbhint">Hint</button>`;if(qs.wrong>=2||qs.hint>=2)h+=`<button class="btn small ghost" data-act="bbshow">Show me how</button>`}
+ const t=$('#tools');if(t)t.innerHTML=h;
+}
+
+/* ===== Bakery mode: generators ===== */
+const BKIND={b1:'Scoop & build',b2:'Halve & double',b3:'Take away',b4:'Slice the cake',b5:'The Big Bake'};
+const CUSTS=[['Mrs. Basil',20],['Mr. Crumb',200],['Chef Pepper',350],['Dot the Baker',280],['Grandpa Jam',30],['Ms. Sprinkle',320],['Captain Cookie',160],['Penny Pie',45],['Mr. Waffle',90],['Lola Latte',250]];
+const ING1=['flour','sugar','milk','butter'],ING2=ING1.concat(['eggs']);
+const L=tileLabel;
+function bh(i,ing,target,blocks0,explain,o){
+ const I=ING[ing];
+ return Object.assign({id:'h'+i,type:ing,name:I.name,noun:I.noun||I.name.toLowerCase(),unit:I.unit,unitPl:I.pl,bigger:I.bigger,accept:I.accept,target,blocks0,explain:`${I.name}: ${explain}`,art:'bake',sol:null,note:''},o||{});
+}
+/* b1: scoop & build */
+function hAdd(i,ing,t){
+ const I=ING[ing],k=I.kind,cl=k==='cup';let target,sol,ex,spoon=false;
+ if(t===1){
+  const d=pick(cl?[2,3,4]:[2,4]),n=pick(coprimes(d).filter(x=>x<=3));
+  target={n,d,form:'proper'};sol=[{k,d,c:n}];
+  ex=n===1?`Drop one ${L(k,d)}.`:`Drop ${n} of the ${L(k,d)} scoops, then <b>Combine</b> them into one ${n}/${d} block.`;
+ }else if(t===2){
+  const r=Math.random();
+  if(cl&&r<.4){
+   const d=pick([2,4]),n=pick(coprimes(d).filter(x=>x<=3)),c=n*8/d;spoon=true;
+   target={n,d,form:'proper'};sol=[{k:'spoon',d:8,c}];
+   ex=`Each spoon is 1/8 of a cup. Drop ${c} spoons, <b>Combine</b> them into ${c}/8, then <b>Simplify</b> (divide top and bottom by ${8/d}) to ${n}/${d}.`;
+  }else if(cl&&r<.55){
+   const d=pick([3,4]),n=d+pick(coprimes(d));
+   target={n,d,form:'improper'};sol=[{k,d,c:n}];
+   ex=`Drop ${n} of the ${L(k,d)} scoops and <b>Combine</b> them into one ${n}/${d} block. This order wants the improper fraction.`;
+  }else{
+   const d=ing==='eggs'?2:pick(cl?[2,3,4]:[2,4]),rr=pick(coprimes(d));
+   target={n:d+rr,d,form:'mixed'};sol=[{k,d:1,c:1},{k,d,c:rr}];
+   ex=`Drop 1 whole (${L(k,1)}) and ${rr===1?'one':rr} of the ${L(k,d)} scoop${rr>1?'s, then <b>Combine</b> them':''}. That is 1 and ${rr}/${d}.`;
+  }
+ }else{
+  const pairs=cl?[[2,3],[2,4],[3,4]]:ing==='eggs'?[[2,4]]:[[2,4],[2,8],[4,8]];
+  for(let tries=0;tries<50;tries++){
+   const [a,b]=pick(pairs),c1=pick([1,1,2]),c2=pick([1,1,2]);
+   if(c1>=a||c2>=b)continue;
+   const sm=bbSum([{n:c1,d:a},{n:c2,d:b}]),rd=redu(sm.N,sm.D);
+   if(rd.d===1||rd.d>24)continue;
+   target={n:rd.n,d:rd.d,form:rd.n>rd.d?'mixed':'proper'};sol=[{k,d:a,c:c1},{k,d:b,c:c2}];
+   ex=`Drop ${c1} of ${L(k,a)} and ${c2} of ${L(k,b)}. <b>Slice</b> them to the same size (${sm.D}ths), <b>Combine</b> into ${sm.N}/${sm.D}${gcd(sm.N,sm.D)>1?', then <b>Simplify</b>':''}${target.form==='mixed'?', then <b>Regroup</b>':''}.`;
+   break;
+  }
+  if(!target){const a=2,b=4;target={n:3,d:4,form:'proper'};sol=[{k,d:a,c:1},{k,d:b,c:1}];ex=`Drop 1/2 and 1/4, <b>Slice</b> the half into fourths and <b>Combine</b>.`}
+ }
+ return bh(i,ing,target,[],ex,{sol,spoon});
+}
+/* b2: halve / double / triple */
+function hScale(i,ing,t,op){
+ const I=ING[ing];let target,b0=[],ex,note,n,d;
+ if(op==='half'){
+  if(t===1){d=pick([2,4]);n=pick(coprimes(d));b0=[{n,d}];target={n,d:2*d,form:'proper'};
+   ex=`Half of ${n}/${d}: <b>Slice \u00D72</b> so it is ${2*n}/${2*d}, <b>Break apart</b> and <b>Take out</b> ${n} pieces, then <b>Combine</b> the ${n} left into ${n}/${2*d}.`}
+  else if(t===2){d=pick([3,5,6]);n=pick(Array.from({length:d-1},(_,x)=>x+1));b0=[{n,d}];
+   if(n%2===0){const r=redu(n/2,d);target={n:r.n,d:r.d,form:'proper'};
+    ex=`<b>Break apart</b> ${n}/${d} into ${n} pieces, <b>Take out</b> ${n/2} of them, <b>Combine</b> the ${n/2} left into ${n/2}/${d}${r.d!==d?`, then <b>Simplify</b> to ${r.n}/${r.d}`:''}.`}
+   else{const r=redu(n,2*d);target={n:r.n,d:r.d,form:'proper'};
+    ex=`<b>Slice \u00D72</b> so it is ${2*n}/${2*d}, <b>Break apart</b>, <b>Take out</b> ${n} pieces, then <b>Combine</b> the rest into ${n}/${2*d}${r.d!==2*d?`, then <b>Simplify</b> to ${r.n}/${r.d}`:''}.`}}
+  else{d=pick([2,3,4]);const r0=pick(coprimes(d));b0=[{n:1,d:1},{n:r0,d}];const N=d+r0,r=redu(N,2*d);target={n:r.n,d:r.d,form:'proper'};
+   ex=`1 and ${r0}/${d} is ${N}/${d}. <b>Slice</b> the whole into ${d}ths and <b>Combine</b> to make ${N}/${d}. Then <b>Slice \u00D72</b>, <b>Break apart</b>, <b>Take out</b> half of the pieces and <b>Combine</b>${r.d!==2*d||gcd(N,2*d)>1?' (then <b>Simplify</b>)':''} to get ${r.n}/${r.d}.`}
+  const total=bbSum(b0);note=`Full recipe: ${txm(total.N,total.D)} ${total.N>total.D?I.pl:I.unit}. Make a HALF batch.`;
+ }else if(op==='double'){
+  const ds=t===1?[2,3,4,5]:[4,6,8];d=pick(ds);
+  n=pick(coprimes(d).filter(x=>2*x>=d));if(!n)n=d-1;
+  b0=[{n,d},{n,d}];const r=redu(2*n,d);
+  target={n:r.n,d:r.d,form:r.d===1?'proper':(t>=2&&Math.random()<.3)?'improper':'mixed'};
+  if(r.d===1&&r.n!==1)target.form='mixed';
+  ex=`<b>Combine</b> the two ${n}/${d} blocks into ${2*n}/${d}${r.d===1?'. A full whole snaps into one whole block!':''}${r.d!==1&&gcd(2*n,d)>1?`, then <b>Simplify</b> to ${r.n}/${r.d}`:''}${target.form==='mixed'?`${gcd(2*n,d)>1?', then':', then'} <b>Regroup</b> the overflow into a new whole cup: ${txm(r.n,r.d)}`:''}.`;
+  note=`Full recipe: ${txm(n,d)} ${I.unit}. Make a DOUBLE batch (two scoops of it).`;
+ }else{ // triple
+  d=pick([4,5,6,8]);n=pick(coprimes(d));
+  b0=[{n,d},{n,d},{n,d}];const r=redu(3*n,d);
+  target={n:r.n,d:r.d,form:r.n>r.d?'mixed':'proper'};
+  ex=`<b>Combine</b> the three ${n}/${d} blocks into ${3*n}/${d}${gcd(3*n,d)>1?`, <b>Simplify</b> to ${r.n}/${r.d}`:''}${target.form==='mixed'?', then <b>Regroup</b> into wholes':''}: ${txm(r.n,r.d)}.`;
+  note=`Full recipe: ${txm(n,d)} ${I.unit}. Make a TRIPLE batch (three scoops of it).`;
+ }
+ return bh(i,ing,target,b0,ex,{note,op});
+}
+/* b3: take away */
+function hTake(i,ing,t){
+ const I=ING[ing];let a,b,d,b0,target,ex,r,w=0;
+ if(t<=2){
+  const ds=ing==='butter'?[4,8]:t===1?[4,5,6,8]:[8,10,12];
+  for(let tries=0;tries<60;tries++){
+   d=pick(ds);a=rnd(3,d-1);b=rnd(1,a-1);r=a-b;
+   if(r<1)continue;
+   if(t===2&&gcd(r,d)===1&&Math.random()<.7)continue;
+   break;
+  }
+  b0=[{n:a,d}];const rr=redu(r,d);target={n:rr.n,d:rr.d,form:'proper'};
+  ex=`<b>Break apart</b> ${a}/${d}, <b>Take out</b> ${b} piece${b>1?'s':''}, <b>Combine</b> the ${r} left into ${r}/${d}${rr.d!==d?`, then <b>Simplify</b> (pour into bigger pieces) to ${rr.n}/${rr.d}`:''}.`;
+  return bh(i,ing,target,b0,ex,{note:`You have ${a}/${d} ${a>d?I.pl:I.unit}. ${pick(['The cat knocks over','A taste-test takes','A hungry mouse nibbles'])} ${b}/${d}. How much is left?`,take:{a,b,d}});
+ }
+ d=pick(ing==='butter'?[4]:[4,6]);const x=pick(coprimes(d));r=rnd(1,d-1);b=d+x-r;
+ b0=[{n:1,d:1},{n:x,d}];const rr=redu(r,d);target={n:rr.n,d:rr.d,form:'proper'};
+ ex=`1 and ${x}/${d} is ${d+x}/${d}: <b>Slice</b> the whole into ${d}ths and <b>Combine</b>. <b>Break apart</b>, <b>Take out</b> ${b} pieces, <b>Combine</b> the ${r} left${rr.d!==d?', then <b>Simplify</b>':''}: ${rr.n}/${rr.d}.`;
+ return bh(i,ing,target,b0,ex,{note:`You have 1 and ${x}/${d} ${I.pl}. ${pick(['A spill takes','The bakery helper uses','A sample tray takes'])} ${txm(b,d)}. How much is left?`,take:{a:d+x,b,d}});
+}
+/* b4: cake slicing */
+function hCake(i,t,count){
+ let d,n,k=1,shown=null;
+ if(t===1){d=pick([2,3,4]);n=pick(coprimes(d))}
+ else if(t===2){d=pick([5,6,8]);n=pick(coprimes(d))}
+ else{d=pick([6,8,10,12]);n=pick(coprimes(d))}
+ let target={n,d,form:'proper'},ex;
+ if(t>=2&&Math.random()<.4){k=pick(d%2===0?[2,3]:[2]);const r0=n*k,D0=d*k;if(D0<=24){shown={n:r0,d:D0}}}
+ const nm=count>1?`Cake ${i+1}`:'Cake';
+ let note=`Cut the cake into equal slices and serve exactly the amount on the order.`;
+ if(shown){note=`A party! Serve <b>${shown.n}/${shown.d}</b> of the cake. Write it in <b>simplest form</b> by using the biggest slices possible.`;ex=`Cut the cake into ${shown.d} slices, keep ${shown.n}, <b>Combine</b> them (${shown.n}/${shown.d}), then <b>Simplify</b> to ${n}/${d}.`}
+ else ex=`<b>Slice</b> the whole cake into ${d}ths, <b>Break apart</b>, <b>Take out</b> ${d-n} slice${d-n>1?'s':''}, then <b>Combine</b> the ${n} left into ${n}/${d}.`;
+ const h=bh(i,'cake',target,[{n:1,d:1}],ex,{note,shown});
+ h.name=nm;return h;
+}
+function bakeTiles(hs,spoons){
+ const ks=[...new Set(hs.flatMap(h=>h.accept))],t=[];
+ if(ks.includes('cup'))[1,2,3,4].forEach(d=>t.push({k:'cup',d}));
+ if(spoons&&ks.includes('cup'))[8,16].forEach(d=>t.push({k:'spoon',d}));
+ if(ks.includes('stick'))[1,2,4,8].forEach(d=>t.push({k:'stick',d}));
+ if(ks.includes('egg'))[1,2,4].forEach(d=>t.push({k:'egg',d}));
+ if(ks.includes('slice'))t.push({k:'slice',d:1});
+ return t;
+}
+const INTRO={
+ b1:['Good morning! Please measure out my order for the picnic cookies.','Hello, baker! I need these measured for today\u2019s cupcakes.','A quick order for the school bake sale, please!'],
+ b2:['I need a different size batch than the recipe says. Can you scale it?','The recipe is the wrong size for my party. Please fix the amounts!'],
+ b3:['Oh no, there was a little accident in the kitchen! How much is left?','Something got spilled and nibbled. Can you work out what is left?'],
+ b4:['Cake time! Please cut and serve exactly what I asked for.','We are celebrating! Slice the cake for the guests, please.'],
+ b5:['THE BIG BAKE! One grand cake needs every ingredient just right. Take your time, baker.']
+};
+function genBake(kind,tier){
+ const big=kind==='b5';let hs=[];
+ if(kind==='b1'){
+  const n=tier===1?rnd(1,2):2,list=shuffle(tier===1?ING1:ING2).slice(0,n);
+  hs=list.map((ing,i)=>hAdd(i,ing,tier));
+ }else if(kind==='b2'){
+  const ops=tier===1?['half','double']:tier===2?['half','double']:['half','triple','double'];
+  const n=tier===1?rnd(1,2):2,list=shuffle(ING1).slice(0,n),o=shuffle(ops);
+  hs=list.map((ing,i)=>hScale(i,ing,tier,o[i%o.length]));
+  if(n===2&&hs[0].op===hs[1].op&&tier>=2){hs[1]=hScale(1,list[1],tier,o.find(x=>x!==hs[0].op))}
+ }else if(kind==='b3'){
+  const n=tier===1?rnd(1,2):2,list=shuffle(ING1).slice(0,n);
+  hs=list.map((ing,i)=>hTake(i,ing,tier));
+ }else if(kind==='b4'){
+  const n=tier===1?1:tier===2?rnd(1,2):2;
+  hs=Array.from({length:n},(_,i)=>hCake(i,tier,n));
+ }else{
+  const ing=shuffle(['flour','sugar','milk']);
+  hs=[hScale(0,ing[0],tier===1?1:2,'double'),hScale(1,'butter',tier===1?1:2,'half'),hTake(2,ing[1],tier===1?1:2)];
+  hs=shuffle(hs);hs.forEach((h,i)=>h.id='h'+i);
+ }
+ const spoons=hs.some(h=>h.spoon),cu=pick(CUSTS);
+ const label=hs.map(itemText).join(' + ');
+ return{mode:'bakery',kind,skill:kind,tier,big,holders:hs,tiles:bakeTiles(hs,spoons),spoons,cust:{n:cu[0],hue:cu[1]},intro:pick(INTRO[kind]),label,badge:`Bakery \u00B7 ${BKIND[kind]}`};
+}
+
+/* ===== Bakery scene art (original SVG) ===== */
+const DECOR=[['window','Sunny window',20],['bunting','Party bunting',25],['lamp','Hanging lamp',30],['plant','Leafy plant',30],['flowers','Flower vase',35],['sign','Bakery sign',40],['cat','Bakery cat',55],['trophy','Trophy shelf',60]];
+const UPS=[['oven','Better oven','+3 coins every order',30],['mixer','Stand mixer','+2 coins every order',25],['display','Cake display','+3 coins every order',35]];
+function sceneSVG(hue,pz){
+ const dc=S.bakery.decor,u=S.bakery.up,has=x=>dc.includes(x);let s=`<svg viewBox="0 0 760 300" role="img" aria-label="Your bakery with ${esc(pz?pz.cust.n:'a customer')}">`;
+ s+=`<rect width="760" height="300" fill="#ffe9c9"/><rect y="0" width="760" height="22" fill="#e86a6a"/>`;
+ for(let i=0;i<19;i++)s+=`<rect x="${i*40}" y="0" width="20" height="22" fill="#fff4e0"/>`;
+ s+=`<rect y="250" width="760" height="50" fill="#d9a066"/>`;
+ if(has('window'))s+=`<rect x="36" y="42" width="130" height="108" rx="8" fill="#bfe6ff" stroke="#8a5a2b" stroke-width="6"/><line x1="101" y1="42" x2="101" y2="150" stroke="#8a5a2b" stroke-width="5"/><line x1="36" y1="96" x2="166" y2="96" stroke="#8a5a2b" stroke-width="5"/><circle cx="135" cy="72" r="12" fill="#ffd84a"/>`;
+ if(has('sign'))s+=`<rect x="300" y="72" width="160" height="42" rx="10" fill="#8a5a2b" stroke="#5d3a18" stroke-width="3"/><text x="380" y="102" text-anchor="middle" font-size="28" font-weight="900" fill="#ffe9c9" font-family="Trebuchet MS,sans-serif">BAKERY</text>`;
+ if(has('bunting')){s+=`<path d="M10 30 Q380 62 750 30" stroke="#5d3a18" stroke-width="2" fill="none"/>`;for(let i=0;i<11;i++){const x=40+i*64,y=30+Math.sin(i/10*Math.PI)*15;s+=`<polygon points="${x-12},${y} ${x+12},${y} ${x},${y+22}" fill="hsl(${i*37},85%,60%)"/>`}}
+ if(has('lamp'))s+=`<line x1="600" y1="22" x2="600" y2="70" stroke="#5d3a18" stroke-width="3"/><path d="M580 100 Q600 56 620 100Z" fill="#ffcf4a" stroke="#c68e00" stroke-width="3"/><ellipse cx="600" cy="104" rx="14" ry="5" fill="#fff3a8"/>`;
+ if(has('trophy'))s+=`<rect x="640" y="128" width="100" height="8" fill="#8a5a2b"/><path d="M672 100 h28 v14 a14 14 0 0 1 -28 0z" fill="#ffc83a" stroke="#c68e00" stroke-width="2"/><rect x="682" y="124" width="8" height="6" fill="#c68e00"/>`+(S.bakery.trophies>0?`<text x="686" y="115" text-anchor="middle" font-size="14" font-weight="900" fill="#7a4a00">${Math.min(S.bakery.trophies,99)}</text>`:'');
+ s+=`<rect x="180" y="112" width="110" height="8" rx="3" fill="#8a5a2b"/>`;[['#f3e4c1',200],['#ffd9e8',235],['#cfe6ff',270]].forEach(j=>{s+=`<rect x="${j[1]-12}" y="86" width="24" height="26" rx="6" fill="${j[0]}" stroke="${INK}" stroke-width="2"/><rect x="${j[1]-10}" y="80" width="20" height="8" rx="3" fill="#b88a55"/>`});
+ // customer
+ const skin=['#f5cfa8','#d9a073','#8d5a3b','#f2c6a0'][hue%4];
+ s+=`<g transform="translate(470 70)"><ellipse cx="0" cy="200" rx="52" ry="12" fill="#00000022"/><rect x="-40" y="82" width="80" height="116" rx="30" fill="hsl(${hue},70%,62%)" stroke="${INK}" stroke-width="3"/><circle cx="0" cy="60" r="40" fill="${skin}" stroke="${INK}" stroke-width="3"/><path d="M-36 40 Q0 -4 36 40Z" fill="hsl(${(hue+40)%360},60%,40%)"/><circle cx="-14" cy="60" r="6" fill="#fff"/><circle cx="14" cy="60" r="6" fill="#fff"/><circle cx="-13" cy="61" r="3" fill="${INK}"/><circle cx="15" cy="61" r="3" fill="${INK}"/><path d="M-14 78 Q0 92 14 78" stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>`;
+ // counter
+ s+=`<rect x="0" y="206" width="760" height="94" fill="#c07a3e"/><rect x="0" y="198" width="760" height="14" fill="#e3a468" stroke="#8a5a2b" stroke-width="2"/>`;
+ if(u.oven>0)s+=`<g transform="translate(40 120)"><rect width="120" height="84" rx="10" fill="#6d6d86" stroke="${INK}" stroke-width="3"/><rect x="14" y="22" width="92" height="52" rx="8" fill="#ffb347" opacity="${.5+Math.min(u.oven,3)*.15}" stroke="${INK}" stroke-width="3"/><circle cx="24" cy="12" r="5" fill="#ffd84a"/><circle cx="44" cy="12" r="5" fill="#ffd84a"/></g>`;
+ if(u.mixer>0)s+=`<g transform="translate(205 140)"><ellipse cx="40" cy="48" rx="34" ry="12" fill="#e86a9a" stroke="${INK}" stroke-width="3"/><rect x="30" y="8" width="20" height="28" rx="6" fill="#bfc3d6" stroke="${INK}" stroke-width="3"/><rect x="18" y="0" width="44" height="14" rx="7" fill="#e86a9a" stroke="${INK}" stroke-width="3"/>${u.mixer>1?'<circle cx="40" cy="36" r="5" fill="#fff"/>':''}</g>`;
+ if(u.display>0){s+=`<g transform="translate(560 120)"><rect width="150" height="82" rx="8" fill="#e8f6ff" fill-opacity=".7" stroke="${INK}" stroke-width="3"/>`;for(let i=0;i<Math.min(3,u.display)+1;i++)s+=`<circle cx="${28+i*34}" cy="62" r="13" fill="hsl(${i*60+330},80%,75%)" stroke="${INK}" stroke-width="2"/><circle cx="${28+i*34}" cy="50" r="4" fill="#d9304f"/>`;s+=`</g>`}
+ if(has('flowers'))s+=`<g transform="translate(400 150)"><rect x="-14" y="28" width="28" height="30" rx="6" fill="#7ec8e3" stroke="${INK}" stroke-width="2"/>${[-12,0,12].map((x,i)=>`<line x1="${x/2}" y1="28" x2="${x}" y2="6" stroke="#3a9d4a" stroke-width="3"/><circle cx="${x}" cy="4" r="8" fill="hsl(${i*100+330},85%,65%)"/>`).join('')}</g>`;
+ if(has('plant'))s+=`<g transform="translate(715 100)"><path d="M-18 70 h36 l-6 40 h-24z" fill="#c4511f" stroke="${INK}" stroke-width="2"/><path d="M0 70 Q-30 40 -22 10 Q0 30 0 70 M0 70 Q30 40 22 8 Q2 30 0 70" fill="#3fae5a" stroke="${INK}" stroke-width="2"/></g>`;
+ if(has('cat'))s+=`<g transform="translate(150 140)"><ellipse cx="0" cy="50" rx="30" ry="24" fill="#ff9f4a" stroke="${INK}" stroke-width="3"/><circle cx="0" cy="18" r="20" fill="#ff9f4a" stroke="${INK}" stroke-width="3"/><polygon points="-18,6 -16,-14 -4,2" fill="#ff9f4a" stroke="${INK}" stroke-width="3"/><polygon points="18,6 16,-14 4,2" fill="#ff9f4a" stroke="${INK}" stroke-width="3"/><circle cx="-7" cy="18" r="3" fill="${INK}"/><circle cx="7" cy="18" r="3" fill="${INK}"/><path d="M-5 26 Q0 31 5 26" stroke="${INK}" stroke-width="2" fill="none"/></g>`;
+ s+=`<g transform="translate(300 214)"><rect width="150" height="12" rx="6" fill="#f7e1b8"/><ellipse cx="75" cy="4" rx="60" ry="8" fill="#fff" stroke="${INK}" stroke-width="2"/><ellipse cx="75" cy="-6" rx="40" ry="14" fill="#ffd9e8" stroke="${INK}" stroke-width="2"/></g>`;
+ return s+'</svg>';
+}
+function bakeryLeft(pz){
+ return `<div class="scene" id="scene">${sceneSVG(pz.cust.hue,pz)}</div><div class="bubble"><b class="cn">${esc(pz.cust.n)}:</b> \u201C${esc(pz.intro)}\u201D</div>${pz.big?'<div class="bigbake">\u2605 Big Bake: worth double coins and a trophy! \u2605</div>':''}`;
+}
+function bakeryDone(outcome,msg){
+ const nm=B.pz.cust.n;
+ fb(`<b>${msg}</b> Order up! ${esc(nm)} is delighted.<br>${B.holders.map(itemHTML).join(' \u00B7 ')}`,'ok');
+}
+function bakeryShown(txt){
+ fb(`<b>Let\u2019s learn from this one. You will see this kind again soon!</b><br>${txt}`,'info');
+}
+function bakeryAfter(outcome){
+ const u=S.bakery.up;
+ if(outcome!=='shown'){
+  S.bakery.served++;
+  const bonus=u.oven*3+u.mixer*2+u.display*3;
+  if(bonus>0){award(bonus);fb($('#fb').innerHTML+`<br><b>Kitchen bonus: +${bonus} coins</b> from your upgrades!`,'ok')}
+  if(B.pz.big){S.bakery.trophies++;toast('Big Bake trophy won! \uD83C\uDFC6',2600)}
+ }
+ save();bbNextBtn();
+}
+function openShop(){
+ const b=S.bakery,coin=S.coins;
+ const ups=UPS.map(([k,n,d,c])=>{const lv=b.up[k],cost=c*(lv+1),max=lv>=3;return `<div class="shopi"><div><b>${n}</b> (level ${lv}/3)<small>${d}</small></div><button class="btn small ${coin>=cost&&!max?'gold':'ghost'}" data-act="buy" data-k="up:${k}" ${max?'disabled':''}>${max?'Maxed':`Buy ${cost}`}</button></div>`}).join('');
+ const dec=DECOR.map(([k,n,c])=>{const own=b.decor.includes(k);return `<div class="shopi"><div><b>${n}</b><small>Decoration</small></div><button class="btn small ${coin>=c&&!own?'gold':'ghost'}" data-act="buy" data-k="dc:${k}" ${own?'disabled':''}>${own?'Owned':`Buy ${c}`}</button></div>`}).join('');
+ modal(`<h2>Bakery shop</h2><p>You have <b>${coin}</b> coins. Upgrades give bonus coins every order. Decorations make your bakery lovely.</p><div class="scene">${sceneSVG(210,null)}</div><h3>Kitchen upgrades</h3>${ups}<h3>Decorations</h3>${dec}<div class="center" style="margin-top:10px"><button class="btn green" data-act="closemodal">Close</button></div>`);
+}
+function buy(k){
+ const [t,id]=k.split(':'),b=S.bakery;let cost=0;
+ if(t==='up'){const u=UPS.find(x=>x[0]===id);if(!u)return;const lv=b.up[id];if(lv>=3)return;cost=u[3]*(lv+1);if(S.coins<cost)return toast('Not enough coins yet. Keep baking!');S.coins-=cost;b.up[id]++}
+ else{const d=DECOR.find(x=>x[0]===id);if(!d||b.decor.includes(id))return;cost=d[2];if(S.coins<cost)return toast('Not enough coins yet. Keep baking!');S.coins-=cost;b.decor.push(id)}
+ save();sfx('chest');updateHud();openShop();toast('Added to your bakery!');
+}
+
+/* ===== Creature Lab: generators and flow ===== */
+const LABKIND={l1:'Build & combine',l2:'Simplify',l3:'Regroup'};
+const PINFO={head:{n:'head',pl:'heads'},wing:{n:'wing',pl:'wings'},tail:{n:'tail',pl:'tails'},feet:{n:'set of feet',pl:'sets of feet'}};
+const PTYPES=['head','wing','tail','feet'];
+const BCOLS=['#7bd389','#ffb86b','#8fb8ff','#e6a1ff','#ffd966','#6fd6d0'];
+function genLab(kind,tier){
+ const nparts=tier===1?rnd(1,2):tier===2?2:rnd(2,3);
+ const ids=shuffle(PTYPES).slice(0,nparts),pal=new Set();let anyWhole=false;
+ const parts=ids.map(id=>{
+  let target,blocks0=[],explain,sol=null;
+  if(kind==='l1'){
+   const ds=tier===1?[2,3,4]:tier===2?[4,5,6,8]:[6,8,10,12];
+   const d=pick(ds),cp=coprimes(d).filter(x=>x<=(tier===1?3:tier===2?5:7));
+   const n=pick(cp.length?cp:[1]);target={n,d,form:'proper'};pal.add(d);sol=[{k:'blk',d,c:n}];
+   explain=`${n===1?`Drop one 1/${d} block.`:`Drop ${n} blocks of 1/${d}, then <b>Combine</b> them into one ${n}/${d} block.`}`;
+  }else if(kind==='l2'){
+   const ds=tier===1?[2,3,4]:tier===2?[3,4,5,6]:[4,5,6,8];
+   let d,n,k,N,D;
+   do{d=pick(ds);n=pick(coprimes(d));k=pick(tier===1?[2,3]:[2,3,4]);N=n*k;D=d*k}while(N>10||D>24);
+   target={n,d,form:'proper'};
+   if(tier>=2&&Math.random()<.6){
+    const a=rnd(1,N-1);blocks0=[{n:a,d:D},{n:N-a,d:D}];
+    if(tier===3&&D%2===0&&(N-a)%2===0&&Math.random()<.6){blocks0=[{n:a,d:D},{n:(N-a)/2,d:D/2}]}
+    pal.add(d);
+    explain=`Start with the blocks you have. ${blocks0[1].d!==blocks0[0].d?`<b>Slice</b> the bigger piece so both are ${D}ths, then `:''}<b>Combine</b> into ${N}/${D}, then <b>Simplify</b> (divide top and bottom by ${k}) to ${n}/${d}.`;
+   }else{
+    pal.add(D);sol=[{k:'blk',d:D,c:N}];
+    explain=`Drop ${N} blocks of 1/${D}, <b>Combine</b> them into ${N}/${D}, then <b>Simplify</b> (divide top and bottom by ${k}) to get ${n}/${d}.`;
+   }
+  }else{
+   const ds=tier===1?[2,3,4]:tier===2?[3,4,5,6]:[4,5,6,8];
+   const d=pick(ds),w=tier===1?1:tier===2?rnd(1,2):rnd(1,3),r=pick(coprimes(d)),N=w*d+r;
+   const mixed=Math.random()<.6;anyWhole=true;
+   if(mixed){
+    target={n:N,d,form:'mixed'};pal.add(d);
+    if(N>9||Math.random()<.55)blocks0=[{n:N,d}];else sol=[{k:'blk',d,c:N}];
+    explain=`${N}/${d} holds ${w} whole${w>1?'s':''} (${w} \u00D7 ${d} = ${w*d}) with ${r} left over. ${blocks0.length?'':`Drop ${N} blocks of 1/${d}, <b>Combine</b> them, then `}Use <b>Regroup</b> to get ${w} whole${w>1?'s':''} plus ${r}/${d}.`;
+   }else{
+    target={n:N,d,form:'improper'};pal.add(d);
+    blocks0=[{n:w,d:1},{n:r,d}];
+    explain=`<b>Slice</b> the ${w} whole${w>1?'s':''} into ${d}ths (${w} \u00D7 ${d} = ${w*d} pieces), then <b>Combine</b> with the ${r}/${d} block to make ${N}/${d}.`;
+   }
+  }
+  const pn=PINFO[id].n;
+  return{id,type:'lab',name:cap(pn),noun:pn,unit:'',unitPl:'',bigger:'make fewer, bigger pieces',accept:['blk'],art:'lab',target,blocks0,sol,note:'',explain:`${cap(pn)}: ${explain}`};
+ });
+ if(tier>=2){const extra=pick([2,3,4,6,8]);if(pal.size<4)pal.add(extra)}
+ const palette=[...pal].sort((a,b)=>a-b);
+ const tiles=palette.map(d=>({k:'blk',d}));
+ if(anyWhole||parts.some(p=>p.blocks0.some(b=>b.d===1)))tiles.push({k:'blk',d:1});
+ const label=parts.map(p=>`${txm(p.target.n,p.target.d)} ${p.target.n>p.target.d?PINFO[p.id].pl:PINFO[p.id].n}`).join(' + ');
+ return{mode:'lab',kind,skill:kind,tier,holders:parts,tiles,palette,label,badge:`Creature Lab \u00B7 ${LABKIND[kind]}`};
+}
+function labLeft(){return `<div class="stagebox" id="stage"></div>`}
+const GN1=['Sir','Captain','Professor','Lady','Baron','Little','Princess','Doctor','Admiral','Madam'];
+const GN2=['Wingly','Fluffernut','Zigzag','Noodle','Bumblefrac','Sprocket','Tailsworth','Pie-lot','Wobble','Munchkin','Fraxel','Quibble'];
+function labSaveCreature(){
+ const name=pick(GN1)+' '+pick(GN2);
+ const parts=B.holders.map(h=>{const {N,D}=bbSum(bbCanonBlocks(h.target));const r=redu(N,D);return{id:h.id,N:r.n,D:r.d}});
+ S.gallery.unshift({name,col:B.col,parts,d:Date.now()});S.gallery=S.gallery.slice(0,60);
+ G.built=(G.built||0)+1;save();return name;
+}
+function labDone(outcome,msg){
+ const name=labSaveCreature();
+ fb(`<b>${msg}</b> Meet <b>${esc(name)}</b>! They are in your gallery now.<br>${B.holders.map(itemHTML).join(' \u00B7 ')}`,'ok');
+}
+function labShown(txt){
+ const name=labSaveCreature();
+ fb(`<b>Let\u2019s learn from this one. You will see this kind again soon!</b><br>${txt}<br>Meet <b>${esc(name)}</b>, saved to your gallery.`,'info');
+}
+function labAfter(outcome){updateHud();bbNextBtn()}
+function gallery(){
+ G=null;B=null;modal('');
+ $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">Creature gallery: ${S.gallery.length}</span></div>
+ <div class="card"><h2>My creature gallery</h2><p>Every creature you finish in Creature Lab lives here.</p>
+ ${S.gallery.length?`<div class="gal">${S.gallery.map(g=>`<div class="gc">${stageSVG({col:g.col,parts:g.parts},{alt:g.name})}${esc(g.name)}<small>${g.parts.map(p=>`${txm(p.N,p.D)} ${p.N>p.D?PINFO[p.id].pl:PINFO[p.id].n}`).join(' \u00B7 ')}</small></div>`).join('')}</div>`:`<p class="note">No creatures yet. Open Creature Lab and build your first one!</p>`}</div>`;
+}
+
+/* ===== Run flow ===== */
+const REW={full:20,partial:16,retry:10,shown:0};
+function award(x){if(x<=0)return;G.score+=x;S.coins+=x;save();sfx('coin');updateHud()}
+function pct(r){return r.att?Math.round(100*(r.full+.5*r.partial)/r.att):null}
+function modal(h){$('#modal').innerHTML=h?`<div class="modal"><div class="card">${h}</div></div>`:''}
+function startRun(mode,level){
+ G={mode,level,t0:Date.now(),qn:0,total:MODES[mode].total,answered:0,full:0,partial:0,retry:0,shown:0,score:0,q:null,qs:null,streak:0,stage:'q',hintsUsed:0,built:0,lastKind:null};
+ audio();
+ $('#screen').innerHTML=`<div class="hud" id="hud"></div><section class="card" id="qcard" aria-live="polite"></section>`;
+ updateHud();nextPuzzle();
+}
+function updateHud(){
+ if(!G||!$('#hud'))return;
+ const bk=G.mode==='bakery';
+ let h=`<button class="btn small ghost" data-act="quit">\u2190 Home</button><span class="pill">${MODES[G.mode].name}</span><span class="pill g">Coins: ${S.coins}</span><span class="pill">${bk?'Order':'Creature'} ${Math.min(G.qn,G.total)} of ${G.total}</span><span class="pill" title="Perfect first tries in a row">Streak: ${G.streak}</span><span class="sp"></span>`;
+ if(bk)h+=`<button class="btn small gold" data-act="shop">Shop</button>`;
+ h+=`<button class="btn small ghost" data-act="mute" aria-label="Toggle sound">${S.settings.mute?'Sound: off':'Sound: on'}</button>`;
+ $('#hud').innerHTML=h;
+}
+function pickKind(){
+ const ids=G.mode==='bakery'?BAKEIDS:LABIDS;
+ if(G.level!=='mix')return G.level;
+ return wpick(ids.map(id=>{const r=rec(id),miss=r.att>=2?1-(r.full+.5*r.partial)/r.att:.4;let w=(id==='l1'||id==='b1'?1.5:2)*(1+2*miss);if(id===G.lastKind)w*=.35;return[id,w]}));
+}
+function nextPuzzle(){
+ if(G.qn>=G.total)return endRun(true);
+ G.qn++;
+ const big=G.mode==='bakery'&&G.level==='mix'&&G.qn===G.total;
+ const kind=big?'b5':pickKind();G.lastKind=kind;
+ const pz=G.mode==='bakery'?genBake(kind,rec(kind).tier):genLab(kind,rec(kind).tier);
+ beginBoard(pz);
+}
+function beginBoard(pz){
+ G.q={skill:pz.skill,label:pz.label,big:!!pz.big};
+ G.qs={wrong:0,hint:0,shown:false,partial:false,done:false,granted:0,tags:[],t0:Date.now()};
+ G.stage='q';
+ const bk=pz.mode==='bakery';
+ B={pz,holders:pz.holders.map(h=>Object.assign({},h,{blocks:h.blocks0.map(b=>Object.assign({},b))})),hist:[],sel:null,hold:null,preview:null,col:pick(BCOLS),
+  onDone:bk?bakeryDone:labDone,onShown:bk?bakeryShown:labShown,after:bk?bakeryAfter:labAfter};
+ drawBoard(bk?bakeryLeft(pz):labLeft());
+}
+function drawBoard(left){
+ const pz=B.pz,r=rec(pz.skill),bk=pz.mode==='bakery';
+ let h=`<div class="row"><span class="skillbadge">${esc(pz.badge)}</span><span class="sp"></span>${r.tier>1?`<small class="star">${'\u2605'.repeat(r.tier-1)} power</small>`:''}</div>`;
+ h+=blueprintHTML();
+ h+=`<div class="labgrid"><div id="leftcol">${left}</div><div id="partscol">${holdersHTML(pz)}</div></div>`;
+ h+=trayHTML(pz)+toolsHTML();
+ h+=`<div id="fb" class="fb" role="status"></div><div class="tools" id="tools"></div><div class="row" id="bbbtns" style="justify-content:center;margin-top:8px"><button class="btn green" style="min-width:55%;font-size:1.25rem" data-act="bbcheck">${bk?'Check my order':'Check my creature'} \u2713</button></div>`;
+ $('#qcard').innerHTML=h;
+ bbChanged();bbTools();updateHud();
+}
+function bbNextBtn(){
+ const last=G.qn>=G.total,bk=G.mode==='bakery';
+ const b=$('#bbbtns');if(b)b.innerHTML=`<button class="btn green" style="min-width:60%;font-size:1.3rem" data-act="next">${last?'Finish \u2713':bk?'Next order \u25B8':'Next creature \u25B8'}</button>${bk?'':`<button class="btn ghost" data-act="gallery">See gallery</button>`}`;
+ G.stage='next';
+}
+function finishPuzzle(outcome){
+ const q=G.q,qs=G.qs;qs.done=true;
+ const r=rec(q.skill);r.att++;r[outcome]++;
+ G.answered++;G[outcome]++;
+ let levelMsg='';
+ if(outcome==='full'){r.streak++;r.bad=0;G.streak++;
+  if(r.streak>=3&&r.tier<3){r.tier++;r.streak=0;levelMsg=`Skill power up! ${SK[q.skill].n} is now a bit trickier.`}}
+ else if(outcome==='partial'){}
+ else{r.streak=0;G.streak=0;r.bad++;if(r.bad>=2&&r.tier>1){r.tier--;r.bad=0;levelMsg='Let\u2019s practice this a little more gently for a bit.'}}
+ if(outcome!=='full'){S.misses.unshift({l:q.label,s:q.skill,o:outcome,t:Date.now()});S.misses=S.misses.slice(0,15)}
+ save();
+ const rw=Math.max(0,REW[outcome]*(q.big?2:1)-qs.granted);
+ if(rw>0)award(rw);
+ if(outcome==='full'&&G.streak>1)award(Math.min(G.streak,6)-1);
+ updateHud();bbTools();
+ if(levelMsg)setTimeout(()=>toast(levelMsg,3000),600);
+ B.after(outcome);
+}
+function endRun(finished){
+ const g=G,mode=g.mode;
+ S.sessions.unshift({d:Date.now(),m:mode,n:g.answered,full:g.full,partial:g.partial,retry:g.retry,shown:g.shown,score:g.score});S.sessions=S.sessions.slice(0,30);
+ S.best[mode]=Math.max(S.best[mode]||0,g.score);save();
+ G=null;B=null;
+ const bk=mode==='bakery';
+ $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">${MODES[mode].name}</span></div>
+ <div class="card center"><h1>${finished?(bk?'The bakery closes for the day!':'The lab is all done!'):'Nice work today!'}</h1>
+ <p style="font-size:1.2rem">You earned <b>${g.score} coins</b> this round. Your bank: <b>${S.coins}</b>.</p>
+ <div class="row" style="justify-content:center;margin:10px 0"><span class="pill g" style="padding:.3em .9em;border-radius:99px;background:#fff4c9;font-weight:800">${g.answered} ${bk?'orders':'creatures'}</span><span class="pill g" style="padding:.3em .9em;border-radius:99px;background:#dcf7e7;font-weight:800">Perfect first tries: ${g.full}</span><span class="pill g" style="padding:.3em .9em;border-radius:99px;background:#e4f0ff;font-weight:800">Right but tidy-up needed: ${g.partial}</span><span class="pill g" style="padding:.3em .9em;border-radius:99px;background:#f1edff;font-weight:800">Got it with help: ${g.retry+g.shown}</span></div>
+ <p>${bk?`Orders served all-time: <b>${S.bakery.served}</b>. Big Bake trophies: <b>${S.bakery.trophies}</b>.`:`Creatures in your gallery: <b>${S.gallery.length}</b>.`}</p>
+ <div class="row" style="justify-content:center"><button class="btn gold" data-act="again" data-m="${mode}" data-l="${g.level}">Play again</button>${bk?`<button class="btn" data-act="shop">Shop</button>`:`<button class="btn" data-act="gallery">Gallery</button>`}<button class="btn ghost" data-act="home">Home</button></div></div>`;
+ if(finished){confetti(160);sfx('win')}
+}
+
+/* ===== Screens ===== */
+let SEL='mix';
+function home(){
+ G=null;B=null;modal('');
+ const card=(m,cls,art)=>`<button class="mode ${cls}" data-act="mode" data-m="${m}"><div class="art">${art}</div><h2>${MODES[m].name}</h2><p>${MODES[m].tag}</p><span class="best">Best score: ${S.best[m]||0}</span></button>`;
+ $('#screen').innerHTML=`<div class="top"><span class="pill">Coins: ${S.coins}</span><span class="sp"></span><button class="btn small ghost" data-act="mute">${S.settings.mute?'Sound: off':'Sound: on'}</button><button class="btn small ghost" data-act="textsize" aria-label="Change text size">Text size: ${['A','A+','A++'][S.settings.big||0]}</button></div>
+ <div class="hero"><h1>Batter Blocks</h1><h2 style="margin:0;font-size:1.3rem">The Fraction Bakery</h2><p>Welcome, Kenny! Every fraction is a number AND blocks you can move. No timers, no lives.</p></div>
+ <div class="modes">${card('bakery','bk',`<svg viewBox="0 0 300 100" width="240" height="80" aria-hidden="true"><g transform="translate(10 0)">${cupArt(3,4,'#f3e4c1','#d2bd8a')}</g><g transform="translate(100 0)">${stickArt(3,4)}</g><g transform="translate(190 0)">${pieArt(3,8,cakeInner(8))}</g></svg>`)}${card('lab','l',stageSVG({col:'#7bd389',parts:[{id:'head',N:3,D:4},{id:'wing',N:1,D:2},{id:'tail',N:5,D:8}]},{w:170}))}</div>
+ <div class="card"><div class="row"><b>Your bakery:</b><span>${S.bakery.served} orders served \u00B7 ${S.bakery.decor.length} decorations \u00B7 ${S.bakery.trophies} Big Bake trophies</span></div><div class="scene" style="margin:8px auto 0;max-width:560px">${sceneSVG(210,null)}</div></div>
+ <div class="footrow"><button class="btn" data-act="shop">Bakery shop</button><button class="btn" data-act="gallery">Creature gallery (${S.gallery.length})</button><button class="btn small ghost" data-act="parent" style="align-self:center">Parent</button></div>`;
+}
+function setup(m){
+ const bk=m==='bakery',ids=bk?BAKEIDS:LABIDS;
+ const lv=[['mix','Smart Mix','Recommended: picks what you need most'+(bk?', and ends with a Big Bake':'')]].concat(ids.map(id=>[id,SK[id].name,SK[id].desc]));
+ const stars=id=>{const r=rec(id),p=pct(r);return p===null?'':`<span class="star">${'\u2605'.repeat(p>=90?3:p>=70?2:p>=40?1:0)||'\u2606'}</span>`};
+ $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">${MODES[m].name}</span></div>
+ <div class="card"><h2>Choose your practice</h2><p>${MODES[m].tag}</p>
+ <div class="lv">${lv.map(([k,n,d])=>`<button class="lvb${String(SEL)===String(k)?' on':''}" data-act="lvl" data-l="${k}"><b class="n">${k==='mix'?'\u2605':k.slice(1)}</b><span><b>${esc(n)}</b> ${k==='mix'?'':stars(k)}<small>${esc(d)}</small></span></button>`).join('')}</div>
+ <p class="note">A round takes about 10 to 15 minutes. You can stop any time with the Home button.</p>
+ <div class="center"><button class="btn gold" style="font-size:1.5rem;min-width:60%" data-act="start" data-m="${m}">Start!</button></div></div>`;
+}
+
+/* ===== Parent corner ===== */
+function missed(){return ALLSK.map(id=>({id,p:pct(rec(id)),att:rec(id).att})).filter(x=>x.att>=3&&x.p!==null&&x.p<85).sort((a,b)=>a.p-b.p).slice(0,3)}
+function summaryText(){
+ const d=new Date(),ds=d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+ const tot=ALLSK.reduce((s,id)=>s+rec(id).att,0);
+ let t=`Batter Blocks (fraction bakery) practice summary for Kenny \u2013 ${ds}\nRounds played: ${S.sessions.length} (most recent 30) | Puzzles answered: ${tot}\n\nScore by skill (full credit = perfect first try; partial credit = right amount but needed a nudge, e.g. to simplify or regroup):\n`;
+ ALLSK.forEach(id=>{const r=rec(id),p=pct(r);t+=` ${SK[id].n}. ${SK[id].name}: ${p===null?'not tried yet':p+'% over '+r.att+' puzzles (perfect '+r.full+', partial '+r.partial+', retried '+r.retry+', needed the walk-through '+r.shown+')'}; difficulty level ${r.tier} of 3\n`});
+ const worst=missed();t+=`\nMost-missed skills: ${worst.length?worst.map(w=>SK[w.id].name+' ('+w.p+'%)').join('; '):'not enough data yet'}\n`;
+ const tg=Object.keys(S.tags).filter(k=>S.tags[k]>0).map(k=>`${TAGNAME[k]||k}: ${S.tags[k]}`);
+ t+=`Habits to watch: ${tg.length?tg.join('; '):'none noticed yet'}\n`;
+ if(S.misses.length)t+=`Recent stumbles: ${S.misses.slice(0,8).map(m=>m.l).join('; ')}\n`;
+ t+=`Bakery orders served: ${S.bakery.served} | Big Bake trophies: ${S.bakery.trophies} | Creatures built: ${S.gallery.length}\n`;
+ t+=`Best scores: Fraction Bakery ${S.best.bakery}, Creature Lab ${S.best.lab}\n`;
+ t+=`\n(This summary was made on this device only. The game never sends data anywhere.)`;
+ return t;
+}
+function parent(){
+ const worst=missed();
+ const col=p=>p===null?'#ccc':p>=85?'#1fa863':p>=60?'#ffb400':'#e0654f';
+ $('#screen').innerHTML=`<div class="top"><button class="btn small ghost" data-act="home">\u2190 Home</button><span class="pill">Parent corner</span></div>
+ <div class="card"><h2>Accuracy by skill</h2><p class="note">Stored only in this browser on this device. Nothing is sent anywhere. Partial credit means the amount was right but needed a nudge (for example, to simplify).</p>
+ <table><tr><th>Skill</th><th>Tried</th><th>Score</th><th></th><th>Level</th></tr>${ALLSK.map(id=>{const r=rec(id),p=pct(r);return `<tr><td><b>${SK[id].n}.</b> ${esc(SK[id].name)}</td><td>${r.att}</td><td>${p===null?'\u2014':p+'%'}</td><td><div class="bar2"><i style="width:${p||0}%;background:${col(p)}"></i></div></td><td>${r.tier}/3</td></tr>`}).join('')}</table>
+ <h3>Most-missed skills</h3><p>${worst.length?worst.map(w=>`<b>${esc(SK[w.id].name)}</b> (${w.p}%)`).join('<br>'):'Not enough practice yet to tell. Play a few rounds!'}</p>
+ <p class="note">Bakery orders served: <b>${S.bakery.served}</b> \u00B7 Creatures built: <b>${S.gallery.length}</b></p>
+ <h3>Habits to watch</h3><p>${Object.keys(S.tags).filter(k=>S.tags[k]>0).map(k=>`${esc(TAGNAME[k]||k)}: <b>${S.tags[k]}</b>`).join('<br>')||'None noticed yet.'}</p>
+ <h3>Recent stumbles</h3><p>${S.misses.length?S.misses.slice(0,8).map(m=>esc(m.l)).join(' \u00B7 '):'None yet.'}</p>
+ <h3>Copyable summary</h3><textarea class="sum" id="sumtxt" readonly>${esc(summaryText())}</textarea>
+ <div class="row" style="margin-top:8px"><button class="btn green" data-act="copy">Copy summary</button><span class="note">Paste it wherever you like. The game itself never sends anything.</span></div>
+ <hr><button class="btn small ghost" data-act="resetask">Erase all progress on this device</button></div>`;
+}
+function copySummary(){
+ const t=summaryText(),ta=$('#sumtxt');
+ const fallback=()=>{try{ta.removeAttribute('readonly');ta.focus();ta.select();const ok=document.execCommand('copy');ta.setAttribute('readonly','');toast(ok?'Summary copied!':'Press and hold the text to copy it')}catch(e){toast('Press and hold the text to copy it')}};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('Summary copied!'),fallback);else fallback();
+}
+
+/* ===== Events ===== */
+const ACT={
+ home,parent,gallery,
+ mode:d=>{SEL='mix';setup(d.m)},
+ lvl:d=>{SEL=d.l;const m=document.querySelector('[data-act="start"]').dataset.m;setup(m)},
+ start:d=>startRun(d.m,SEL),
+ again:d=>startRun(d.m,d.l),
+ mute:()=>{S.settings.mute=!S.settings.mute;save();G?updateHud():home()},
+ textsize:()=>{S.settings.big=((S.settings.big||0)+1)%3;save();applyFS();home()},
+ quit:()=>modal(`<h2>Take a break?</h2><p>Your coins and bakery are saved.</p><div class="row" style="justify-content:center"><button class="btn green" data-act="closemodal">Keep playing</button><button class="btn" data-act="quityes">Finish this round</button></div>`),
+ quityes:()=>{modal('');if(G&&G.answered>0)endRun(false);else home()},
+ closemodal:()=>modal(''),
+ next:()=>{if(G&&G.stage==='next')nextPuzzle()},
+ shop:()=>{openShop()},buy:d=>buy(d.k),
+ copy:copySummary,
+ bbcheck:bbCheck,bbhint:bbHint,bbshow:bbShowMe,bbundo:bbUndo,tool:d=>bbTool(d.tool),chipsel:d=>chipSel(d.p,+d.i),tilesel:d=>tileSel(d.k,+d.d),placehere:d=>placeHere(d.p),
+ resetask:()=>modal(`<h2>Erase everything?</h2><p>This clears coins, bakery, creatures and scores on this device. It cannot be undone.</p><div class="row" style="justify-content:center"><button class="btn green" data-act="closemodal">No, keep it</button><button class="btn ghost" data-act="resetyes">Yes, erase</button></div>`),
+ resetyes:()=>{try{localStorage.removeItem(KEY)}catch(e){}S=defState();ALLSK.forEach(rec);save();modal('');applyFS();home();toast('Progress erased')}
+};
+document.addEventListener('click',e=>{
+ const t=e.target.closest&&e.target.closest('[data-act]');if(!t)return;
+ audio();const f=ACT[t.dataset.act];if(f)f(t.dataset,e);
+});
+document.addEventListener('keydown',e=>{
+ if(!G||!G.q||document.querySelector('#modal .modal'))return;
+ if(e.key==='Enter'&&!(e.target&&e.target.tagName==='BUTTON')){if(G.qs.done){if(G.stage==='next')nextPuzzle()}else bbCheck()}
+});
+window.addEventListener('error',e=>{window.__errs=(window.__errs||[]).concat(String(e.message))});
+window.BB={get B(){return B},get S(){return S},get G(){return G},genBake,genLab,bbAnalyze,bbApply,bbSum,bbCanon,bbCanonBlocks,bbCheck,bbAddBlock,bbTool,chipSel,tileSel,placeHere,startRun,home,summaryText,nextPuzzle,SK,ALLSK,ACT,gcd,lcm,rec,beginBoard,bbHint,bbShowMe,bbUndo,openShop,buy};
+home();
+</script>
+</body>
+</html>
